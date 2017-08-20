@@ -15,4 +15,5 @@
         completions."
     </string>
     <string name="title_activity_route_view">Map</string>
+    <string name='preference_file_key'>Xplocity.PositionServiceStorage</string>
 </resources>
