@@ -23,16 +23,12 @@ public class Route implements Parcelable {
     public ArrayList<LatLng> path;
     public ArrayList<Location> locations;
 
-    public LatLng position;
-
-    private static final int LOCATION_REACHED_DISTANCE = 50;
 
     public Route() {
 
         locations = new ArrayList<Location>();
         path = new ArrayList<LatLng>();
     }
-
 
 
     public static ArrayList<LatLng> string_to_route(String str_route) {
@@ -48,9 +44,6 @@ public class Route implements Parcelable {
 
         return points;
     }
-
-
-
 
 
 
