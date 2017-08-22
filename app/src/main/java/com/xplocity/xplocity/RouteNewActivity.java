@@ -17,11 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -30,6 +36,8 @@ import api_classes.LocationCategoriesDownloader;
 import api_classes.NewRouteDownloader;
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
 import api_classes.interfaces.NewRouteDownloaderInterface;
+import managers.MapManager;
+import managers.PositionManager;
 import models.LocationCategory;
 import models.Route;
 
@@ -40,6 +48,11 @@ public class RouteNewActivity extends FragmentActivity implements LocationCatego
     // Permissions
     private static final int REQUEST_PERMISSIONS = 100;
     boolean boolean_permission;
+
+
+    //Managers
+    MapManager map_manager;
+    PositionManager position_manager;
 
     //UI Objects
     private ArrayList<CheckBox> category_checkboxes; //Array of checkboxes (location categories)
@@ -98,20 +111,30 @@ public class RouteNewActivity extends FragmentActivity implements LocationCatego
     }
 
 
-
     // Called when "Get locations" button is pressed
     public void create_route(View view) {
-
         try {
             //TODO добавить проверку permissions
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            request_new_route(location.getLatitude(), location.getLongitude());
-                        }
-                    });
+            LocationRequest mLocationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(100)        // 10 seconds, in milliseconds
+                    .setFastestInterval(100); // 1 second, in milliseconds
+
+
+            final LocationCallback mLocationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    if (!locationResult.getLocations().isEmpty()) {
+                        Location location = locationResult.getLocations().get(0);
+                        request_new_route(location.getLatitude(), location.getLongitude());
+                        mFusedLocationClient.removeLocationUpdates(this);
+                    }
+                }
+            };
+
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null);
         } catch (SecurityException e) {
         }
     }
@@ -149,15 +172,17 @@ public class RouteNewActivity extends FragmentActivity implements LocationCatego
 
     @Override
     public void onNewRouteDownload(Route p_route) {
+        // create position manager
+        init_position_manager(p_route);
+
         //Create the google map
+        //TODO при восстановлении состояния, если был включен трекинг, то надо также создавать карту + срау отображать вторую страницу аниматора
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
         animator.showNext();
-
-        //TODO сохранить полученный маршрут в Position Manager
 
 
     }
@@ -166,20 +191,29 @@ public class RouteNewActivity extends FragmentActivity implements LocationCatego
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        map_manager = new MapManager(mMap);
 
 
         if (boolean_permission) {
             try {
                 mMap.setMyLocationEnabled(true);
 
+                for (models.Location loc : position_manager.route.locations) {
+                    map_manager.add_location_marker(loc);
+                }
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position_manager.route.locations.get(0).position, map_manager.DEFAULT_OVERVIEW_ZOOM));
                 //TODO нарисовать на карте полученный массив локаций, переместить камеру к текущей позиции
-            }
-            catch (SecurityException e) {
+            } catch (SecurityException e) {
                 //TODO обрабатывать отсутствие прав
             }
         }
     }
 
+
+    void init_position_manager(Route p_route) {
+        position_manager = new PositionManager(p_route);
+    }
 
 
     ////////// Route settings windows
@@ -219,7 +253,6 @@ public class RouteNewActivity extends FragmentActivity implements LocationCatego
     }
 
 
-
     public static String formatHoursAndMinutes(int totalMinutes) {
         String minutes = Integer.toString(totalMinutes % 60);
         minutes = minutes.length() == 1 ? "0" + minutes : minutes;
@@ -248,7 +281,7 @@ public class RouteNewActivity extends FragmentActivity implements LocationCatego
             }
         });
 
-        time_slider.setProgress(240-TIME_SLIDER_MIN);
+        time_slider.setProgress(240 - TIME_SLIDER_MIN);
     }
 
 }

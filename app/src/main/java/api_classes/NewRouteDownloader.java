@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import api_classes.interfaces.NewRouteDownloaderInterface;
 import models.Route;
+import utils.UTF8StringRequest;
 import utils.VolleySingleton;
 import xml_parsers.XMLLocationsParser;
 
@@ -50,7 +51,7 @@ public class NewRouteDownloader {
 
     private void request_new_route(String urlString) {
         // Formulate the request and handle the response.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, urlString,
+        StringRequest stringRequest = new UTF8StringRequest(Request.Method.GET, urlString,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
