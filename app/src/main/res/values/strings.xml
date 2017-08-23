@@ -16,4 +16,7 @@
     </string>
     <string name="title_activity_route_view">Map</string>
     <string name='preference_file_key'>Xplocity.PositionServiceStorage</string>
+
+    <!-- Log level -->
+    <string name='log_level'>verbose</string>
 </resources>
