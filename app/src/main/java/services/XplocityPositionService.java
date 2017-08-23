@@ -13,7 +13,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -23,32 +22,36 @@ import com.xplocity.xplocity.R;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import utils.Factory.LogFactory;
+import utils.Log.Logger;
+import utils.LogLevelGetter;
+import utils.ResourceGetter;
+
 public class XplocityPositionService extends Service {
-    private static final String TAG = "XPLOCITYTESTGPS";
-    private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
 
-    private boolean tracking_active = false;
-
-    public ArrayList<LatLng> route;
-    public LatLng last_position;
+    private LatLng mLastPosition;
+    private ArrayList<LatLng> mRoute;
+    private boolean mTrackingActive = false;
+    private LocationManager mLocationManager;
+    private Logger mLogger;
 
     private class LocationListener implements android.location.LocationListener {
+        private Logger mLogger;
 
         public LocationListener(String provider) {
-
+            mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         }
 
         @Override
         public void onLocationChanged(Location location) {
+            if (mTrackingActive) {
+                mLastPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                mRoute.add(mLastPosition);
+                writeStateToStorage();
 
-            if (tracking_active) {
-                last_position = new LatLng(location.getLatitude(), location.getLongitude());
-                route.add(last_position);
-
-                write_state_to_storage();
-                Log.e("XPLOCITY SERVICE", "location_changed");
+                mLogger.logVerbose("Location update: " + location.toString());
             }
         }
 
@@ -74,14 +77,13 @@ public class XplocityPositionService extends Service {
     };
 
     public class LocalBinder extends Binder {
-        XplocityPositionService getService() {
+        public XplocityPositionService getService() {
             // Return this instance of LocalService so clients can call public methods
             return XplocityPositionService.this;
         }
     }
 
     private final IBinder mBinder = new LocalBinder();
-
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -96,25 +98,24 @@ public class XplocityPositionService extends Service {
 
     @Override
     public void onCreate() {
+        mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         initializeLocationManager();
-        Log.e("Xplocity service", "Service started");
 
         Notification notification = new NotificationCompat.Builder(this)
                 .setContentTitle("Xplocity")
                 .setContentText("Tracking started")
+                .setOngoing(true)
                 .build();
 
-        startForeground(1338, notification);
-
+        startForeground(ResourceGetter.getInteger("location_service_id"), notification);
 
         // load tasks from preference
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        mTrackingActive = prefs.getBoolean("tracking_active", false);
 
-        if (prefs.getBoolean("tracking_active", false)) {
-            tracking_active = true;
-
+        if(mTrackingActive) {
             Gson gson = new Gson();
-            route = gson.fromJson(prefs.getString("route", ""), new TypeToken<ArrayList<LatLng>>() {
+            mRoute = gson.fromJson(prefs.getString("route", ""), new TypeToken<ArrayList<LatLng>>() {
             }.getType());
 
             prefs.edit().remove("route");
@@ -122,101 +123,101 @@ public class XplocityPositionService extends Service {
 
             startTracking();
         }
-
     }
-
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         scheduleService();
     }
-
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-
         scheduleService();
     }
 
-
     private void scheduleService() {
-
-        write_state_to_storage();
+        writeStateToStorage();
 
         Intent myIntent = new Intent(getApplicationContext(), XplocityPositionService.class);
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0, myIntent, 0);
-        AlarmManager alarmManager1 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 10);
 
-        alarmManager1.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
-        Log.e("Xplocity service", "Service stopped");
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        mLogger.logInfo("Service stopped");
     }
 
-    private void write_state_to_storage() {
+    private void writeStateToStorage() {
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
         Gson gson = new Gson();
-        String json = gson.toJson(route);
+        String json = gson.toJson(mRoute);
         editor.putString("route", json);
-        editor.putBoolean("tracking_active", tracking_active);
-
+        editor.putBoolean("tracking_active", mTrackingActive);
 
         editor.commit();
     }
-
 
     private void initializeLocationManager() {
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
-
-
     }
-
 
     public void startTracking() {
+        if(!mTrackingActive)
+        {
+            mTrackingActive = true;
 
-        tracking_active = true;
-
-        if (route == null) {
-            route = new ArrayList<LatLng>();
-        } else {
-            //route.clear();
-        }
-
-
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
-
-    }
-
-
-    public void stopTracking() {
-        tracking_active = false;
-        route.clear();
-
-        if (mLocationManager != null) {
-            try {
-                mLocationManager.removeUpdates(mLocationListeners[0]);
-            } catch (Exception ex) {
-                Log.i(TAG, "fail to remove location listeners, ignore", ex);
+            if (mRoute == null) {
+                mRoute = new ArrayList<LatLng>();
             }
 
+            mRoute.clear();
+
+            try {
+                mLocationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                        mLocationListeners[0]);
+            } catch (java.lang.SecurityException e) {
+                mLogger.logError("Failed to start tracking: Failed to request location update", e);
+            } catch (IllegalArgumentException e) {
+                mLogger.logError("Failed to start tracking: GPS provider does not exist", e);
+            }
         }
+        else {
+            mLogger.logWarning("Failed to start tracking: tracking already in progress");
+        }
+    }
+
+    public void stopTracking() {
+        if(mTrackingActive)
+        {
+            mTrackingActive = false;
+            mRoute.clear();
+
+            if (mLocationManager != null) {
+                try {
+                    for(LocationListener l: mLocationListeners ){
+                        mLocationManager.removeUpdates(l);
+                    }
+                } catch (Exception e) {
+                    mLogger.logError("Failed to start tracking: GPS provider does not exist", e);
+                }
+            }
+        }
+        else{
+            mLogger.logWarning("Failed to stop tracking: already stopped");
+        }
+    }
+
+    public boolean trackingActive(){
+        return mTrackingActive;
     }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Service -->
+    <integer name="location_service_id">1488</integer>
+
+    <!-- UI -->
+    <integer name="map_polyline_width">5</integer>
+</resources>

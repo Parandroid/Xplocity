@@ -10,5 +10,5 @@ import models.RouteDescription;
  */
 
 public interface RouteDownloaderInterface {
-    void onRouteDownload(Route p_route);
+    void onRouteDownloaded(Route route);
 }

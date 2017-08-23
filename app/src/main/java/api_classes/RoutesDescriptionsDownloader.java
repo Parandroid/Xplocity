@@ -10,8 +10,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import api_classes.interfaces.RouteDescriptionsDownloaderInterface;
+import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import models.RouteDescription;
+import utils.Factory.LogFactory;
+import utils.Log.Logger;
+import utils.LogLevelGetter;
 import utils.VolleySingleton;
 import xml_parsers.XMLRouteDescriptionsParser;
 
@@ -20,40 +23,41 @@ import xml_parsers.XMLRouteDescriptionsParser;
  */
 
 
-public class RouteDescriptionsDownloader {
+public class RoutesDescriptionsDownloader {
 
-    private RouteDescriptionsDownloaderInterface mainClass;
+    private RoutesDescriptionsDownloaderInterface mCallback;
+    private Logger mLogger;
 
-    public RouteDescriptionsDownloader(RouteDescriptionsDownloaderInterface mClass) {
-        mainClass = mClass;
+    public RoutesDescriptionsDownloader(RoutesDescriptionsDownloaderInterface callback) {
+        mCallback = callback;
+        mLogger = LogFactory.createLogger(this.getClass(), LogLevelGetter.get());
     }
 
-
-    public void download_route_descriptions() {
-        request_route_descriptions("http://br-on.ru:3003/api/v1/chains?user_id=1");
+    public void downloadRoutesDescriptions() {
+        requestRoutesDescriptions("http://br-on.ru:3003/api/v1/chains?user_id=1");
     }
 
-
-    private void request_route_descriptions(String urlString) {
+    private void requestRoutesDescriptions(String urlString) {
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, urlString,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        parse_route_descriptions(response);
+                        parseRoutesDescriptions(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Handle error
+                        mLogger.logError("Error Loading routes' descriptions: " + error.getMessage(), error.getCause());
                     }
                 });
-        VolleySingleton.getInstance().addToRequestQueue(stringRequest);
 
+        VolleySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
-    private void parse_route_descriptions(String xml) {
+    private void parseRoutesDescriptions(String xml) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLRouteDescriptionsParser route_descriptions_parser = new XMLRouteDescriptionsParser();
 
@@ -61,13 +65,10 @@ public class RouteDescriptionsDownloader {
 
         try {
             route_descriptions = route_descriptions_parser.parse(stream);
-            mainClass.onRouteDescriptionsDownload(route_descriptions);
-
+            mCallback.onRouteDescriptionsDownloaded(route_descriptions);
         }
         catch (Throwable e) {
+            mLogger.logError("Error parsing routes' descriptions: ", e);
         }
-
     }
-
-
 }

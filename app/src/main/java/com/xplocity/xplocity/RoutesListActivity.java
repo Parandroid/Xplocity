@@ -13,20 +13,18 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import adapters.RouteDescriptionsListAdapter;
-import api_classes.RouteDescriptionsDownloader;
-import api_classes.interfaces.RouteDescriptionsDownloaderInterface;
+import api_classes.RoutesDescriptionsDownloader;
+import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import models.RouteDescription;
 
-public class RoutesListActivity extends AppCompatActivity implements RouteDescriptionsDownloaderInterface {
-
-
-    private RouteDescriptionsListAdapter adapter;
-
+public class RoutesListActivity extends AppCompatActivity implements RoutesDescriptionsDownloaderInterface {
+    private RouteDescriptionsListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routes_list);
+
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
 
@@ -42,39 +40,28 @@ public class RoutesListActivity extends AppCompatActivity implements RouteDescri
         ListView newsListView = (ListView) findViewById(R.id.chain_list);
         newsListView.setOnItemClickListener(listListener);
 
-        routes_list_init();
-
+        routesListInit();
     }
 
-
-    // Routes list
-    private void routes_list_init() {
-
-        RouteDescriptionsDownloader route_descr_downolader = new RouteDescriptionsDownloader(this);
-        route_descr_downolader.download_route_descriptions();
-
+    private void routesListInit() {
+        RoutesDescriptionsDownloader loader = new RoutesDescriptionsDownloader(this);
+        loader.downloadRoutesDescriptions();
     }
 
     @Override
-    public void onRouteDescriptionsDownload(ArrayList<RouteDescription> p_route_descriptions) {
-        adapter = new RouteDescriptionsListAdapter(this, p_route_descriptions);
-
+    public void onRouteDescriptionsDownloaded(ArrayList<RouteDescription> routeDescriptions) {
+        mAdapter = new RouteDescriptionsListAdapter(this, routeDescriptions);
         ListView listView = (ListView)findViewById(R.id.chain_list);
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
     }
-
-
-
 
     AdapterView.OnItemClickListener listListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent intent = new Intent(getApplicationContext(), RouteViewActivity.class);
-            RouteDescription route = adapter.getItem(position);
-            intent.putExtra("route_id", route.id);
+            RouteDescription route = mAdapter.getItem(position);
+            intent.putExtra(getString(R.string.route_id_key), route.id);
             startActivity(intent);
         }
     };
-
-
 }

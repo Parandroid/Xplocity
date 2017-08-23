@@ -18,7 +18,6 @@ import models.Location;
 
 
 public class LocationToMapAdapter implements GoogleMap.InfoWindowAdapter {
-
     // These are both viewgroups containing an ImageView with id "badge" and two TextViews with id
     // "title" and "snippet".
     private final View mWindow;
@@ -39,7 +38,6 @@ public class LocationToMapAdapter implements GoogleMap.InfoWindowAdapter {
         return mWindow;
     }
 
-
     private void render(Marker marker, View view) {
         TextView txt_name = ((TextView) view.findViewById(R.id.name));
         TextView txt_address = ((TextView) view.findViewById(R.id.address));
@@ -50,6 +48,5 @@ public class LocationToMapAdapter implements GoogleMap.InfoWindowAdapter {
         txt_name.setText(loc.name);
         txt_address.setText(loc.address);
         txt_description.setText(loc.description);
-
     }
 }

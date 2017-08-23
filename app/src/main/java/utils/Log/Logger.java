@@ -3,21 +3,11 @@ package utils.Log;
 import android.util.Log;
 
 public class Logger {
-    public enum LogLevel
-    {
-        VERBOSE,
-        DEBUG,
-        INFO,
-        WARNING,
-        ERROR,
-        FATAL_ERROR,
-    }
+    private final String mLogTag;
+    private LogLevel mLogLevel = LogLevel.INFO;
 
-    private final String m_log_tag;
-    private LogLevel m_log_level = LogLevel.INFO;
-
-    public Logger(final String logging_tag, final LogLevel level) throws IllegalArgumentException{
-        if(logging_tag == null) {
+    public Logger(final String logTag, final LogLevel level) throws IllegalArgumentException{
+        if(logTag == null) {
             throw new IllegalArgumentException("Log tag is null");
         }
 
@@ -25,12 +15,8 @@ public class Logger {
             throw new IllegalArgumentException("Log level is null");
         }
 
-        m_log_tag = logging_tag;
-        m_log_level = level;
-    }
-
-    public Logger(final String logging_tag) throws IllegalArgumentException{
-        this(logging_tag, LogLevel.INFO);
+        mLogTag = logTag;
+        mLogLevel = level;
     }
 
     public void logVerbose(final String message) throws IllegalArgumentException{
@@ -86,59 +72,59 @@ public class Logger {
             throw new IllegalArgumentException("Log message is null");
         }
 
-        if(level.ordinal() >= m_log_level.ordinal()) {
+        if(level.ordinal() >= mLogLevel.ordinal()) {
             switch(level) {
                 case VERBOSE:
                     if(exception==null) {
-                        Log.v(m_log_tag, message);
+                        Log.v(mLogTag, message);
                     }
                     else{
-                        Log.v(m_log_tag,message,exception);
+                        Log.v(mLogTag,message,exception);
                     }
 
                     break;
                 case DEBUG:
                     if(exception==null) {
-                        Log.d(m_log_tag, message);
+                        Log.d(mLogTag, message);
                     }
                     else{
-                        Log.d(m_log_tag,message,exception);
+                        Log.d(mLogTag,message,exception);
                     }
 
                     break;
                 case INFO:
                     if(exception==null) {
-                        Log.i(m_log_tag, message);
+                        Log.i(mLogTag, message);
                     }
                     else{
-                        Log.i(m_log_tag,message,exception);
+                        Log.i(mLogTag,message,exception);
                     }
 
                     break;
                 case WARNING:
                     if(exception==null) {
-                        Log.w(m_log_tag, message);
+                        Log.w(mLogTag, message);
                     }
                     else {
-                        Log.w(m_log_tag, message, exception);
+                        Log.w(mLogTag, message, exception);
                     }
 
                     break;
                 case ERROR:
                     if(exception==null) {
-                        Log.e(m_log_tag, message);
+                        Log.e(mLogTag, message);
                     }
                     else {
-                        Log.e(m_log_tag, message, exception);
+                        Log.e(mLogTag, message, exception);
                     }
 
                     break;
                 case FATAL_ERROR:
                     if(exception==null) {
-                        Log.wtf(m_log_tag, message);
+                        Log.wtf(mLogTag, message);
                     }
                     else {
-                        Log.wtf(m_log_tag, message, exception);
+                        Log.wtf(mLogTag, message, exception);
                     }
 
                     break;
@@ -148,7 +134,7 @@ public class Logger {
     }
 
     public synchronized LogLevel getLogLevel(){
-        return m_log_level;
+        return mLogLevel;
     }
 
     public synchronized void setLogLevel(final LogLevel level) throws IllegalArgumentException{
@@ -156,7 +142,7 @@ public class Logger {
             throw new IllegalArgumentException("Log level is null");
         }
 
-        m_log_level = level;
+        mLogLevel = level;
     }
 }
 

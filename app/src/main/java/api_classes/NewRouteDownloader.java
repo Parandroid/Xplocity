@@ -1,10 +1,5 @@
 package api_classes;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -12,77 +7,51 @@ import java.util.ArrayList;
 
 import api_classes.interfaces.NewRouteDownloaderInterface;
 import models.Route;
-import utils.UTF8StringRequest;
-import utils.VolleySingleton;
 import xml_parsers.XMLLocationsParser;
-
 
 /**
  * Created by dmitry on 20.08.17.
  */
 
-public class NewRouteDownloader {
-    private NewRouteDownloaderInterface mainClass;
+public class NewRouteDownloader extends Loader {
+    private NewRouteDownloaderInterface mCallback;
 
-    public NewRouteDownloader(NewRouteDownloaderInterface mClass) {
-        mainClass = mClass;
+    public NewRouteDownloader(NewRouteDownloaderInterface callback) {
+        mCallback = callback;
     }
 
-
-    public void download_new_route(Double lat, Double lon, int loc_count, double optimal_distance, ArrayList<Integer> location_categories) {
-        String url = generate_locations_url(lat, lon, loc_count, optimal_distance, location_categories);
-        request_new_route(url);
+    public void downloadNewRoute(Double lat, Double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
+        String url = generateLocationsUrl(lat, lon, locCount, optimalDistance, locationCategories);
+        sendDownloadRequest(url);
     }
 
+    private String generateLocationsUrl(double lat, double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
 
-    private String generate_locations_url(double lat, double lon, int loc_count, double optimal_distance, ArrayList<Integer> location_categories) {
-
-        String url = "http://br-on.ru:3003/api/v1/locations/get_location_list?loc_count=" + Integer.toString(loc_count)
-                + "&optimal_distance=" + Double.toString(optimal_distance) + "&latitude="
+        String url = "http://br-on.ru:3003/api/v1/locations/get_location_list?loc_count=" + Integer.toString(locCount)
+                + "&optimal_distance=" + Double.toString(optimalDistance) + "&latitude="
                 + Double.toString(lat) + "&longitude=" + Double.toString(lon);
 
-        for (int cat : location_categories) {
+        for (int cat : locationCategories) {
             url = url + "&category[]=" + Integer.toString(cat);
         }
 
         return url;
     }
 
-
-    private void request_new_route(String urlString) {
-        // Formulate the request and handle the response.
-        StringRequest stringRequest = new UTF8StringRequest(Request.Method.GET, urlString,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        parse_new_route(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle error
-                    }
-                });
-        VolleySingleton.getInstance().addToRequestQueue(stringRequest);
-    }
-
-
-    private void parse_new_route(String xml) {
+    @Override
+    protected void onDownloadResponse(String xml) {
+        mLogger.logError("RESPONSE");
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        XMLLocationsParser new_route_parser = new XMLLocationsParser();
+        XMLLocationsParser newRouteParser = new XMLLocationsParser();
 
         Route route = new Route();
 
         try {
-            route.locations = new_route_parser.parse(stream);
-            mainClass.onNewRouteDownload(route);
-
+            route.locations = newRouteParser.parse(stream);
+            mCallback.onNewRouteDownloaded(route);
         }
         catch (Throwable e) {
+            mLogger.logError("Error parsing new mRoute: ", e);
         }
-
     }
-
-
 }

@@ -1,8 +1,8 @@
 package managers;
 
 import android.graphics.Color;
-import android.util.Log;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,72 +16,88 @@ import java.util.HashMap;
 import java.util.Map;
 
 import models.Location;
+import utils.Factory.LogFactory;
+import utils.LogLevelGetter;
+import utils.Log.Logger;
+import utils.ResourceGetter;
+import models.Route;
 
 /**
  * Created by dmitry on 20.08.17.
  */
 
 public class MapManager {
-    private GoogleMap map;
-    private Polyline polyline;
-
+    private GoogleMap mMap;
+    private Polyline mPolyline;
+    private Logger mLogger;
 
     public static final float DEFAULT_TRACKING_ZOOM = 15f;
     public static final float DEFAULT_OVERVIEW_ZOOM = 10f;
 
-
-
-    private Map<Location, Marker> location_markers;
+    private Map<Location, Marker> mLocationMarkers;
 
     public MapManager(GoogleMap p_map) {
-        map = p_map;
-        location_markers = new HashMap<Location, Marker>();
+        mMap = p_map;
+        mLocationMarkers = new HashMap<>();
+        mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
     }
 
-
-    public void add_location_marker(Location loc) {
-        Marker m = map.addMarker(new MarkerOptions()
+    public void addLocationMarker(Location loc) {
+        Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(loc.position)
                 .title(loc.name)
                 .snippet("Address: " + loc.address + System.getProperty("line.separator") + "Description: " + loc.description));
 
-        if (loc.explored)
-            set_marker_icon_explored(m);
+        if (loc.explored) {
+            setMarkerIconExplored(marker);
+        }
 
-        m.setTag(loc);
-
-        location_markers.put(loc, m);
+        marker.setTag(loc);
+        mLocationMarkers.put(loc, marker);
     }
 
-
-    public void set_location_marker_explored(Location loc) {
+    public void setLocationMarkerExplored(Location loc) {
         try {
-            set_marker_icon_explored(location_markers.get(loc));
+            setMarkerIconExplored(mLocationMarkers.get(loc));
         }
-        catch (Exception e)
-        {
-            Log.e("Xplocity,MapManager", e.getMessage());
-        }
-    }
-
-
-    public void draw_route(ArrayList<LatLng> path) {
-        if (polyline == null) {
-            polyline = map.addPolyline(new PolylineOptions()
-                    .addAll(path)
-                    .width(5)
-                    .color(Color.RED));
-        }
-        else {
-            polyline.setPoints(path);
+        catch (Exception e) {
+            mLogger.logError("Failed to set location marker as explored", e);
         }
     }
 
-
-
-    private void set_marker_icon_explored(Marker marker) {
+    private void setMarkerIconExplored(Marker marker) {
         marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
     }
 
+    public void setRoute(Route route) {
+        for (Location loc : route.locations) {
+            Marker m = mMap.addMarker(new MarkerOptions()
+                    .position(loc.position)
+                    .title(loc.name)
+                    .snippet("Address: " + loc.address + System.getProperty("line.separator") + "Description: " + loc.description));
 
+            if (loc.explored) {
+                m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            }
+
+            m.setTag(loc);
+        }
+
+        if (!route.locations.isEmpty()) {
+            Location loc = route.locations.get(0);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc.position, 10f));
+        }
+
+        if (!route.path.isEmpty()) {
+            if (mPolyline != null) {
+                mPolyline.setPoints(route.path);
+            }
+            else {
+                mPolyline = mMap.addPolyline(new PolylineOptions()
+                        .addAll(route.path)
+                        .width(ResourceGetter.getInteger("map_polyline_width"))
+                        .color(Color.RED));
+            }
+        }
+    }
 }

@@ -8,12 +8,28 @@
     android:outAnimation="@anim/slide_up_100"
     android:inAnimation="@anim/slide_up">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="100">
+
+        <FrameLayout
+            android:id="@+id/waitWheel"
+            android:animateLayoutChanges="true"
+            android:visibility="gone"
+            android:alpha="0.4"
+            android:background="#000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -114,7 +130,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/colorPrimary"
-                android:onClick="create_route"
+                android:onClick="createRoute"
                 android:text="Get locations"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -156,7 +172,7 @@
                 android:layout_margin="4dp"
                 android:layout_weight="50"
                 android:backgroundTint="@android:color/holo_green_light"
-                android:onClick="start_tracking"
+                android:onClick="startTracking"
                 android:text="Start" />
 
             <Button
@@ -167,10 +183,8 @@
                 android:layout_margin="4dp"
                 android:layout_weight="50"
                 android:backgroundTint="@android:color/holo_red_light"
-                android:onClick="stop_tracking"
+                android:onClick="stopTracking"
                 android:text="Stop" />
         </LinearLayout>
-
-
     </LinearLayout>
 </ViewAnimator>

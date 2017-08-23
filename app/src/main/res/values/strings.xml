@@ -11,11 +11,17 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="title_activity_route_view">Map</string>
     <string name='preference_file_key'>Xplocity.PositionServiceStorage</string>
+    <string name='route_id_key'>route_id</string>
+
+    <!-- Error messages -->
+    <string name='error_location_perm_request_failed'>Failed to acquire location permissions</string>
+
+    <!-- Info messages -->
+    <string name='info_location_perm_request_head'>Location permissions request</string>
+    <string name='info_location_perm_request_text'>Xplocity needs location tracking permissions to track your route</string>
 
     <!-- Log level -->
     <string name='log_level'>verbose</string>

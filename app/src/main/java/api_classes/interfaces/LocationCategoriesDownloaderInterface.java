@@ -10,5 +10,5 @@ import models.Route;
  */
 
 public interface LocationCategoriesDownloaderInterface {
-    void onLocationCategoriesDownload(ArrayList<LocationCategory> location_categories);
+    void onLocationCategoriesDownloaded(ArrayList<LocationCategory> locationCategories);
 }

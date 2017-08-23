@@ -8,5 +8,5 @@ import models.Route;
  */
 
 public interface NewRouteDownloaderInterface {
-    void onNewRouteDownload(Route p_route);
+    void onNewRouteDownloaded(Route route);
 }

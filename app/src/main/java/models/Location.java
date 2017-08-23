@@ -16,7 +16,6 @@ public class Location {
 
     public LatLng position;
 
-
     public Location() {
 
     }
