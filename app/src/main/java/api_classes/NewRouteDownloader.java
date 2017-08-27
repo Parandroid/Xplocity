@@ -22,7 +22,7 @@ public class NewRouteDownloader extends Loader {
 
     public void downloadNewRoute(Double lat, Double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
         String url = generateLocationsUrl(lat, lon, locCount, optimalDistance, locationCategories);
-        sendDownloadRequest(url);
+        sendDownloadRequest(url, true);
     }
 
     private String generateLocationsUrl(double lat, double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
@@ -39,7 +39,7 @@ public class NewRouteDownloader extends Loader {
     }
 
     @Override
-    protected void onDownloadResponse(String xml) {
+    protected void onDownloadResponse(String xml, int http_code) {
         mLogger.logError("RESPONSE");
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationsParser newRouteParser = new XMLLocationsParser();

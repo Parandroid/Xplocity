@@ -21,11 +21,11 @@ public class RouteDownloader extends Loader{
     }
 
     public void downloadRoute(int routeId) {
-        sendDownloadRequest("http://br-on.ru:3003/api/v1/chains/" + Integer.toString(routeId));
+        sendDownloadRequest("http://br-on.ru:3003/api/v1/chains/" + Integer.toString(routeId), true);
     }
 
     @Override
-    protected void onDownloadResponse(String xml) {
+    protected void onDownloadResponse(String xml, int http_code) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLRouteParser parser = new XMLRouteParser();
         Route route;

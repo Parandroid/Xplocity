@@ -21,11 +21,11 @@ public class LocationCategoriesDownloader extends Loader {
     }
 
     public void downloadLocationCategories() {
-        sendDownloadRequest("http://br-on.ru:3003/api/v1/location_categories");
+        sendDownloadRequest("http://br-on.ru:3003/api/v1/location_categories", false);
     }
 
     @Override
-    protected void onDownloadResponse(String xml) {
+    protected void onDownloadResponse(String xml, int http_code) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationCategoryParser parser = new XMLLocationCategoryParser();
 

@@ -13,6 +13,9 @@ import java.io.UnsupportedEncodingException;
  */
 
 public class UTF8StringRequest extends StringRequest {
+
+    private int http_code;
+
     public UTF8StringRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
     }
@@ -27,10 +30,16 @@ public class UTF8StringRequest extends StringRequest {
         String utf8String = null;
         try {
             utf8String = new String(response.data, "UTF-8");
+            http_code = response.statusCode;
             return Response.success(utf8String, HttpHeaderParser.parseCacheHeaders(response));
 
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         }
+    }
+
+
+    public int getHttpCode() {
+        return http_code;
     }
 }
