@@ -28,8 +28,10 @@ public class PositionManager implements Parcelable {
 
 
     public void setPath(ArrayList<LatLng> path) {
-        route.path = path;
-        lastPosition = path.get(path.size()-1);
+        if (path != null && path.size() > 0) {
+            route.path = path;
+            lastPosition = path.get(path.size() - 1);
+        }
     }
 
 
