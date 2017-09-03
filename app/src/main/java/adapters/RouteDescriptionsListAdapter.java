@@ -1,7 +1,6 @@
 package adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,35 +35,35 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.route_description_list_item, parent, false);
         }
 
-        TextView distance = (TextView) convertView.findViewById(R.id.distance);
-        TextView duration = (TextView) convertView.findViewById(R.id.duration);
-        TextView date = (TextView) convertView.findViewById(R.id.date);
-        TextView name = (TextView) convertView.findViewById(R.id.name);
-        TextView locations_explored = (TextView) convertView.findViewById(R.id.locations_explored);
-        TextView locations_total = (TextView) convertView.findViewById(R.id.locations_total);
+        TextView distanceTxtView = (TextView) convertView.findViewById(R.id.distance);
+        TextView durationTxtView = (TextView) convertView.findViewById(R.id.duration);
+        TextView dateTxtView = (TextView) convertView.findViewById(R.id.date);
+        TextView nameTxtView = (TextView) convertView.findViewById(R.id.name);
+        TextView locationsExploredTxtView = (TextView) convertView.findViewById(R.id.locations_explored);
+        TextView locationsTotalTxtView = (TextView) convertView.findViewById(R.id.locations_total);
 
 
-        distance.setText(format_distance(routeDescription.distance));
-        date.setText(format_date(routeDescription.date));
-        duration.setText(format_duration(routeDescription.duration));
-        name.setText(routeDescription.name);
-        locations_explored.setText(Integer.toString(routeDescription.loc_cnt_explored));
-        locations_total.setText(Integer.toString(routeDescription.loc_cnt_total));
+        distanceTxtView.setText(formatDistance(routeDescription.distance));
+        dateTxtView.setText(formatDate(routeDescription.date));
+        durationTxtView.setText(formatDuration(routeDescription.duration));
+        nameTxtView.setText(routeDescription.name);
+        locationsExploredTxtView.setText(Integer.toString(routeDescription.locCntExplored));
+        locationsTotalTxtView.setText(Integer.toString(routeDescription.locCntTotal));
 
         return convertView;
     }
 
-    private String format_distance(int distance) {
+    private String formatDistance(int distance) {
         String result = String.format("%.2f", (double)distance/1000) + " km";
         return result;
     }
 
-    private String format_date(Date date) {
+    private String formatDate(Date date) {
         SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return simpleDate.format(date);
     }
 
-    private String format_duration(int duration) {
+    private String formatDuration(int duration) {
         int hours = duration / 3600;
         int minutes = (duration % 3600) / 60;
         int seconds = duration % 60;

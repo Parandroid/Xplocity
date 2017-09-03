@@ -11,8 +11,8 @@ public class RouteDescription {
     public Date date;
     public int duration; //duration in seconds
     public String name;
-    public int loc_cnt_explored;
-    public int loc_cnt_total;
+    public int locCntExplored;
+    public int locCntTotal;
     public int id;
 
     public RouteDescription() {}

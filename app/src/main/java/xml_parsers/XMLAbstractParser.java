@@ -40,21 +40,16 @@ public abstract class XMLAbstractParser {
     }
 
 
-    protected Date parseDate(String str_date) throws ParseException {
+    protected Date parseDate(String strDate) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");  //2016-02-11 22:59:46 UTC
-        try {
-            Date date = format.parse(str_date);
-            return date;
-        } catch (ParseException e) {
-            throw e;
-        }
+        Date date = format.parse(strDate);
+        return date;
     }
 
     protected int parseInt(String str_int) {
         try {
             return Integer.parseInt(str_int);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return 0;
         }
     }

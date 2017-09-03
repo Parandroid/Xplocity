@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import models.RouteDescription;
 
@@ -78,8 +77,8 @@ public class XMLRouteDescriptionsParser extends XMLAbstractParser {
                 route.duration = parseInt(readText(parser));
             } else if (name.equals("Locations")) {
                 int[] locs = readLocationsCount(parser);
-                route.loc_cnt_explored = locs[0];
-                route.loc_cnt_total = locs[1];
+                route.locCntExplored = locs[0];
+                route.locCntTotal = locs[1];
             } else {
                 skip(parser);
             }
