@@ -20,8 +20,11 @@ public class PositionManager implements Parcelable {
 
     public Route route;
     public LatLng lastPosition;
+    public boolean trackingActive;
 
-    public PositionManager() {}
+    public PositionManager() {
+        route = new Route();
+    }
 
 
     public void setPath(ArrayList<LatLng> path) {
@@ -62,5 +65,7 @@ public class PositionManager implements Parcelable {
         PositionManager  c = gson.fromJson(in.readString(), PositionManager.class);
 
         this.route = c.route;
+        this.lastPosition = c.lastPosition;
+        this.trackingActive = c.trackingActive;
     }
 }

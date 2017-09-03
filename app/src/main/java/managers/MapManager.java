@@ -113,4 +113,9 @@ public class MapManager {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position,
                 DEFAULT_TRACKING_ZOOM), 1000, null);
     }
+
+    public void setOverviewCamera(LatLng position) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position,
+                DEFAULT_OVERVIEW_ZOOM), 1000, null);
+    }
 }

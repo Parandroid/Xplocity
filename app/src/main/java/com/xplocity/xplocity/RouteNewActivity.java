@@ -111,6 +111,7 @@ public class RouteNewActivity
         receiver = new ServiceStateReceiver(this);
 
         requestPermissions(); //TODO мб вынести работу с разрешениями в отдельный класс?
+
     }
 
     @Override
@@ -128,6 +129,11 @@ public class RouteNewActivity
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState.getParcelable("positionManager") != null) {
             mPositionManager = savedInstanceState.getParcelable("positionManager");
+
+            if (mService != null) {
+                mPositionManager.setPath(mService.getPath());
+            }
+
             ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
             Animation inAnimation = animator.getInAnimation();
             Animation outAnimation = animator.getOutAnimation();
@@ -307,12 +313,14 @@ public class RouteNewActivity
             try {
                 googleMap.setMyLocationEnabled(true);
 
-                for (models.Location loc : mPositionManager.route.locations) {
-                    mMapManager.addLocationMarker(loc);
-                }
+                mMapManager.setRoute(mPositionManager.route);
 
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mPositionManager.route.locations.get(0).position,
-                        mMapManager.DEFAULT_OVERVIEW_ZOOM));
+                if (mPositionManager.trackingActive) {
+                    mMapManager.setTrackingCamera(mPositionManager.lastPosition);
+                }
+                else {
+                    mMapManager.setOverviewCamera(mPositionManager.route.locations.get(0).position);
+                }
 
             } catch (SecurityException e) {
                 //TODO обрабатывать отсутствие прав
@@ -390,6 +398,7 @@ public class RouteNewActivity
         if(mIsBound && !mService.trackingActive())
         {
             mService.startTracking();
+            mPositionManager.trackingActive = true;
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
 
@@ -401,6 +410,7 @@ public class RouteNewActivity
         if(mIsBound && mService.trackingActive())
         {
             mService.stopTracking();
+            mPositionManager.trackingActive = false;
             mStartTrackingButton.setEnabled(true);
             mStopTrackingButton.setEnabled(false);
         }
@@ -409,6 +419,9 @@ public class RouteNewActivity
     @Override
     protected void onServiceBound(){
         boolean active = mService.trackingActive();
+        if (mPositionManager != null) {
+            mPositionManager.setPath(mService.getPath());
+        }
         mStartTrackingButton.setEnabled(!active);
         mStopTrackingButton.setEnabled(active);
     }
