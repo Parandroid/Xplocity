@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -39,6 +41,8 @@ import managers.MapManager;
 import managers.PositionManager;
 import models.LocationCategory;
 import models.Route;
+import services.ServiceStateReceiver;
+import services.interfaces.ServiceStateReceiverInterface;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
@@ -51,7 +55,8 @@ public class RouteNewActivity
         extends ServiceBindingActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
-        OnMapReadyCallback {
+        OnMapReadyCallback,
+        ServiceStateReceiverInterface {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -68,10 +73,11 @@ public class RouteNewActivity
     MapManager mMapManager;
     PositionManager mPositionManager;
 
+    ServiceStateReceiver receiver;
+
     //UI Objects
     private ArrayList<CheckBox> mCategoryCheckboxes; //Array of checkboxes (location categories)
     private FusedLocationProviderClient mFusedLocationClient; //Location client used to get current position
-    private GoogleMap mMap;
 
     FrameLayout mWaitWheel;
     AlphaAnimation mInAnimation;
@@ -92,6 +98,8 @@ public class RouteNewActivity
         if (savedInstanceState == null) {
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(false);
+            initRouteSettings();
+            mPositionManager = new PositionManager();
         }
 
         mWaitWheel = (FrameLayout) findViewById(R.id.waitWheel);
@@ -99,9 +107,59 @@ public class RouteNewActivity
         mInAnimation.setDuration(200);
         mWaitWheel.setAnimation(mInAnimation);
 
-        initRouteSettings();
+
+        receiver = new ServiceStateReceiver(this);
+
         requestPermissions(); //TODO мб вынести работу с разрешениями в отдельный класс?
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
+        if (mPositionManager != null) {
+            savedInstanceState.putParcelable("positionManager", mPositionManager);
+        }
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.getParcelable("positionManager") != null) {
+            mPositionManager = savedInstanceState.getParcelable("positionManager");
+            ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
+            Animation inAnimation = animator.getInAnimation();
+            Animation outAnimation = animator.getOutAnimation();
+            animator.setInAnimation(null);
+            animator.setOutAnimation(null);
+            animator.setDisplayedChild(1);
+            animator.setInAnimation(inAnimation);
+            animator.setOutAnimation(outAnimation);
+
+            initMap();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (receiver != null) {
+            receiver.unregisterReceiver(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (receiver != null) {
+            receiver.registerReceiver(this);
+        }
+    }
+
 
     // Permissions
     private void requestPermissions() {
@@ -174,6 +232,7 @@ public class RouteNewActivity
                         if (!locationResult.getLocations().isEmpty()) {
                             Location location = locationResult.getLocations().get(0);
                             requestNewRoute(location.getLatitude(), location.getLongitude());
+                            mPositionManager.lastPosition = new LatLng(location.getLatitude(), location.getLongitude());
                             mFusedLocationClient.removeLocationUpdates(this);
                         }
                     }
@@ -224,16 +283,20 @@ public class RouteNewActivity
     @Override
     public void onNewRouteDownloaded(Route route) {
         hideWaitAnimation();
-        initPositionManager(route);
+        mPositionManager.route = route;
 
+        initMap();
+
+        ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
+        animator.showNext();
+    }
+
+    private void initMap() {
         //Create the google map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
-
-        ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
-        animator.showNext();
     }
 
     @Override
@@ -262,9 +325,6 @@ public class RouteNewActivity
         }
     }
 
-    private void initPositionManager(Route route) {
-        mPositionManager = new PositionManager(route);
-    }
 
     private void initRouteSettings() {
         timeSliderInit();
@@ -332,6 +392,8 @@ public class RouteNewActivity
             mService.startTracking();
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
+
+            mMapManager.setTrackingCamera(mPositionManager.lastPosition);
         }
     }
 
@@ -355,6 +417,15 @@ public class RouteNewActivity
     protected void onServiceUnbound(){
         mStartTrackingButton.setEnabled(false);
         mStopTrackingButton.setEnabled(false);
+    }
+
+
+    @Override
+    public void onPositionChanged() {
+        if (mPositionManager != null && mMapManager != null) {
+            mPositionManager.setPath(mService.getPath());
+            mMapManager.drawPath(mPositionManager.route.path);
+        }
     }
 
     private void showWaitAnimation(){

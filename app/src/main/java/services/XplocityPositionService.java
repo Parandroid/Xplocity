@@ -12,6 +12,8 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.SyncStateContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -49,6 +51,9 @@ public class XplocityPositionService extends Service {
             if (mTrackingActive) {
                 mLastPosition = new LatLng(location.getLatitude(), location.getLongitude());
                 mRoute.add(mLastPosition);
+                broadcastLocationChanged();
+
+
                 writeStateToStorage();
 
                 mLogger.logVerbose("Location update: " + location.toString());
@@ -164,11 +169,36 @@ public class XplocityPositionService extends Service {
         editor.commit();
     }
 
+    private void clearStorage() {
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+
+        editor.remove("route");
+        editor.remove("tracking_active");
+
+        editor.commit();
+
+    }
+
     private void initializeLocationManager() {
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
+
+
+    private void broadcastLocationChanged() {
+        Intent localIntent =
+                new Intent(getString(R.string.broadcast_position_changed));
+        // Broadcasts the Intent to receivers in this app.
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+    }
+
+
+
+
+
 
     public void startTracking() {
         if(!mTrackingActive)
@@ -201,6 +231,7 @@ public class XplocityPositionService extends Service {
         {
             mTrackingActive = false;
             mRoute.clear();
+            clearStorage();
 
             if (mLocationManager != null) {
                 try {
@@ -219,5 +250,10 @@ public class XplocityPositionService extends Service {
 
     public boolean trackingActive(){
         return mTrackingActive;
+    }
+
+
+    public ArrayList<LatLng> getPath() {
+        return mRoute;
     }
 }

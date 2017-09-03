@@ -83,21 +83,34 @@ public class MapManager {
             m.setTag(loc);
         }
 
+        drawPath(route.path);
+
         if (!route.locations.isEmpty()) {
             Location loc = route.locations.get(0);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc.position, 10f));
         }
 
-        if (!route.path.isEmpty()) {
+
+    }
+
+
+    public void drawPath(ArrayList<LatLng> path) {
+        if (!path.isEmpty()) {
             if (mPolyline != null) {
-                mPolyline.setPoints(route.path);
+                mPolyline.setPoints(path);
             }
             else {
                 mPolyline = mMap.addPolyline(new PolylineOptions()
-                        .addAll(route.path)
+                        .addAll(path)
                         .width(ResourceGetter.getInteger("map_polyline_width"))
                         .color(Color.RED));
             }
         }
+    }
+
+
+    public void setTrackingCamera(LatLng position) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position,
+                DEFAULT_TRACKING_ZOOM), 1000, null);
     }
 }

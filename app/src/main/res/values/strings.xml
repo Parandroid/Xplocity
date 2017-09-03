@@ -21,6 +21,7 @@
 
     <string name='preference_file_key'>Xplocity.Storage</string>
     <string name='route_id_key'>route_id</string>
+    <string name="broadcast_position_changed">Xplocity.broadcast.positionChanged</string>
 
     <!-- Error messages -->
     <string name='error_location_perm_request_failed'>Failed to acquire location permissions</string>
