@@ -2,6 +2,7 @@ package com.xplocity.xplocity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -413,6 +414,9 @@ public class RouteNewActivity
             mPositionManager.trackingActive = false;
             mStartTrackingButton.setEnabled(true);
             mStopTrackingButton.setEnabled(false);
+
+            Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
+            startActivity(intent);
         }
     }
 
