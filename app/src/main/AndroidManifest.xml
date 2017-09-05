@@ -47,7 +47,9 @@
         <activity
             android:name=".RouteViewActivity"
             android:label="@string/title_activity_route_view" />
-        <activity android:name=".RouteSaveActivity" />
+        <activity android:name=".RouteSaveActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

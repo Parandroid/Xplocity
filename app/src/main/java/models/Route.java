@@ -30,6 +30,14 @@ public class Route implements Parcelable {
         path = new ArrayList<LatLng>();
     }
 
+    // deep copy path from source ArrayList
+    public void setPath(ArrayList<LatLng> src) {
+        path.clear();
+        for (LatLng pos : src) {
+            path.add(pos);
+        }
+
+    }
 
     public static ArrayList<LatLng> string_to_route(String str_route) {
         ArrayList<LatLng> points = new ArrayList<LatLng>();

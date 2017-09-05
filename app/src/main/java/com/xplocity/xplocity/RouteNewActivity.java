@@ -48,6 +48,8 @@ import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 //public class FragmentBindingActivity extends ServiceBindingActivity{
 //
 //}
@@ -133,6 +135,7 @@ public class RouteNewActivity
 
             if (mService != null) {
                 mPositionManager.setPath(mService.getPath());
+                onPositionChanged();
             }
 
             ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
@@ -410,12 +413,18 @@ public class RouteNewActivity
     public void stopTracking(View view) {
         if(mIsBound && mService.trackingActive())
         {
+            //get last position from service then stop the service
+            onPositionChanged();
+            Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
+            intent.putExtra("route",   mPositionManager.route);
+
+
             mService.stopTracking();
             mPositionManager.trackingActive = false;
             mStartTrackingButton.setEnabled(true);
             mStopTrackingButton.setEnabled(false);
 
-            Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
+
             startActivity(intent);
         }
     }
@@ -425,6 +434,7 @@ public class RouteNewActivity
         boolean active = mService.trackingActive();
         if (mPositionManager != null) {
             mPositionManager.setPath(mService.getPath());
+            onPositionChanged();
         }
         mStartTrackingButton.setEnabled(!active);
         mStopTrackingButton.setEnabled(active);
@@ -440,8 +450,10 @@ public class RouteNewActivity
     @Override
     public void onPositionChanged() {
         if (mPositionManager != null && mMapManager != null) {
-            mPositionManager.setPath(mService.getPath());
-            mMapManager.drawPath(mPositionManager.route.path);
+            if (mPositionManager.trackingActive) {
+                mPositionManager.setPath(mService.getPath());
+                mMapManager.drawPath(mPositionManager.route.path);
+            }
         }
     }
 
