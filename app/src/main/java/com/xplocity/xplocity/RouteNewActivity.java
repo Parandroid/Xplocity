@@ -135,7 +135,7 @@ public class RouteNewActivity
 
             if (mService != null) {
                 mPositionManager.setPath(mService.getPath());
-                onPositionChanged();
+                getPathFromService();
             }
 
             ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
@@ -168,6 +168,9 @@ public class RouteNewActivity
         if (receiver != null) {
             receiver.registerReceiver(this);
         }
+
+        //Get updates from service
+        getPathFromService();
     }
 
 
@@ -413,8 +416,8 @@ public class RouteNewActivity
     public void stopTracking(View view) {
         if(mIsBound && mService.trackingActive())
         {
-            //get last position from service then stop the service
-            onPositionChanged();
+            //get last path update from service then stop the service
+            getPathFromService();
             Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
             intent.putExtra("route",   mPositionManager.route);
 
@@ -434,7 +437,7 @@ public class RouteNewActivity
         boolean active = mService.trackingActive();
         if (mPositionManager != null) {
             mPositionManager.setPath(mService.getPath());
-            onPositionChanged();
+            getPathFromService();
         }
         mStartTrackingButton.setEnabled(!active);
         mStopTrackingButton.setEnabled(active);
@@ -449,6 +452,11 @@ public class RouteNewActivity
 
     @Override
     public void onPositionChanged() {
+        getPathFromService();
+    }
+
+
+    private void getPathFromService() {
         if (mPositionManager != null && mMapManager != null) {
             if (mPositionManager.trackingActive) {
                 mPositionManager.setPath(mService.getPath());
