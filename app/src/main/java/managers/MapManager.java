@@ -1,5 +1,6 @@
 package managers;
 
+import android.content.Context;
 import android.graphics.Color;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import adapters.LocationToMapAdapter;
 import models.Location;
 import utils.Factory.LogFactory;
 import utils.LogLevelGetter;
@@ -30,16 +32,20 @@ public class MapManager {
     private GoogleMap mMap;
     private Polyline mPolyline;
     private Logger mLogger;
+    private Context mContext;
 
     public static final float DEFAULT_TRACKING_ZOOM = 15f;
     public static final float DEFAULT_OVERVIEW_ZOOM = 10f;
 
     private Map<Location, Marker> mLocationMarkers;
 
-    public MapManager(GoogleMap p_map) {
+    public MapManager(GoogleMap p_map, Context context) {
         mMap = p_map;
         mLocationMarkers = new HashMap<>();
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
+        mContext = context;
+
+        mMap.setInfoWindowAdapter(new LocationToMapAdapter(mContext));
     }
 
     public void addLocationMarker(Location loc) {

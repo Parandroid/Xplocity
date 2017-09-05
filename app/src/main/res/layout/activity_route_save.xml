@@ -37,6 +37,7 @@
                 android:layout_height="match_parent"
                 android:background="?android:selectableItemBackground"
                 android:minWidth="100dp"
+                android:onClick="cancelRoute"
                 android:src="@drawable/ic_close_black_24dp"
                 android:tint="@color/cast_expanded_controller_text_color" />
 
@@ -60,6 +61,7 @@
                 android:cropToPadding="false"
                 android:elevation="0dp"
                 android:minWidth="100dp"
+                android:onClick="uploadRoute"
                 android:src="@drawable/ic_done_black_24dp"
                 android:tint="@color/cast_expanded_controller_text_color" />
 

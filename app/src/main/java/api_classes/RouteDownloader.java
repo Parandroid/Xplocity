@@ -1,10 +1,13 @@
 package api_classes;
 
+import com.xplocity.xplocity.R;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import api_classes.interfaces.RouteDownloaderInterface;
+import app.XplocityApplication;
 import models.Route;
 
 import xml_parsers.XMLRouteParser;
@@ -16,16 +19,19 @@ import xml_parsers.XMLRouteParser;
 public class RouteDownloader extends Loader{
     private RouteDownloaderInterface mCallback;
 
+    private static final String API_method = "/chains/";
+
     public RouteDownloader(RouteDownloaderInterface callback) {
         mCallback = callback;
     }
 
     public void downloadRoute(int routeId) {
-        sendDownloadRequest("http://br-on.ru:3003/api/v1/chains/" + Integer.toString(routeId), true);
+        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + Integer.toString(routeId);
+        sendGetRequest(url, true);
     }
 
     @Override
-    protected void onDownloadResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int http_code) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLRouteParser parser = new XMLRouteParser();
         Route route;

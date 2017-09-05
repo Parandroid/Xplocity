@@ -34,8 +34,7 @@ public class RouteViewActivity extends FragmentActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setInfoWindowAdapter(new LocationToMapAdapter(this.getBaseContext()));
-        mMapManager = new MapManager(googleMap);
+        mMapManager = new MapManager(googleMap, this);
 
         RouteDownloader loader = new RouteDownloader(this);
         loader.downloadRoute(mRouteId);

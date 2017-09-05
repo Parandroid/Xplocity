@@ -1,11 +1,14 @@
 package api_classes;
 
+import com.xplocity.xplocity.R;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
+import app.XplocityApplication;
 import models.LocationCategory;
 import xml_parsers.XMLLocationCategoryParser;
 
@@ -16,16 +19,19 @@ import xml_parsers.XMLLocationCategoryParser;
 public class LocationCategoriesDownloader extends Loader {
     private LocationCategoriesDownloaderInterface mCallback;
 
+    private static final String API_method = "/location_categories";
+
     public LocationCategoriesDownloader(LocationCategoriesDownloaderInterface callback) {
         mCallback = callback;
     }
 
     public void downloadLocationCategories() {
-        sendDownloadRequest("http://br-on.ru:3003/api/v1/location_categories", false);
+        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method;
+        sendGetRequest(url, false);
     }
 
     @Override
-    protected void onDownloadResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int http_code) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationCategoryParser parser = new XMLLocationCategoryParser();
 

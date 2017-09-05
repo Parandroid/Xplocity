@@ -1,5 +1,6 @@
 package utils;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -15,13 +16,17 @@ import java.io.UnsupportedEncodingException;
 public class UTF8StringRequest extends StringRequest {
 
     private int http_code;
+    private String mBody;
 
-    public UTF8StringRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    public UTF8StringRequest(int method, String url, String body, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
+        mBody = body;
+
     }
 
-    public UTF8StringRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    public UTF8StringRequest(String url, String body, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(url, listener, errorListener);
+        mBody = body;
     }
 
     @Override
@@ -35,6 +40,22 @@ public class UTF8StringRequest extends StringRequest {
 
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
+        }
+    }
+
+    @Override
+    public String getBodyContentType() {
+        return "application/xml; charset=" +
+                getParamsEncoding();
+    }
+
+    @Override
+    public byte[] getBody() throws AuthFailureError {
+        try {
+            return mBody == null ? null :
+                    mBody.getBytes(getParamsEncoding());
+        } catch (UnsupportedEncodingException uee) {
+            return null;
         }
     }
 

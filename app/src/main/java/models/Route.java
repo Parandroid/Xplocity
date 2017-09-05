@@ -44,8 +44,8 @@ public class Route implements Parcelable {
 
         for (String str_pos : str_route.split(";")) {
             //Achtung! API возвращает координаты в инвертированном порядке. (Долгота-ширина)
-            Double longitude = Double.parseDouble(str_pos.substring(0, str_pos.indexOf(" ")));
-            Double latitude = Double.parseDouble(str_pos.substring(str_pos.indexOf(" ")+1, str_pos.length()));
+            Double latitude = Double.parseDouble(str_pos.substring(0, str_pos.indexOf(" ")));
+            Double longitude = Double.parseDouble(str_pos.substring(str_pos.indexOf(" ")+1, str_pos.length()));
 
             points.add(new LatLng(latitude, longitude));
         }

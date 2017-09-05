@@ -314,7 +314,7 @@ public class RouteNewActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMapManager = new MapManager(googleMap);
+        mMapManager = new MapManager(googleMap, this);
 
         if (mLocationPermissionsGranted) {
             try {
@@ -401,7 +401,7 @@ public class RouteNewActivity
     }
 
 
-    public void startTracking(View view) {
+    public void startTrackingBtnPressed(View view) {
         if(mIsBound && !mService.trackingActive())
         {
             mService.startTracking();
@@ -413,23 +413,23 @@ public class RouteNewActivity
         }
     }
 
-    public void stopTracking(View view) {
+    public void stopTrackingBtnPressed(View view) {
         if(mIsBound && mService.trackingActive())
         {
             //get last path update from service then stop the service
             getPathFromService();
             Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
             intent.putExtra("route",   mPositionManager.route);
-
-
-            mService.stopTracking();
-            mPositionManager.trackingActive = false;
-            mStartTrackingButton.setEnabled(true);
-            mStopTrackingButton.setEnabled(false);
-
-
+            stopTracking();
             startActivity(intent);
         }
+    }
+
+    private void stopTracking() {
+        mService.stopTracking();
+        mPositionManager.trackingActive = false;
+        mStartTrackingButton.setEnabled(true);
+        mStopTrackingButton.setEnabled(false);
     }
 
     @Override
@@ -471,5 +471,44 @@ public class RouteNewActivity
 
     private void hideWaitAnimation(){
         mWaitWheel.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mPositionManager.trackingActive) {
+            showCancelRouteDialog();
+        }
+        else {
+            super.onBackPressed();
+        }
+
+    }
+
+    private void showCancelRouteDialog() {
+        android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(this);
+        builder1.setMessage("Unsaved route will be lost. Do you want to continue?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        stopTracking();
+                        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+                        startActivity(intent);
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        android.support.v7.app.AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 }

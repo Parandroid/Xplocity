@@ -1,11 +1,14 @@
 package api_classes;
 
+import com.xplocity.xplocity.R;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import api_classes.interfaces.NewRouteDownloaderInterface;
+import app.XplocityApplication;
 import models.Route;
 import xml_parsers.XMLLocationsParser;
 
@@ -15,6 +18,7 @@ import xml_parsers.XMLLocationsParser;
 
 public class NewRouteDownloader extends Loader {
     private NewRouteDownloaderInterface mCallback;
+    private static final String API_method = "/locations/get_location_list";
 
     public NewRouteDownloader(NewRouteDownloaderInterface callback) {
         mCallback = callback;
@@ -22,12 +26,11 @@ public class NewRouteDownloader extends Loader {
 
     public void downloadNewRoute(Double lat, Double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
         String url = generateLocationsUrl(lat, lon, locCount, optimalDistance, locationCategories);
-        sendDownloadRequest(url, true);
+        sendGetRequest(url, true);
     }
 
     private String generateLocationsUrl(double lat, double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
-
-        String url = "http://br-on.ru:3003/api/v1/locations/get_location_list?loc_count=" + Integer.toString(locCount)
+        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?loc_count=" + Integer.toString(locCount)
                 + "&optimal_distance=" + Double.toString(optimalDistance) + "&latitude="
                 + Double.toString(lat) + "&longitude=" + Double.toString(lon);
 
@@ -39,7 +42,7 @@ public class NewRouteDownloader extends Loader {
     }
 
     @Override
-    protected void onDownloadResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int http_code) {
         mLogger.logError("RESPONSE");
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationsParser newRouteParser = new XMLLocationsParser();

@@ -172,7 +172,7 @@
                 android:layout_margin="4dp"
                 android:layout_weight="50"
                 android:backgroundTint="@android:color/holo_green_light"
-                android:onClick="startTracking"
+                android:onClick="startTrackingBtnPressed"
                 android:text="Start" />
 
             <Button
@@ -183,7 +183,7 @@
                 android:layout_margin="4dp"
                 android:layout_weight="50"
                 android:backgroundTint="@android:color/holo_red_light"
-                android:onClick="stopTracking"
+                android:onClick="stopTrackingBtnPressed"
                 android:text="Stop" />
         </LinearLayout>
     </LinearLayout>

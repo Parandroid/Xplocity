@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.xplocity.xplocity.R;
 
 import app.XplocityApplication;
@@ -29,17 +28,17 @@ public abstract class Loader {
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
     }
 
-    protected void sendDownloadRequest(String urlString, boolean useAuth) {
+    protected void sendGetRequest(String urlString, boolean useAuth) {
         if (useAuth) {
             urlString = addAuthToUrl(urlString);
         }
 
         // Formulate the request and handle the response.
-        stringRequest = new UTF8StringRequest(Request.Method.GET, urlString,
+        stringRequest = new UTF8StringRequest(Request.Method.GET, urlString, null,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        onDownloadResponse(response, stringRequest.getHttpCode());
+                        Loader.this.onResponse(response, stringRequest.getHttpCode());
 
                     }
                 },
@@ -47,7 +46,36 @@ public abstract class Loader {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mLogger.logError("Network error: " + error.getMessage(), error.getCause());
-                        onDownloadResponse(error.getMessage(), stringRequest.getHttpCode());
+                        onResponse(error.getMessage(), stringRequest.getHttpCode());
+
+                        //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
+
+                    }
+                });
+
+        VolleySingleton.getInstance().addToRequestQueue(stringRequest);
+    }
+
+
+    protected void sendPostRequest(String urlString, String body, boolean useAuth) {
+        if (useAuth) {
+            urlString = addAuthToUrl(urlString);
+        }
+
+        // Formulate the request and handle the response.
+        stringRequest = new UTF8StringRequest(Request.Method.POST, urlString, body,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Loader.this.onResponse(response, stringRequest.getHttpCode());
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mLogger.logError("Network error: " + error.getMessage(), error.getCause());
+                        onResponse(error.getMessage(), stringRequest.getHttpCode());
 
                         //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
 
@@ -84,5 +112,5 @@ public abstract class Loader {
     }
 
     // Implement in descendants
-    protected abstract void onDownloadResponse(String response, int http_code);
+    protected abstract void onResponse(String response, int http_code);
 }
