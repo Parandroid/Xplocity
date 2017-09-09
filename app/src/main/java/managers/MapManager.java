@@ -48,19 +48,6 @@ public class MapManager {
         mMap.setInfoWindowAdapter(new LocationToMapAdapter(mContext));
     }
 
-    public void addLocationMarker(Location loc) {
-        Marker marker = mMap.addMarker(new MarkerOptions()
-                .position(loc.position)
-                .title(loc.name)
-                .snippet("Address: " + loc.address + System.getProperty("line.separator") + "Description: " + loc.description));
-
-        if (loc.explored) {
-            setMarkerIconExplored(marker);
-        }
-
-        marker.setTag(loc);
-        mLocationMarkers.put(loc, marker);
-    }
 
     public void setLocationMarkerExplored(Location loc) {
         try {
@@ -77,16 +64,7 @@ public class MapManager {
 
     public void setRoute(Route route) {
         for (Location loc : route.locations) {
-            Marker m = mMap.addMarker(new MarkerOptions()
-                    .position(loc.position)
-                    .title(loc.name)
-                    .snippet("Address: " + loc.address + System.getProperty("line.separator") + "Description: " + loc.description));
-
-            if (loc.explored) {
-                m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            }
-
-            m.setTag(loc);
+            addLocationMarker(loc);
         }
 
         drawPath(route.path);
@@ -95,8 +73,21 @@ public class MapManager {
             Location loc = route.locations.get(0);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc.position, 10f));
         }
+    }
 
 
+    private void addLocationMarker(Location loc) {
+        Marker marker = mMap.addMarker(new MarkerOptions()
+                .position(loc.position)
+                .title(loc.name)
+                .snippet("Address: " + loc.address + System.getProperty("line.separator") + "Description: " + loc.description));
+
+        if (loc.explored) {
+            setMarkerIconExplored(marker);
+        }
+
+        marker.setTag(loc);
+        mLocationMarkers.put(loc, marker);
     }
 
 

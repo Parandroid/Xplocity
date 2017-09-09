@@ -1,11 +1,14 @@
 package com.xplocity.xplocity;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.view.View;
@@ -38,13 +41,16 @@ import api_classes.LocationCategoriesDownloader;
 import api_classes.NewRouteDownloader;
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
 import api_classes.interfaces.NewRouteDownloaderInterface;
+import app.XplocityApplication;
 import managers.MapManager;
 import managers.PositionManager;
+import managers.interfaces.PositionManagerInterface;
 import models.LocationCategory;
 import models.Route;
 import services.ServiceStateReceiver;
 import services.interfaces.ServiceStateReceiverInterface;
 import utils.Factory.LogFactory;
+import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 
@@ -59,7 +65,8 @@ public class RouteNewActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
         OnMapReadyCallback,
-        ServiceStateReceiverInterface {
+        ServiceStateReceiverInterface,
+        PositionManagerInterface {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -82,6 +89,10 @@ public class RouteNewActivity
     private ArrayList<CheckBox> mCategoryCheckboxes; //Array of checkboxes (location categories)
     private FusedLocationProviderClient mFusedLocationClient; //Location client used to get current position
 
+    TextView mTxtDistance;
+    TextView mTxtDuration;
+    TextView mTxtSpeed;
+
     FrameLayout mWaitWheel;
     AlphaAnimation mInAnimation;
 
@@ -102,7 +113,7 @@ public class RouteNewActivity
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(false);
             initRouteSettings();
-            mPositionManager = new PositionManager();
+            mPositionManager = new PositionManager(this);
         }
 
         mWaitWheel = (FrameLayout) findViewById(R.id.waitWheel);
@@ -110,6 +121,9 @@ public class RouteNewActivity
         mInAnimation.setDuration(200);
         mWaitWheel.setAnimation(mInAnimation);
 
+        mTxtDistance = (TextView) findViewById(R.id.textDistance);
+        mTxtDuration = (TextView) findViewById(R.id.textDuration);
+        mTxtSpeed = (TextView) findViewById(R.id.textSpeed);
 
         receiver = new ServiceStateReceiver(this);
 
@@ -132,6 +146,7 @@ public class RouteNewActivity
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState.getParcelable("positionManager") != null) {
             mPositionManager = savedInstanceState.getParcelable("positionManager");
+            mPositionManager.setCallback(this);
 
             if (mService != null) {
                 mPositionManager.setPath(mService.getPath());
@@ -155,6 +170,7 @@ public class RouteNewActivity
     @Override
     protected void onPause() {
         super.onPause();
+        XplocityApplication.activityPaused();
 
         if (receiver != null) {
             receiver.unregisterReceiver(this);
@@ -164,6 +180,7 @@ public class RouteNewActivity
     @Override
     protected void onResume() {
         super.onResume();
+        XplocityApplication.activityResumed();
 
         if (receiver != null) {
             receiver.registerReceiver(this);
@@ -178,7 +195,7 @@ public class RouteNewActivity
     private void requestPermissions() {
         int requestResult = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if (requestResult!= PackageManager.PERMISSION_GRANTED) {
+        if (requestResult != PackageManager.PERMISSION_GRANTED) {
             if ((ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION))) {
                 new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.info_location_perm_request_head))
@@ -230,7 +247,7 @@ public class RouteNewActivity
 
     // Called when "Get locations" button is pressed
     public void createRoute(View view) {
-        if(mLocationPermissionsGranted) {
+        if (mLocationPermissionsGranted) {
             try {
                 LocationRequest locationRequest = LocationRequest.create()
                         .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -256,15 +273,14 @@ public class RouteNewActivity
             } catch (SecurityException e) {
                 mLogger.logError("Failed to create mRoute", e);
             }
-        }
-        else {
+        } else {
             mLogger.logVerbose("Failed to create mRoute: permissions not granted");
             Toast.makeText(getApplicationContext(), getString(R.string.info_location_perm_request_text), Toast.LENGTH_LONG).show();
         }
     }
 
     private void requestNewRoute(final Double lat, final Double lon) {
-        SeekBar sb = (SeekBar)findViewById(R.id.SelectTimeSlider);
+        SeekBar sb = (SeekBar) findViewById(R.id.SelectTimeSlider);
 
         int locCount = (sb.getProgress() + TIME_SLIDER_MIN) / 15;
 
@@ -324,8 +340,7 @@ public class RouteNewActivity
 
                 if (mPositionManager.trackingActive) {
                     mMapManager.setTrackingCamera(mPositionManager.lastPosition);
-                }
-                else {
+                } else {
                     mMapManager.setOverviewCamera(mPositionManager.route.locations.get(0).position);
                 }
 
@@ -333,8 +348,7 @@ public class RouteNewActivity
                 //TODO обрабатывать отсутствие прав
                 mLogger.logError("Cannot set up map", e);
             }
-        }
-        else {
+        } else {
             mLogger.logError("Cannot set up map: permissions not granted");
             Toast.makeText(getApplicationContext(), getString(R.string.info_location_perm_request_text), Toast.LENGTH_LONG).show();
         }
@@ -402,10 +416,9 @@ public class RouteNewActivity
 
 
     public void startTrackingBtnPressed(View view) {
-        if(mIsBound && !mService.trackingActive())
-        {
+        if (mIsBound && !mService.trackingActive()) {
             mService.startTracking();
-            mPositionManager.trackingActive = true;
+            mPositionManager.startTracking();
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
 
@@ -414,12 +427,11 @@ public class RouteNewActivity
     }
 
     public void stopTrackingBtnPressed(View view) {
-        if(mIsBound && mService.trackingActive())
-        {
+        if (mIsBound && mService.trackingActive()) {
             //get last path update from service then stop the service
             getPathFromService();
             Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
-            intent.putExtra("route",   mPositionManager.route);
+            intent.putExtra("route", mPositionManager.route);
             stopTracking();
             startActivity(intent);
         }
@@ -427,13 +439,13 @@ public class RouteNewActivity
 
     private void stopTracking() {
         mService.stopTracking();
-        mPositionManager.trackingActive = false;
+        mPositionManager.stopTracking();
         mStartTrackingButton.setEnabled(true);
         mStopTrackingButton.setEnabled(false);
     }
 
     @Override
-    protected void onServiceBound(){
+    protected void onServiceBound() {
         boolean active = mService.trackingActive();
         if (mPositionManager != null) {
             mPositionManager.setPath(mService.getPath());
@@ -444,7 +456,7 @@ public class RouteNewActivity
     }
 
     @Override
-    protected void onServiceUnbound(){
+    protected void onServiceUnbound() {
         mStartTrackingButton.setEnabled(false);
         mStopTrackingButton.setEnabled(false);
     }
@@ -461,15 +473,57 @@ public class RouteNewActivity
             if (mPositionManager.trackingActive) {
                 mPositionManager.setPath(mService.getPath());
                 mMapManager.drawPath(mPositionManager.route.path);
+                updateDistance();
+                updateDuration();
+                updateSpeed();
             }
         }
     }
 
-    private void showWaitAnimation(){
+    private void updateDistance() {
+        if (mPositionManager != null) {
+            mTxtDistance.setText(Formatter.formatDistance(mPositionManager.distance));
+        }
+    }
+
+    private void updateDuration() {
+        if (mPositionManager != null) {
+            mTxtDuration.setText(Formatter.formatDuration(mPositionManager.duration));
+        }
+    }
+
+    private void updateSpeed() {
+        if (mPositionManager != null) {
+            float speed;
+            if (mPositionManager.duration !=0) {
+                speed = mPositionManager.distance / mPositionManager.duration;
+            }
+            else {
+                speed = 0f;
+            }
+
+            mTxtSpeed.setText(Formatter.formatSpeed(speed));
+        }
+    }
+
+
+    @Override
+    public void onLocationReached(models.Location location) {
+        if (mMapManager != null) {
+            mMapManager.setLocationMarkerExplored(location);
+        }
+
+        //TODO show notification from service when location is reached in background
+    }
+
+
+
+
+    private void showWaitAnimation() {
         mWaitWheel.setVisibility(View.VISIBLE);
     }
 
-    private void hideWaitAnimation(){
+    private void hideWaitAnimation() {
         mWaitWheel.setVisibility(View.GONE);
     }
 
@@ -477,8 +531,7 @@ public class RouteNewActivity
     public void onBackPressed() {
         if (mPositionManager.trackingActive) {
             showCancelRouteDialog();
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
 

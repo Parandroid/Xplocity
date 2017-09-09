@@ -2,7 +2,6 @@ package app;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 
 import com.facebook.stetho.Stetho;
 
@@ -12,19 +11,35 @@ import com.facebook.stetho.Stetho;
 
 public class XplocityApplication extends Application {
 
-    private static Context m_context;
+    private static Context mContext;
+    private static boolean mActivityVisible = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        m_context = getApplicationContext();
+        mContext = getApplicationContext();
 
         //подключаем карту с выбором позиции к эмулятору
         Stetho.initializeWithDefaults(this);
     }
 
     public static Context getAppContext() {
-        return m_context;
+        return mContext;
     }
+
+    public static boolean isActivityVisible() {
+        return mActivityVisible;
+    }
+
+    public static void activityResumed() {
+        mActivityVisible = true;
+    }
+
+    public static void activityPaused() {
+        mActivityVisible = false;
+    }
+
+
+
 }
 

@@ -2,6 +2,7 @@ package managers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.style.TtsSpan;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -9,7 +10,12 @@ import com.google.gson.GsonBuilder;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+import managers.interfaces.PositionManagerInterface;
+import models.Location;
 import models.Route;
 
 /**
@@ -22,15 +28,88 @@ public class PositionManager implements Parcelable {
     public LatLng lastPosition;
     public boolean trackingActive;
 
-    public PositionManager() {
+    public int distance = 0; //distance in meter
+    public int duration = 0; //duration in seconds
+
+    private Date mLastTime;
+
+    private int mLastPosChecked; //last position in path that was checked
+    private transient PositionManagerInterface mCallback;
+
+    private static final int LOCATION_REACHED_DISTANCE = 50;
+
+    public PositionManager(PositionManagerInterface callback) {
         route = new Route();
+        mCallback = callback;
+    }
+
+    public void setCallback(PositionManagerInterface callback) {
+        mCallback = callback;
     }
 
 
     public void setPath(ArrayList<LatLng> path) {
         if (path != null && path.size() > 0) {
             route.setPath(path);
+            check_location_reached();
             lastPosition = path.get(path.size() - 1);
+            updateDuration();
+        }
+    }
+
+
+    private void check_location_reached() {
+        if (route.path != null) {
+            if (route.path.size() - 1 > mLastPosChecked) {
+                for (int i = mLastPosChecked; i <= route.path.size() - 1; i++) {
+                    LatLng position = route.path.get(i);
+                    for (Location loc : route.locations) {
+                        if (!loc.explored) {
+                            float[] results = new float[2];
+                            android.location.Location.distanceBetween(loc.position.latitude, loc.position.longitude, position.latitude, position.longitude, results);
+                            if (results[0] <= LOCATION_REACHED_DISTANCE) {
+                                loc.explored = true;
+                                mCallback.onLocationReached(loc);
+                            }
+                        }
+                    }
+
+                    if (i > 0) {
+                        float[] results = new float[2];
+                        LatLng pos1 = route.path.get(i);
+                        LatLng pos2 = route.path.get(i-1);
+                        android.location.Location.distanceBetween(pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude, results);
+                        distance = distance + (int)results[0];
+                    }
+
+                    mLastPosChecked = i;
+                }
+            }
+        }
+    }
+
+
+    public void startTracking() {
+        distance = 0;
+        duration = 0;
+        trackingActive = true;
+        mLastTime = Calendar.getInstance().getTime();
+    }
+
+    public void stopTracking() {
+        trackingActive = false;
+    }
+
+
+    public void updateDuration() {
+        if (mLastTime != null) {
+            Date curTime = Calendar.getInstance().getTime();
+
+            long diffInMs = curTime.getTime() - mLastTime.getTime();
+            long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
+
+            duration = duration + (int) diffInSec;
+            mLastTime = curTime;
         }
     }
 
@@ -67,6 +146,7 @@ public class PositionManager implements Parcelable {
         PositionManager  c = gson.fromJson(in.readString(), PositionManager.class);
 
         this.route = c.route;
+        this.mLastPosChecked = c.mLastPosChecked;
         this.lastPosition = c.lastPosition;
         this.trackingActive = c.trackingActive;
     }

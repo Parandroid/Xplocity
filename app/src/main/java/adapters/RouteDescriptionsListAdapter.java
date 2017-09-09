@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import models.RouteDescription;
+import utils.Formatter;
 
 
 /**
@@ -43,9 +44,9 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         TextView locationsTotalTxtView = (TextView) convertView.findViewById(R.id.locations_total);
 
 
-        distanceTxtView.setText(formatDistance(routeDescription.distance));
-        dateTxtView.setText(formatDate(routeDescription.date));
-        durationTxtView.setText(formatDuration(routeDescription.duration));
+        distanceTxtView.setText(Formatter.formatDistance(routeDescription.distance));
+        dateTxtView.setText(Formatter.formatDate(routeDescription.date));
+        durationTxtView.setText(Formatter.formatDuration(routeDescription.duration));
         nameTxtView.setText(routeDescription.name);
         locationsExploredTxtView.setText(Integer.toString(routeDescription.locCntExplored));
         locationsTotalTxtView.setText(Integer.toString(routeDescription.locCntTotal));
@@ -53,23 +54,7 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         return convertView;
     }
 
-    private String formatDistance(int distance) {
-        String result = String.format("%.2f", (double)distance/1000) + " km";
-        return result;
-    }
 
-    private String formatDate(Date date) {
-        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        return simpleDate.format(date);
-    }
-
-    private String formatDuration(int duration) {
-        int hours = duration / 3600;
-        int minutes = (duration % 3600) / 60;
-        int seconds = duration % 60;
-
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-    }
 
 
 }
