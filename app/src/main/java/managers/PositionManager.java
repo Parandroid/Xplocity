@@ -28,15 +28,12 @@ public class PositionManager implements Parcelable {
     public LatLng lastPosition;
     public boolean trackingActive;
 
-    public int distance = 0; //distance in meter
-    public int duration = 0; //duration in seconds
-
     private Date mLastTime;
 
     private int mLastPosChecked; //last position in path that was checked
     private transient PositionManagerInterface mCallback;
 
-    private static final int LOCATION_REACHED_DISTANCE = 50;
+    private static final int LOCATION_REACHED_DISTANCE = 100;
 
     public PositionManager(PositionManagerInterface callback) {
         route = new Route();
@@ -48,11 +45,11 @@ public class PositionManager implements Parcelable {
     }
 
 
-    public void setPath(ArrayList<LatLng> path) {
-        if (path != null && path.size() > 0) {
-            route.setPath(path);
+    public void addPosToPath(LatLng pos) {
+        if (pos != null) {
+            route.path.add(pos);
             check_location_reached();
-            lastPosition = path.get(path.size() - 1);
+            lastPosition = pos;
             updateDuration();
         }
     }
@@ -79,7 +76,7 @@ public class PositionManager implements Parcelable {
                         LatLng pos1 = route.path.get(i);
                         LatLng pos2 = route.path.get(i-1);
                         android.location.Location.distanceBetween(pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude, results);
-                        distance = distance + (int)results[0];
+                        route.distance = route.distance + (int)results[0];
                     }
 
                     mLastPosChecked = i;
@@ -90,9 +87,10 @@ public class PositionManager implements Parcelable {
 
 
     public void startTracking() {
-        distance = 0;
-        duration = 0;
+        route.distance = 0;
+        route.duration = 0;
         trackingActive = true;
+        mLastPosChecked = 0;
         mLastTime = Calendar.getInstance().getTime();
     }
 
@@ -108,7 +106,7 @@ public class PositionManager implements Parcelable {
             long diffInMs = curTime.getTime() - mLastTime.getTime();
             long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
-            duration = duration + (int) diffInSec;
+            route.duration = route.duration + (int) diffInSec;
             mLastTime = curTime;
         }
     }

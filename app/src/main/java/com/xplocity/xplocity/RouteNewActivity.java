@@ -1,14 +1,11 @@
 package com.xplocity.xplocity;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.view.View;
@@ -29,7 +26,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -54,8 +50,6 @@ import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-
 //public class FragmentBindingActivity extends ServiceBindingActivity{
 //
 //}
@@ -65,8 +59,7 @@ public class RouteNewActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
         OnMapReadyCallback,
-        ServiceStateReceiverInterface,
-        PositionManagerInterface {
+        ServiceStateReceiverInterface {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -81,7 +74,6 @@ public class RouteNewActivity
 
     //Managers
     MapManager mMapManager;
-    PositionManager mPositionManager;
 
     ServiceStateReceiver receiver;
 
@@ -113,7 +105,6 @@ public class RouteNewActivity
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(false);
             initRouteSettings();
-            mPositionManager = new PositionManager(this);
         }
 
         mWaitWheel = (FrameLayout) findViewById(R.id.waitWheel);
@@ -133,39 +124,13 @@ public class RouteNewActivity
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-
         super.onSaveInstanceState(savedInstanceState);
-        if (mPositionManager != null) {
-            savedInstanceState.putParcelable("positionManager", mPositionManager);
-        }
-
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.getParcelable("positionManager") != null) {
-            mPositionManager = savedInstanceState.getParcelable("positionManager");
-            mPositionManager.setCallback(this);
-
-            if (mService != null) {
-                mPositionManager.setPath(mService.getPath());
-                getPathFromService();
-            }
-
-            ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
-            Animation inAnimation = animator.getInAnimation();
-            Animation outAnimation = animator.getOutAnimation();
-            animator.setInAnimation(null);
-            animator.setOutAnimation(null);
-            animator.setDisplayedChild(1);
-            animator.setInAnimation(inAnimation);
-            animator.setOutAnimation(outAnimation);
-
-            initMap();
-        }
-
-    }
+     }
 
     @Override
     protected void onPause() {
@@ -186,9 +151,51 @@ public class RouteNewActivity
             receiver.registerReceiver(this);
         }
 
+        // if some location was reached, we need to check it and recolor marker
+        if (mService != null && mMapManager != null) {
+            if (mService.trackingActive()) {
+                mMapManager.updateLocationMarkers();
+            }
+        }
+
         //Get updates from service
-        getPathFromService();
+        updateRouteUI();
     }
+
+
+    @Override
+    protected void onServiceBound() {
+        if (mService.trackingActive()) {
+            restoreActivityState();
+        }
+
+        updateRouteUI();
+
+        boolean active = mService.trackingActive();
+        mStartTrackingButton.setEnabled(!active);
+        mStopTrackingButton.setEnabled(active);
+    }
+
+    @Override
+    protected void onServiceUnbound() {
+        mStartTrackingButton.setEnabled(false);
+        mStopTrackingButton.setEnabled(false);
+    }
+
+
+    private void restoreActivityState() {
+        ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
+        Animation inAnimation = animator.getInAnimation();
+        Animation outAnimation = animator.getOutAnimation();
+        animator.setInAnimation(null);
+        animator.setOutAnimation(null);
+        animator.setDisplayedChild(1);
+        animator.setInAnimation(inAnimation);
+        animator.setOutAnimation(outAnimation);
+
+        initMap();
+    }
+
 
 
     // Permissions
@@ -262,7 +269,7 @@ public class RouteNewActivity
                         if (!locationResult.getLocations().isEmpty()) {
                             Location location = locationResult.getLocations().get(0);
                             requestNewRoute(location.getLatitude(), location.getLongitude());
-                            mPositionManager.lastPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                            mService.setLastPosition(new LatLng(location.getLatitude(), location.getLongitude()));
                             mFusedLocationClient.removeLocationUpdates(this);
                         }
                     }
@@ -312,7 +319,7 @@ public class RouteNewActivity
     @Override
     public void onNewRouteDownloaded(Route route) {
         hideWaitAnimation();
-        mPositionManager.route = route;
+        mService.setRoute(route);
 
         initMap();
 
@@ -336,12 +343,13 @@ public class RouteNewActivity
             try {
                 googleMap.setMyLocationEnabled(true);
 
-                mMapManager.setRoute(mPositionManager.route);
+                mMapManager.setRoute(mService.getRoute());
+                updateRouteUI();
 
-                if (mPositionManager.trackingActive) {
-                    mMapManager.setTrackingCamera(mPositionManager.lastPosition);
+                if (mService.trackingActive()) {
+                    mMapManager.setTrackingCamera(mService.getLastposition());
                 } else {
-                    mMapManager.setOverviewCamera(mPositionManager.route.locations.get(0).position);
+                    mMapManager.setOverviewCamera(mService.getRoute().locations.get(0).position);
                 }
 
             } catch (SecurityException e) {
@@ -418,20 +426,20 @@ public class RouteNewActivity
     public void startTrackingBtnPressed(View view) {
         if (mIsBound && !mService.trackingActive()) {
             mService.startTracking();
-            mPositionManager.startTracking();
+
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
 
-            mMapManager.setTrackingCamera(mPositionManager.lastPosition);
+            mMapManager.setTrackingCamera(mService.getLastposition());
         }
     }
 
     public void stopTrackingBtnPressed(View view) {
         if (mIsBound && mService.trackingActive()) {
             //get last path update from service then stop the service
-            getPathFromService();
+            updateRouteUI();
             Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
-            intent.putExtra("route", mPositionManager.route);
+            intent.putExtra("route", mService.getRoute());
             stopTracking();
             startActivity(intent);
         }
@@ -439,40 +447,22 @@ public class RouteNewActivity
 
     private void stopTracking() {
         mService.stopTracking();
-        mPositionManager.stopTracking();
         mStartTrackingButton.setEnabled(true);
         mStopTrackingButton.setEnabled(false);
     }
 
-    @Override
-    protected void onServiceBound() {
-        boolean active = mService.trackingActive();
-        if (mPositionManager != null) {
-            mPositionManager.setPath(mService.getPath());
-            getPathFromService();
-        }
-        mStartTrackingButton.setEnabled(!active);
-        mStopTrackingButton.setEnabled(active);
-    }
-
-    @Override
-    protected void onServiceUnbound() {
-        mStartTrackingButton.setEnabled(false);
-        mStopTrackingButton.setEnabled(false);
-    }
 
 
     @Override
     public void onPositionChanged() {
-        getPathFromService();
+        updateRouteUI();
     }
 
 
-    private void getPathFromService() {
-        if (mPositionManager != null && mMapManager != null) {
-            if (mPositionManager.trackingActive) {
-                mPositionManager.setPath(mService.getPath());
-                mMapManager.drawPath(mPositionManager.route.path);
+    private void updateRouteUI() {
+        if (mMapManager != null && mService != null) {
+            if (mService.trackingActive()) {
+                mMapManager.drawPath(mService.getRoute().path);
                 updateDistance();
                 updateDuration();
                 updateSpeed();
@@ -481,22 +471,22 @@ public class RouteNewActivity
     }
 
     private void updateDistance() {
-        if (mPositionManager != null) {
-            mTxtDistance.setText(Formatter.formatDistance(mPositionManager.distance));
+        if (mService.getRoute() != null) {
+            mTxtDistance.setText(Formatter.formatDistance(mService.getRoute().distance));
         }
     }
 
     private void updateDuration() {
-        if (mPositionManager != null) {
-            mTxtDuration.setText(Formatter.formatDuration(mPositionManager.duration));
+        if (mService.getRoute() != null) {
+            mTxtDuration.setText(Formatter.formatDuration(mService.getRoute().duration));
         }
     }
 
     private void updateSpeed() {
-        if (mPositionManager != null) {
+        if (mService.getRoute() != null) {
             float speed;
-            if (mPositionManager.duration !=0) {
-                speed = mPositionManager.distance / mPositionManager.duration;
+            if (mService.getRoute().duration !=0) {
+                speed = mService.getRoute().distance / mService.getRoute().duration;
             }
             else {
                 speed = 0f;
@@ -508,12 +498,15 @@ public class RouteNewActivity
 
 
     @Override
-    public void onLocationReached(models.Location location) {
+    public void onLocationReached(int locationId) {
         if (mMapManager != null) {
-            mMapManager.setLocationMarkerExplored(location);
+            for(models.Location loc: mService.getRoute().locations){
+                if(loc.id == locationId) {
+                    mMapManager.setLocationMarkerExplored(loc);
+                    break;
+                }
+            }
         }
-
-        //TODO show notification from service when location is reached in background
     }
 
 
@@ -529,8 +522,10 @@ public class RouteNewActivity
 
     @Override
     public void onBackPressed() {
-        if (mPositionManager.trackingActive) {
-            showCancelRouteDialog();
+        if (mService != null) {
+            if (mService.trackingActive()) {
+                showCancelRouteDialog();
+            }
         } else {
             super.onBackPressed();
         }

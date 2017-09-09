@@ -28,13 +28,24 @@ public class ServiceStateReceiver extends BroadcastReceiver {
     // Called when the BroadcastReceiver gets an Intent it's registered to receive
     @Override
     public void onReceive(Context context, Intent intent) {
-        mCallback.onPositionChanged();
+
+        String s = intent.getAction();
+        if (s.equals(ResourceGetter.getString("broadcast_position_changed"))) {
+            mCallback.onPositionChanged();
+        }
+        else if (s.equals(ResourceGetter.getString("broadcast_location_reached"))) {
+            mCallback.onLocationReached(intent.getIntExtra("locationId", 0));
+        }
+
+
 
     }
 
     public void registerReceiver(Context context) {
-        IntentFilter statusIntentFilter = new IntentFilter(
-                ResourceGetter.getString("broadcast_position_changed"));
+        IntentFilter statusIntentFilter = new IntentFilter();
+        statusIntentFilter.addAction(ResourceGetter.getString("broadcast_position_changed"));
+        statusIntentFilter.addAction(ResourceGetter.getString("broadcast_location_reached"));
+
         LocalBroadcastManager.getInstance(context).registerReceiver(
                 this,
                 statusIntentFilter);

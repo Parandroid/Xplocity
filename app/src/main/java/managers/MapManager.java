@@ -76,6 +76,16 @@ public class MapManager {
     }
 
 
+    public void updateLocationMarkers() {
+        for (Map.Entry<Location, Marker> entry : mLocationMarkers.entrySet())
+        {
+            if (entry.getKey().explored) {
+                setMarkerIconExplored(entry.getValue());
+            }
+        }
+    }
+
+
     private void addLocationMarker(Location loc) {
         Marker marker = mMap.addMarker(new MarkerOptions()
                 .position(loc.position)

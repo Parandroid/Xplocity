@@ -19,6 +19,8 @@ public class Route implements Parcelable {
     public int loc_cnt_explored;
     public int loc_cnt_total;
     public int id;
+    public int distance = 0; //distance in meter
+    public int duration = 0; //duration in seconds
 
     public ArrayList<LatLng> path;
     public ArrayList<Location> locations;
@@ -92,5 +94,7 @@ public class Route implements Parcelable {
         this.locations = c.locations;
         this.loc_cnt_explored = c.loc_cnt_explored;
         this.loc_cnt_total = c.loc_cnt_total;
+        this.distance = c.distance;
+        this.duration = c.duration;
     }
 }
