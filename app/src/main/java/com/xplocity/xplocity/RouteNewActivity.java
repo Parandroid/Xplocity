@@ -39,8 +39,6 @@ import api_classes.interfaces.LocationCategoriesDownloaderInterface;
 import api_classes.interfaces.NewRouteDownloaderInterface;
 import app.XplocityApplication;
 import managers.MapManager;
-import managers.PositionManager;
-import managers.interfaces.PositionManagerInterface;
 import models.LocationCategory;
 import models.Route;
 import services.ServiceStateReceiver;
@@ -50,9 +48,6 @@ import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 
-//public class FragmentBindingActivity extends ServiceBindingActivity{
-//
-//}
 
 public class RouteNewActivity
         extends ServiceBindingActivity
