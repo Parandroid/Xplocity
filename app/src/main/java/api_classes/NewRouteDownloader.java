@@ -57,4 +57,9 @@ public class NewRouteDownloader extends Loader {
             mLogger.logError("Error parsing new mRoute: ", e);
         }
     }
+
+    @Override
+    protected void onError(String errorText) {
+
+    }
 }

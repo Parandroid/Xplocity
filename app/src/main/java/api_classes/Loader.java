@@ -3,6 +3,7 @@ package api_classes;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -21,6 +22,7 @@ public abstract class Loader {
 
     //http codes
     public static final int HTTP_OK = 200;
+    public static final int HTTP_CREATED = 201;
     public static final int HTTP_NOT_MODIFIED = 304;
 
 
@@ -75,12 +77,16 @@ public abstract class Loader {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         mLogger.logError("Network error: " + error.getMessage(), error.getCause());
-                        onResponse(error.getMessage(), stringRequest.getHttpCode());
+                        Loader.this.onError(error.getMessage());
 
                         //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
 
                     }
                 });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         VolleySingleton.getInstance().addToRequestQueue(stringRequest);
     }
@@ -113,4 +119,5 @@ public abstract class Loader {
 
     // Implement in descendants
     protected abstract void onResponse(String response, int http_code);
+    protected abstract void onError(String error);
 }

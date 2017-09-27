@@ -53,5 +53,10 @@ public class AuthTokenDownloader extends Loader {
         }
     }
 
+    @Override
+    protected void onError(String errorText) {
+
+    }
+
 
 }

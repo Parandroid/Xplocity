@@ -45,4 +45,9 @@ public class LocationCategoriesDownloader extends Loader {
             mLogger.logError("Error parsing location categories: ", e);
         }
     }
+
+    @Override
+    protected void onError(String errorText) {
+
+    }
 }

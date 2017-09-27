@@ -54,19 +54,8 @@ public class RoutesDescriptionsDownloader extends Loader {
         }
     }
 
+    @Override
+    protected void onError(String errorText) {
 
-    private void parseRoutesDescriptions(String xml) {
-        InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        XMLRouteDescriptionsParser route_descriptions_parser = new XMLRouteDescriptionsParser();
-
-        ArrayList<RouteDescription> route_descriptions;
-
-        try {
-            route_descriptions = route_descriptions_parser.parse(stream);
-            mCallback.onRouteDescriptionsDownloaded(route_descriptions);
-        }
-        catch (Throwable e) {
-            mLogger.logError("Error parsing routes' descriptions: ", e);
-        }
     }
 }

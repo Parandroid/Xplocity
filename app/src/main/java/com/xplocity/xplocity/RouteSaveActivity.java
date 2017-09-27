@@ -7,6 +7,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -18,6 +20,7 @@ import api_classes.RouteUploader;
 import api_classes.interfaces.RouteUploaderInterface;
 import managers.MapManager;
 import models.Route;
+import utils.UI.WaitWheel;
 
 
 public class RouteSaveActivity
@@ -26,6 +29,8 @@ public class RouteSaveActivity
         RouteUploaderInterface {
 
     private MapManager mMapManager;
+    private WaitWheel mWaitWheel;
+
     private Route mRoute;
 
     @Override
@@ -34,6 +39,8 @@ public class RouteSaveActivity
         setContentView(R.layout.activity_route_save);
 
         mRoute = getIntent().getParcelableExtra("route");
+
+        mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
         initMap();
     }
 
@@ -58,6 +65,7 @@ public class RouteSaveActivity
     public void uploadRoute(View view) {
         RouteUploader routeUploader = new RouteUploader(this);
         routeUploader.uploadRoute(mRoute);
+        mWaitWheel.showWaitAnimation();
     }
 
     public void cancelRoute(View view) {
@@ -67,13 +75,16 @@ public class RouteSaveActivity
 
     @Override
     public void onSuccessUploadRoute() {
+        mWaitWheel.hideWaitAnimation();
         Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
         startActivity(intent);
     }
 
     @Override
-    public void onErrorUploadRoute() {
-
+    public void onErrorUploadRoute(String errorText) {
+        mWaitWheel.hideWaitAnimation();
+        Toast toast = Toast.makeText(this, errorText, Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override

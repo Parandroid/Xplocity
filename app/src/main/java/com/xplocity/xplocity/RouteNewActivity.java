@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -47,6 +48,7 @@ import utils.Factory.LogFactory;
 import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
+import utils.UI.WaitWheel;
 
 
 public class RouteNewActivity
@@ -80,8 +82,7 @@ public class RouteNewActivity
     TextView mTxtDuration;
     TextView mTxtSpeed;
 
-    FrameLayout mWaitWheel;
-    AlphaAnimation mInAnimation;
+    WaitWheel mWaitWheel;
 
     Button mStartTrackingButton;
     Button mStopTrackingButton;
@@ -102,10 +103,8 @@ public class RouteNewActivity
             initRouteSettings();
         }
 
-        mWaitWheel = (FrameLayout) findViewById(R.id.waitWheel);
-        mInAnimation = new AlphaAnimation(0f, 1f);
-        mInAnimation.setDuration(200);
-        mWaitWheel.setAnimation(mInAnimation);
+        mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
+
 
         mTxtDistance = (TextView) findViewById(R.id.textDistance);
         mTxtDuration = (TextView) findViewById(R.id.textDuration);
@@ -260,7 +259,7 @@ public class RouteNewActivity
                 final LocationCallback locationCallback = new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
-                        hideWaitAnimation();
+                        mWaitWheel.hideWaitAnimation();
                         if (!locationResult.getLocations().isEmpty()) {
                             Location location = locationResult.getLocations().get(0);
                             requestNewRoute(location.getLatitude(), location.getLongitude());
@@ -271,7 +270,7 @@ public class RouteNewActivity
                 };
 
                 mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                showWaitAnimation();
+                mWaitWheel.showWaitAnimation();
             } catch (SecurityException e) {
                 mLogger.logError("Failed to create mRoute", e);
             }
@@ -308,12 +307,12 @@ public class RouteNewActivity
 
         NewRouteDownloader downloader = new NewRouteDownloader(this);
         downloader.downloadNewRoute(lat, lon, locCount, optimalDistance, checkedLocationCategories);
-        showWaitAnimation();
+        mWaitWheel.showWaitAnimation();
     }
 
     @Override
     public void onNewRouteDownloaded(Route route) {
-        hideWaitAnimation();
+        mWaitWheel.hideWaitAnimation();
         mService.setRoute(route);
 
         initMap();
@@ -507,13 +506,7 @@ public class RouteNewActivity
 
 
 
-    private void showWaitAnimation() {
-        mWaitWheel.setVisibility(View.VISIBLE);
-    }
 
-    private void hideWaitAnimation() {
-        mWaitWheel.setVisibility(View.GONE);
-    }
 
     @Override
     public void onBackPressed() {
@@ -521,7 +514,11 @@ public class RouteNewActivity
             if (mService.trackingActive()) {
                 showCancelRouteDialog();
             }
-        } else {
+            else {
+                super.onBackPressed();
+            }
+        }
+        else {
             super.onBackPressed();
         }
 

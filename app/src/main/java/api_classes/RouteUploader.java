@@ -29,10 +29,18 @@ public class RouteUploader extends Loader {
         sendPostRequest(url, body, true);
     }
 
-
+    @Override
     protected void onResponse(String response, int http_code) {
-        mCallback.onSuccessUploadRoute();
+        if (http_code == HTTP_CREATED) {
+            mCallback.onSuccessUploadRoute();
+        }
     }
+
+    @Override
+    protected void onError(String errorText) {
+        mCallback.onErrorUploadRoute(errorText);
+    }
+
 
 
 }

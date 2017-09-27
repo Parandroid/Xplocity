@@ -6,5 +6,5 @@ package api_classes.interfaces;
 
 public interface RouteUploaderInterface {
     void onSuccessUploadRoute();
-    void onErrorUploadRoute();
+    void onErrorUploadRoute(String errorText);
 }
