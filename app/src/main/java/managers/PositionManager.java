@@ -104,9 +104,8 @@ public class PositionManager implements Parcelable {
             Date curTime = Calendar.getInstance().getTime();
 
             long diffInMs = curTime.getTime() - mLastTime.getTime();
-            long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
-            route.duration = route.duration + (int) diffInSec;
+            route.duration = route.duration + (int) diffInMs;
             mLastTime = curTime;
         }
     }

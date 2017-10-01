@@ -480,7 +480,7 @@ public class RouteNewActivity
         if (mService.getRoute() != null) {
             float speed;
             if (mService.getRoute().duration !=0) {
-                speed = mService.getRoute().distance / mService.getRoute().duration;
+                speed = mService.getRoute().distance / (mService.getRoute().duration / 1000f);
             }
             else {
                 speed = 0f;

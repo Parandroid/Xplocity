@@ -18,10 +18,13 @@ public class Formatter {
         return simpleDate.format(date);
     }
 
-    public static String formatDuration(int duration) {
-        int hours = duration / 3600;
-        int minutes = (duration % 3600) / 60;
-        int seconds = duration % 60;
+    //format milliseconds to readable duration
+    public static String formatDuration(int durationMs) {
+        int durationSec = durationMs/1000;
+
+        int hours = durationSec / 3600;
+        int minutes = (durationSec % 3600) / 60;
+        int seconds = durationSec % 60;
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
