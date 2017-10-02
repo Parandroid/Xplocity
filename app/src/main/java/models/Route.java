@@ -19,7 +19,7 @@ public class Route implements Parcelable {
     public int loc_cnt_explored;
     public int loc_cnt_total;
     public int id;
-    public int distance = 0; //distance in meter
+    public float distance = 0f; //distance in meter
     public int duration = 0; //duration in milliseconds
 
     public ArrayList<LatLng> path;

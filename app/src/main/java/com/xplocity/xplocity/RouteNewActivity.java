@@ -466,7 +466,7 @@ public class RouteNewActivity
 
     private void updateDistance() {
         if (mService.getRoute() != null) {
-            mTxtDistance.setText(Formatter.formatDistance(mService.getRoute().distance));
+            mTxtDistance.setText(Formatter.formatDistance((int) mService.getRoute().distance));
         }
     }
 

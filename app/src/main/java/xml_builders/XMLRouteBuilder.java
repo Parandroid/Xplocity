@@ -28,7 +28,21 @@ public class XMLRouteBuilder {
             serializer.startDocument("UTF-8", true);
             serializer.startTag("", "Chain");
 
+
+            serializer.startTag("", "Info");
+
+            serializer.startTag("", "distance");
+            serializer.text(Integer.toString((int) route.distance));
+            serializer.endTag("", "distance");
+            serializer.startTag("", "duration");
+            serializer.text(Integer.toString(route.duration));
+            serializer.endTag("", "duration");
+
+            serializer.endTag("", "Info");
+
+
             serializer.startTag("", "Locations");
+
             for (Location loc: route.locations){
                 serializer.startTag("", "Location");
                 serializer.attribute("", "id", Integer.toString(loc.id));

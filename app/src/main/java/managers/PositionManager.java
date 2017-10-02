@@ -30,7 +30,6 @@ public class PositionManager implements Parcelable {
 
     private Date mLastTime;
 
-    private int mLastPosChecked; //last position in path that was checked
     private transient PositionManagerInterface mCallback;
 
     private static final int LOCATION_REACHED_DISTANCE = 100;
@@ -47,39 +46,25 @@ public class PositionManager implements Parcelable {
 
     public void addPosToPath(LatLng pos) {
         if (pos != null) {
-            route.path.add(pos);
-            check_location_reached();
-            lastPosition = pos;
+            route.distance = route.distance + calculateDistance(pos, lastPosition);
             updateDuration();
+
+            check_location_reached(pos);
+            route.path.add(pos);
+            lastPosition = pos;
+
         }
     }
 
 
-    private void check_location_reached() {
-        if (route.path != null) {
-            if (route.path.size() - 1 > mLastPosChecked) {
-                for (int i = mLastPosChecked; i <= route.path.size() - 1; i++) {
-                    LatLng position = route.path.get(i);
-                    for (Location loc : route.locations) {
-                        if (!loc.explored) {
-                            float[] results = new float[2];
-                            android.location.Location.distanceBetween(loc.position.latitude, loc.position.longitude, position.latitude, position.longitude, results);
-                            if (results[0] <= LOCATION_REACHED_DISTANCE) {
-                                loc.explored = true;
-                                mCallback.onLocationReached(loc);
-                            }
-                        }
-                    }
-
-                    if (i > 0) {
-                        float[] results = new float[2];
-                        LatLng pos1 = route.path.get(i);
-                        LatLng pos2 = route.path.get(i-1);
-                        android.location.Location.distanceBetween(pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude, results);
-                        route.distance = route.distance + (int)results[0];
-                    }
-
-                    mLastPosChecked = i;
+    private void check_location_reached(LatLng position) {
+        for (Location loc : route.locations) {
+            if (!loc.explored) {
+                float[] results = new float[2];
+                android.location.Location.distanceBetween(loc.position.latitude, loc.position.longitude, position.latitude, position.longitude, results);
+                if (results[0] <= LOCATION_REACHED_DISTANCE) {
+                    loc.explored = true;
+                    mCallback.onLocationReached(loc);
                 }
             }
         }
@@ -90,7 +75,6 @@ public class PositionManager implements Parcelable {
         route.distance = 0;
         route.duration = 0;
         trackingActive = true;
-        mLastPosChecked = 0;
         mLastTime = Calendar.getInstance().getTime();
     }
 
@@ -110,6 +94,13 @@ public class PositionManager implements Parcelable {
         }
     }
 
+    public float calculateDistance(LatLng pos1, LatLng pos2) {
+        float[] results = new float[2];
+        android.location.Location.distanceBetween(pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude, results);
+
+        return results[0];
+
+    }
 
 
     // Parcelable
@@ -129,21 +120,22 @@ public class PositionManager implements Parcelable {
     public static final Parcelable.Creator<PositionManager> CREATOR
             = new Parcelable.Creator<PositionManager>() {
         public PositionManager createFromParcel(Parcel in) {
-            return new PositionManager (in);
+            return new PositionManager(in);
         }
 
-        public PositionManager [] newArray(int size) {
+        public PositionManager[] newArray(int size) {
             return new PositionManager[size];
         }
     };
 
-    /** recreate object from parcel */
+    /**
+     * recreate object from parcel
+     */
     private PositionManager(Parcel in) {
         Gson gson = new Gson();
-        PositionManager  c = gson.fromJson(in.readString(), PositionManager.class);
+        PositionManager c = gson.fromJson(in.readString(), PositionManager.class);
 
         this.route = c.route;
-        this.mLastPosChecked = c.mLastPosChecked;
         this.lastPosition = c.lastPosition;
         this.trackingActive = c.trackingActive;
     }
