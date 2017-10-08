@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,8 +36,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.vision.text.Line;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import adapters.RouteLocationsListAdapter;
 import adapters.interfaces.RouteLocationsListAdapterInterface;
@@ -122,7 +125,6 @@ public class RouteNewActivity
         mTxtSpeed = (TextView) findViewById(R.id.textSpeed);
 
         mPagerAdapter = new NewRoutePagerAdapter(getSupportFragmentManager(), this);
-        mPagerAdapter.addFragment(RouteLocationList.class.getName());
         mPagerAdapter.addFragment(RouteLocationList.class.getName());
 
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -587,12 +589,6 @@ public class RouteNewActivity
             return Fragment.instantiate(mContext, mFragmentsNames.get(position));
         }
 
-        /*@Override
-        public CharSequence getPageTitle(int position) {
-            //return CONTENT[position % CONTENT.length].toUpperCase();
-            return mEntries.get(position % CONTENT.length).toUpperCase();
-        }*/
-
         @Override
         public int getCount() {
             // return CONTENT.length;
@@ -610,7 +606,23 @@ public class RouteNewActivity
         mLocationAdapter = new RouteLocationsListAdapter(this, locations, this);
         ListView listView = (ListView)findViewById(R.id.listLocations);
         listView.setAdapter(mLocationAdapter);
+
+        // Update locations info on bottom sheet expanded
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet_panel));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    mLocationAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onSlide(View bottomSheet, float slideOffset) {
+            }
+        });
     }
+
 
     @Override
     public void moveCameraPositionBelowLocation(LatLng position) {

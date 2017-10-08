@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +53,7 @@ public class PositionManager implements Parcelable {
             check_location_reached(pos);
             route.path.add(pos);
             lastPosition = pos;
+            sortLocationsByDistance();
 
         }
     }
@@ -59,15 +61,23 @@ public class PositionManager implements Parcelable {
 
     private void check_location_reached(LatLng position) {
         for (Location loc : route.locations) {
-            if (!loc.explored) {
-                float[] results = new float[2];
-                android.location.Location.distanceBetween(loc.position.latitude, loc.position.longitude, position.latitude, position.longitude, results);
-                if (results[0] <= LOCATION_REACHED_DISTANCE) {
-                    loc.explored = true;
-                    mCallback.onLocationReached(loc);
-                }
+            loc.distance = calculateDistanceToLocation(position, loc);
+
+            if (!loc.explored && loc.distance <= LOCATION_REACHED_DISTANCE) {
+                loc.explored = true;
+                mCallback.onLocationReached(loc);
             }
         }
+    }
+
+    private float calculateDistanceToLocation(LatLng position, Location location) {
+        float[] results = new float[2];
+        android.location.Location.distanceBetween(location.position.latitude, location.position.longitude, position.latitude, position.longitude, results);
+        return results[0];
+    }
+
+    private void sortLocationsByDistance() {
+        Collections.sort(route.locations);
     }
 
 

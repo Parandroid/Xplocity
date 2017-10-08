@@ -1,6 +1,8 @@
 package adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +18,10 @@ import java.util.ArrayList;
 import adapters.interfaces.RouteLocationsListAdapterInterface;
 import models.Location;
 import utils.Factory.LogFactory;
+import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
+import utils.ResourceGetter;
 
 
 /**
@@ -27,11 +31,13 @@ import utils.LogLevelGetter;
 public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
 
     private Logger mLogger;
+    private Context mContext;
     private RouteLocationsListAdapterInterface mCallback;
 
     public RouteLocationsListAdapter(Context context, ArrayList<Location> locations, RouteLocationsListAdapterInterface callback) {
         super(context, 0, locations);
 
+        mContext = context;
         mCallback = callback;
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
     }
@@ -47,17 +53,23 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
 
         TextView txtLocationAddress = (TextView) convertView.findViewById(R.id.txtLocationAddress);
         TextView txtLocationName = (TextView) convertView.findViewById(R.id.txtLocationName);
-        ImageView imageLocationExplored = (ImageView) convertView.findViewById(R.id.imageLocationExplored);
+        TextView txtLocationDistance = (TextView) convertView.findViewById(R.id.txtLocationDistance);
+
         ImageButton btnLocationTrack = (ImageButton) convertView.findViewById(R.id.btnLocationTrack);
 
         txtLocationAddress.setText(location.address);
         txtLocationName.setText(location.name);
+        txtLocationDistance.setText(Formatter.formatDistance((int) location.distance));
 
         if (location.explored) {
-            imageLocationExplored.setVisibility(View.VISIBLE);
+            txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.colorSuccess));
+            txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
+            txtLocationDistance.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
         }
         else {
-            imageLocationExplored.setVisibility(View.INVISIBLE);
+            txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            txtLocationDistance.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
         }
 
         btnLocationTrack.setFocusable(false);

@@ -1,6 +1,8 @@
 package utils;
 
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Color;
 
 import app.XplocityApplication;
 
@@ -20,6 +22,7 @@ public class ResourceGetter {
         Resources resources = XplocityApplication.getAppContext().getResources();
         return resources.getInteger(resources.getIdentifier(name, "integer", getPackageName()));
     }
+
 
     private static String getPackageName() {
         if( mPackageName == null ) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/wallet_bright_foreground_holo_dark"
@@ -9,43 +10,60 @@
     android:descendantFocusability="blocksDescendants" >
 
 
-    <ImageButton
-        android:id="@+id/btnLocationTrack"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_weight="10"
-        android:background="?android:selectableItemBackground"
-        android:src="@drawable/ic_location_searching_black_24dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"/>
+        android:layout_weight="15"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/btnLocationTrack"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_location_searching_black_24dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
+
+        <TextView
+            android:id="@+id/txtLocationDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textColor="@color/darkerGray"
+            android:textSize="10dp"
+            tools:text="36.6 km" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="80"
+        android:layout_weight="85"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/txtLocationName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Location name"
+            android:textColor="@color/colorSuccess"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtLocationAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:ellipsize="end"
+            android:lines="2"
+            android:maxLines="2"
+            android:text="Location address"
+            android:textColor="@color/darkerGray" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageLocationExplored"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="10"
-        app:srcCompat="@drawable/ic_done_black_24dp" />
-
 
 </LinearLayout>
