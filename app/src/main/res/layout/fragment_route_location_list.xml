@@ -1,0 +1,15 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.xplocity.xplocity.RouteLocationList">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <utils.UI.BottomSheetListView
+        android:id="@+id/listLocations"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</FrameLayout>

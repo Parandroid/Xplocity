@@ -1,21 +1,25 @@
 package com.xplocity.xplocity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,6 +38,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import adapters.RouteLocationsListAdapter;
+import adapters.interfaces.RouteLocationsListAdapterInterface;
 import api_classes.LocationCategoriesDownloader;
 import api_classes.NewRouteDownloader;
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
@@ -56,7 +62,8 @@ public class RouteNewActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
         OnMapReadyCallback,
-        ServiceStateReceiverInterface {
+        ServiceStateReceiverInterface,
+        RouteLocationsListAdapterInterface {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -87,6 +94,10 @@ public class RouteNewActivity
     Button mStartTrackingButton;
     Button mStopTrackingButton;
 
+    NewRoutePagerAdapter mPagerAdapter;
+    private RouteLocationsListAdapter mLocationAdapter;
+    ViewPager mPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +121,13 @@ public class RouteNewActivity
         mTxtDuration = (TextView) findViewById(R.id.textDuration);
         mTxtSpeed = (TextView) findViewById(R.id.textSpeed);
 
+        mPagerAdapter = new NewRoutePagerAdapter(getSupportFragmentManager(), this);
+        mPagerAdapter.addFragment(RouteLocationList.class.getName());
+        mPagerAdapter.addFragment(RouteLocationList.class.getName());
+
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setAdapter(mPagerAdapter);
+
         receiver = new ServiceStateReceiver(this);
 
         requestPermissions(); //TODO мб вынести работу с разрешениями в отдельный класс?
@@ -124,7 +142,7 @@ public class RouteNewActivity
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-     }
+    }
 
     @Override
     protected void onPause() {
@@ -187,9 +205,10 @@ public class RouteNewActivity
         animator.setInAnimation(inAnimation);
         animator.setOutAnimation(outAnimation);
 
+        fillLocationsList(mService.getRoute().locations);
+
         initMap();
     }
-
 
 
     // Permissions
@@ -314,6 +333,7 @@ public class RouteNewActivity
     public void onNewRouteDownloaded(Route route) {
         mWaitWheel.hideWaitAnimation();
         mService.setRoute(route);
+        fillLocationsList(mService.getRoute().locations);
 
         initMap();
 
@@ -446,7 +466,6 @@ public class RouteNewActivity
     }
 
 
-
     @Override
     public void onPositionChanged() {
         updateRouteUI();
@@ -479,10 +498,9 @@ public class RouteNewActivity
     private void updateSpeed() {
         if (mService.getRoute() != null) {
             float speed;
-            if (mService.getRoute().duration !=0) {
+            if (mService.getRoute().duration != 0) {
                 speed = mService.getRoute().distance / (mService.getRoute().duration / 1000f);
-            }
-            else {
+            } else {
                 speed = 0f;
             }
 
@@ -494,8 +512,8 @@ public class RouteNewActivity
     @Override
     public void onLocationReached(int locationId) {
         if (mMapManager != null) {
-            for(models.Location loc: mService.getRoute().locations){
-                if(loc.id == locationId) {
+            for (models.Location loc : mService.getRoute().locations) {
+                if (loc.id == locationId) {
                     mMapManager.setLocationMarkerExplored(loc);
                     break;
                 }
@@ -504,21 +522,15 @@ public class RouteNewActivity
     }
 
 
-
-
-
-
     @Override
     public void onBackPressed() {
         if (mService != null) {
             if (mService.trackingActive()) {
                 showCancelRouteDialog();
-            }
-            else {
+            } else {
                 super.onBackPressed();
             }
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
 
@@ -551,4 +563,149 @@ public class RouteNewActivity
         android.support.v7.app.AlertDialog alert11 = builder1.create();
         alert11.show();
     }
+
+
+    /***************** Pager ********************/
+
+    class NewRoutePagerAdapter extends FragmentPagerAdapter {
+        private ArrayList<String> mFragmentsNames;
+        private Context mContext;
+
+        public NewRoutePagerAdapter(FragmentManager fm, Context context) {
+            super(fm);
+            mFragmentsNames = new ArrayList();
+            mContext = context;
+        }
+
+        public void addFragment(String fragmentClass) {
+            mFragmentsNames.add(fragmentClass);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            //return MyFragment.newInstance();
+            return Fragment.instantiate(mContext, mFragmentsNames.get(position));
+        }
+
+        /*@Override
+        public CharSequence getPageTitle(int position) {
+            //return CONTENT[position % CONTENT.length].toUpperCase();
+            return mEntries.get(position % CONTENT.length).toUpperCase();
+        }*/
+
+        @Override
+        public int getCount() {
+            // return CONTENT.length;
+            return mFragmentsNames.size();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+    }
+
+
+    public void fillLocationsList(ArrayList<models.Location> locations) {
+        mLocationAdapter = new RouteLocationsListAdapter(this, locations, this);
+        ListView listView = (ListView)findViewById(R.id.listLocations);
+        listView.setAdapter(mLocationAdapter);
+    }
+
+    @Override
+    public void moveCameraPositionBelowLocation(LatLng position) {
+        mMapManager.setTrackingCamera(new LatLng(position.latitude -0.002, position.longitude));
+    }
+
+
+    /*public class ViewWeightAnimationWrapper {
+        private View mAnimatedView;
+        private View mSecondView;
+        private float mWeightSum;
+
+        public ViewWeightAnimationWrapper(View animatedView, View secondView) {
+            if (animatedView.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                this.mAnimatedView = animatedView;
+            } else {
+                throw new IllegalArgumentException("The view should have LinearLayout as parent");
+            }
+
+            if (secondView.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                this.mSecondView = secondView;
+            } else {
+                throw new IllegalArgumentException("The view should have LinearLayout as parent");
+            }
+
+            mWeightSum = ((LinearLayout.LayoutParams) mAnimatedView.getLayoutParams()).weight + ((LinearLayout.LayoutParams) mSecondView.getLayoutParams()).weight;
+        }
+
+        public void setWeight(float weight) {
+            updateWeightUI(mAnimatedView, weight);
+            updateWeightUI(mSecondView, mWeightSum - weight);
+        }
+
+        public float getWeight() {
+            return ((LinearLayout.LayoutParams) mAnimatedView.getLayoutParams()).weight;
+        }
+
+        private void updateWeightUI(View view, float weight) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+            params.weight = weight;
+            view.setLayoutParams(params);
+        }
+    }
+
+
+    private void animate(final View v, float from, float to) {
+        ValueAnimator va = ValueAnimator.ofFloat(from, to);
+        va.setDuration(800);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float growingWeight = (Float) animation.getAnimatedValue();
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) v.getLayoutParams();
+                params.weight = growingWeight;
+                v.setLayoutParams(params);
+            }
+        });
+        va.start();
+    }
+
+
+    private Boolean mInfoExpanded = false;
+    private static final float INFO_EXPANDED_WEIGHT = 40f;
+    private static final float INFO_COLLAPSED_WEIGHT = 0f;
+    private static final float TOTAL_WEIGHT = 80f;
+
+    public void infoSlide(View view) {
+        float startWeight;
+        float endWeight;
+
+        if (mInfoExpanded) {
+            startWeight = INFO_EXPANDED_WEIGHT;
+            endWeight = INFO_COLLAPSED_WEIGHT;
+            ((ImageButton) view).setImageResource(R.drawable.ic_arrow_drop_up_black_60_20dp);
+        } else {
+            startWeight = INFO_COLLAPSED_WEIGHT;
+            endWeight = INFO_EXPANDED_WEIGHT;
+            ((ImageButton) view).setImageResource(R.drawable.ic_arrow_drop_down_black_60_20dp);
+        }
+        animate(findViewById(R.id.pager), startWeight, endWeight);
+        animate(findViewById(R.id.map), TOTAL_WEIGHT - startWeight, TOTAL_WEIGHT - endWeight);
+        mInfoExpanded = !mInfoExpanded;
+    }
+
+
+    private void initTouchInfoSlide() {
+        findViewById(R.id.routeInfoUpPanel).setOnTouchListener(new OnSwipeTouchListener(this) {
+            public void onSwipeTop() {
+                Toast.makeText(RouteNewActivity.this, "top", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onSwipeBottom() {
+                Toast.makeText(RouteNewActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }*/
+
+
 }
