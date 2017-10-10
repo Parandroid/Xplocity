@@ -1,14 +1,19 @@
 package adapters;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.xplocity.xplocity.R;
@@ -22,6 +27,7 @@ import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 import utils.ResourceGetter;
+import utils.UI.BottomSheetListView;
 
 
 /**
@@ -43,38 +49,36 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the data item for this position
+    public View getView(int position, View convertView, final ViewGroup parent) {
         final Location location = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.route_locations_list_item, parent, false);
         }
 
-        TextView txtLocationAddress = (TextView) convertView.findViewById(R.id.txtLocationAddress);
-        TextView txtLocationName = (TextView) convertView.findViewById(R.id.txtLocationName);
-        TextView txtLocationDistance = (TextView) convertView.findViewById(R.id.txtLocationDistance);
+        final TextView txtLocationAddress = (TextView) convertView.findViewById(R.id.txtLocationAddress);
+        final TextView txtLocationName = (TextView) convertView.findViewById(R.id.txtLocationName);
+        final TextView txtLocationDescription = (TextView) convertView.findViewById(R.id.txtLocationDescription);
 
-        ImageButton btnLocationTrack = (ImageButton) convertView.findViewById(R.id.btnLocationTrack);
+        Button btnLocationTrack = (Button) convertView.findViewById(R.id.btnLocationTrack);
 
         txtLocationAddress.setText(location.address);
         txtLocationName.setText(location.name);
-        txtLocationDistance.setText(Formatter.formatDistance((int) location.distance));
+        txtLocationDescription.setText(location.description);
+        btnLocationTrack.setText(Formatter.formatDistance((int) location.distance));
 
         if (location.explored) {
             txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.colorSuccess));
             txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
-            txtLocationDistance.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
+            txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
+            btnLocationTrack.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
         }
         else {
             txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
             txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
-            txtLocationDistance.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            btnLocationTrack.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
         }
-
-        btnLocationTrack.setFocusable(false);
-        btnLocationTrack.setFocusableInTouchMode(false);
-        btnLocationTrack.setClickable(true);
 
         btnLocationTrack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -82,8 +86,48 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
             }
         });
 
+        btnLocationTrack.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (((BottomSheetListView)parent).canScrollVertically((BottomSheetListView)parent)) {
+                    parent.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+
+                return false;
+            }
+        });
+
+
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            public void onClick(View v) {
+                cycleTextViewExpansion(txtLocationDescription);
+            }
+        };
+
+
+        /*txtLocationName.setOnClickListener(clickListener);
+        txtLocationAddress.setOnClickListener(clickListener);
+        txtLocationDescription.setOnClickListener(clickListener);*/
+
+
+
+        /*LinearLayout layoutLocationInfo = (LinearLayout) convertView.findViewById(R.id.layoutLocationInfo);
+        layoutLocationInfo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                cycleTextViewExpansion(txtLocationDescription);
+            }
+        });*/
+
 
         return convertView;
+    }
+
+
+    private void cycleTextViewExpansion(TextView tv){
+        int collapsedMaxLines = 1;
+        ObjectAnimator animation = ObjectAnimator.ofInt(tv, "maxLines",
+                tv.getMaxLines() == collapsedMaxLines? tv.getLineCount() : collapsedMaxLines);
+        animation.setDuration(200).start();
     }
 
 

@@ -1,5 +1,6 @@
 package com.xplocity.xplocity;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -51,6 +53,7 @@ import app.XplocityApplication;
 import managers.MapManager;
 import models.LocationCategory;
 import models.Route;
+import models.RouteDescription;
 import services.ServiceStateReceiver;
 import services.interfaces.ServiceStateReceiverInterface;
 import utils.Factory.LogFactory;

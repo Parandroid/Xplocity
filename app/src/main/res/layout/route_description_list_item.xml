@@ -9,9 +9,9 @@
     android:weightSum="100">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="35">
+        android:layout_weight="25">
 
         <TextView
             android:id="@+id/distance"
@@ -37,9 +37,9 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="25">
+        android:layout_weight="45">
 
         <TextView
             android:id="@+id/duration"
@@ -70,9 +70,9 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="40">
+        android:layout_weight="20">
 
         <TextView
             android:id="@+id/locations_explored"
@@ -109,5 +109,11 @@
             app:layout_constraintRight_toRightOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="10"
+        android:text="d"/>
 
 </LinearLayout>
