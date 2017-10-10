@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class Formatter {
     public static String formatDistance(int distance) {
-        double distanceKm = distance/1000;
+        double distanceKm = distance/1000f;
 
         if (distanceKm < 100) {
             return String.format("%.2f", distanceKm) + " km";

@@ -86,37 +86,15 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
             }
         });
 
-        btnLocationTrack.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (((BottomSheetListView)parent).canScrollVertically((BottomSheetListView)parent)) {
-                    parent.getParent().requestDisallowInterceptTouchEvent(true);
-                }
 
-                return false;
-            }
-        });
-
-
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            public void onClick(View v) {
-                cycleTextViewExpansion(txtLocationDescription);
-            }
-        };
-
-
-        /*txtLocationName.setOnClickListener(clickListener);
-        txtLocationAddress.setOnClickListener(clickListener);
-        txtLocationDescription.setOnClickListener(clickListener);*/
-
-
-
-        /*LinearLayout layoutLocationInfo = (LinearLayout) convertView.findViewById(R.id.layoutLocationInfo);
+        LinearLayout layoutLocationInfo = (LinearLayout) convertView.findViewById(R.id.layoutLocationInfo);
         layoutLocationInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                cycleTextViewExpansion(txtLocationName);
+                cycleTextViewExpansion(txtLocationAddress);
                 cycleTextViewExpansion(txtLocationDescription);
             }
-        });*/
+        });
 
 
         return convertView;
@@ -127,7 +105,7 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
         int collapsedMaxLines = 1;
         ObjectAnimator animation = ObjectAnimator.ofInt(tv, "maxLines",
                 tv.getMaxLines() == collapsedMaxLines? tv.getLineCount() : collapsedMaxLines);
-        animation.setDuration(200).start();
+        animation.setDuration(tv.getLineCount()*100).start();
     }
 
 

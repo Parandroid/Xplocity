@@ -19,17 +19,16 @@ public class BottomSheetListView extends ListView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        /*View view = (View) getChildAt(getChildCount() - 1);
+        if (!canScrollVertically(this)) {
+            getParent().requestDisallowInterceptTouchEvent(false);
+        }
+        else {
+            getParent().requestDisallowInterceptTouchEvent(true);
 
-        int diffBottom = (view.getBottom() - (getHeight() + getScrollY()));
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-            if (diffBottom == 0) {
-                return false;
-            }
-        }*/
+        }
 
-        //onTouchEvent(motionEvent);
         return super.onInterceptTouchEvent(motionEvent);
+
     }
 
     @Override
