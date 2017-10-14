@@ -23,6 +23,11 @@ public class ResourceGetter {
         return resources.getInteger(resources.getIdentifier(name, "integer", getPackageName()));
     }
 
+    public static Resources getResources() {
+        Resources resources = XplocityApplication.getAppContext().getResources();
+        return resources;
+    }
+
 
     private static String getPackageName() {
         if( mPackageName == null ) {

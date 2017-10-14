@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import adapters.RouteDescriptionsListAdapter;
 import api_classes.RoutesDescriptionsDownloader;
@@ -50,6 +51,7 @@ public class RoutesListActivity extends AppCompatActivity implements RoutesDescr
 
     @Override
     public void onRouteDescriptionsDownloaded(ArrayList<RouteDescription> routeDescriptions) {
+        Collections.sort(routeDescriptions);
         mAdapter = new RouteDescriptionsListAdapter(this, routeDescriptions);
         ListView listView = (ListView)findViewById(R.id.chain_list);
         listView.setAdapter(mAdapter);

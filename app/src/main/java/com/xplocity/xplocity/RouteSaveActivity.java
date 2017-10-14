@@ -1,6 +1,5 @@
 package com.xplocity.xplocity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -10,12 +9,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import org.osmdroid.views.MapView;
 
-import adapters.LocationToMapAdapter;
-import api_classes.RouteDownloader;
 import api_classes.RouteUploader;
 import api_classes.interfaces.RouteUploaderInterface;
 import managers.MapManager;
@@ -25,8 +20,7 @@ import utils.UI.WaitWheel;
 
 public class RouteSaveActivity
         extends AppCompatActivity
-        implements OnMapReadyCallback,
-        RouteUploaderInterface {
+        implements RouteUploaderInterface {
 
     private MapManager mMapManager;
     private WaitWheel mWaitWheel;
@@ -41,24 +35,15 @@ public class RouteSaveActivity
         mRoute = getIntent().getParcelableExtra("route");
 
         mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
-        initMap();
+        initMapManager();
     }
 
-    private void initMap() {
-        //Create the google map
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        googleMap.setInfoWindowAdapter(new LocationToMapAdapter(this.getBaseContext()));
-        mMapManager = new MapManager(googleMap, this);
-
+    public void initMapManager() {
+        MapView map = (MapView) findViewById(R.id.map);
+        mMapManager = new MapManager(map, this);
         mMapManager.setRoute(mRoute);
+        mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size()-1));
     }
 
 

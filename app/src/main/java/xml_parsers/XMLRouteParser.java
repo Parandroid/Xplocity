@@ -5,6 +5,7 @@ import android.util.Xml;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -105,7 +106,7 @@ public class XMLRouteParser extends XMLAbstractParser {
     }
 
 
-    private LatLng readPosition(XmlPullParser parser) throws XmlPullParserException, IOException {
+    private GeoPoint readPosition(XmlPullParser parser) throws XmlPullParserException, IOException {
         double lat = 0d;
         double lon = 0d;
         parser.require(XmlPullParser.START_TAG, ns, "Position");
@@ -124,7 +125,7 @@ public class XMLRouteParser extends XMLAbstractParser {
 
 
         }
-        LatLng pos = new LatLng(lat, lon);
+        GeoPoint pos = new GeoPoint(lat, lon);
         return pos;
     }
 

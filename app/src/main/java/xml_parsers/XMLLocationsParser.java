@@ -5,6 +5,7 @@ import android.util.Xml;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -82,7 +83,7 @@ public class XMLLocationsParser extends XMLAbstractParser {
                 skip(parser);
             }
         }
-        LatLng pos = new LatLng(lat, lon);
+        GeoPoint pos = new GeoPoint(lat, lon);
         loc.position = pos;
 
 

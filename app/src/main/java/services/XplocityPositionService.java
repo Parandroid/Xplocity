@@ -16,10 +16,11 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.xplocity.xplocity.R;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,7 +57,7 @@ public class XplocityPositionService
         @Override
         public void onLocationChanged(Location location) {
             if (mPositionManager.trackingActive) {
-                mPositionManager.addPosToPath(new LatLng(location.getLatitude(), location.getLongitude()));
+                mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
                 broadcastPositionChanged();
 
                 writeStateToStorage();
@@ -271,11 +272,11 @@ public class XplocityPositionService
         return mPositionManager.route;
     }
 
-    public void setLastPosition(LatLng pos) {
+    public void setLastPosition(GeoPoint pos) {
         mPositionManager.lastPosition = pos;
     }
 
-    public LatLng getLastposition() {
+    public GeoPoint getLastposition() {
         return mPositionManager.lastPosition;
     }
 

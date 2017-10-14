@@ -7,6 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.osmdroid.util.GeoPoint;
+
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
@@ -22,34 +24,34 @@ public class Route implements Parcelable {
     public float distance = 0f; //distance in meter
     public int duration = 0; //duration in milliseconds
 
-    public ArrayList<LatLng> path;
+    public ArrayList<GeoPoint> path;
     public ArrayList<Location> locations;
 
 
     public Route() {
 
         locations = new ArrayList<Location>();
-        path = new ArrayList<LatLng>();
+        path = new ArrayList<GeoPoint>();
     }
 
     // deep copy path from source ArrayList
-    public void setPath(ArrayList<LatLng> src) {
+    public void setPath(ArrayList<GeoPoint> src) {
         path.clear();
-        for (LatLng pos : src) {
+        for (GeoPoint pos : src) {
             path.add(pos);
         }
 
     }
 
-    public static ArrayList<LatLng> string_to_route(String str_route) {
-        ArrayList<LatLng> points = new ArrayList<LatLng>();
+    public static ArrayList<GeoPoint> string_to_route(String str_route) {
+        ArrayList<GeoPoint> points = new ArrayList<GeoPoint>();
 
         for (String str_pos : str_route.split(";")) {
             //Achtung! API возвращает координаты в инвертированном порядке. (Долгота-ширина)
             Double latitude = Double.parseDouble(str_pos.substring(0, str_pos.indexOf(" ")));
             Double longitude = Double.parseDouble(str_pos.substring(str_pos.indexOf(" ")+1, str_pos.length()));
 
-            points.add(new LatLng(latitude, longitude));
+            points.add(new GeoPoint(latitude, longitude));
         }
 
         return points;

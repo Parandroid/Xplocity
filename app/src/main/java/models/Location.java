@@ -2,6 +2,8 @@ package models;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.osmdroid.util.GeoPoint;
+
 /**
  * Created by dmitry on 20.08.17.
  */
@@ -14,7 +16,7 @@ public class Location implements Comparable<Location> {
     public String description;
     public String address;
 
-    public LatLng position;
+    public GeoPoint position;
     public float distance; //distance to location in meters
 
     public Location() {

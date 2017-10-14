@@ -4,9 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.style.TtsSpan;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import models.Route;
 public class PositionManager implements Parcelable {
 
     public Route route;
-    public LatLng lastPosition;
+    public GeoPoint lastPosition;
     public boolean trackingActive;
 
     private Date mLastTime;
@@ -45,7 +46,7 @@ public class PositionManager implements Parcelable {
     }
 
 
-    public void addPosToPath(LatLng pos) {
+    public void addPosToPath(GeoPoint pos) {
         if (pos != null) {
             route.distance = route.distance + calculateDistance(pos, lastPosition);
             updateDuration();
@@ -59,7 +60,7 @@ public class PositionManager implements Parcelable {
     }
 
 
-    private void check_location_reached(LatLng position) {
+    private void check_location_reached(GeoPoint position) {
         for (Location loc : route.locations) {
             loc.distance = calculateDistanceToLocation(position, loc);
 
@@ -70,10 +71,8 @@ public class PositionManager implements Parcelable {
         }
     }
 
-    private float calculateDistanceToLocation(LatLng position, Location location) {
-        float[] results = new float[2];
-        android.location.Location.distanceBetween(location.position.latitude, location.position.longitude, position.latitude, position.longitude, results);
-        return results[0];
+    private float calculateDistanceToLocation(GeoPoint position, Location location) {
+        return calculateDistance(position, location.position);
     }
 
     private void sortLocationsByDistance() {
@@ -104,9 +103,9 @@ public class PositionManager implements Parcelable {
         }
     }
 
-    public float calculateDistance(LatLng pos1, LatLng pos2) {
+    public float calculateDistance(GeoPoint pos1, GeoPoint pos2) {
         float[] results = new float[2];
-        android.location.Location.distanceBetween(pos1.latitude, pos1.longitude, pos2.latitude, pos2.longitude, results);
+        android.location.Location.distanceBetween(pos1.getLatitude(), pos1.getLongitude(), pos2.getLatitude(), pos2.getLongitude(), results);
 
         return results[0];
 

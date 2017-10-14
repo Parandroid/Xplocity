@@ -26,10 +26,14 @@
 
     <!-- Error messages -->
     <string name='error_location_perm_request_failed'>Failed to acquire location permissions</string>
+    <string name='error_write_external_storage_perm_request_failed'>Failed to acquire write to external storage permissions</string>
 
     <!-- Info messages -->
-    <string name='info_location_perm_request_head'>Location permissions request</string>
+    <string name='info_location_perm_request_head'>Location permission request</string>
     <string name='info_location_perm_request_text'>Xplocity needs location tracking permissions to track your route</string>
+    <string name='info_write_external_storage_perm_request_head'>External storage permission request</string>
+    <string name='info_write_external_storage_perm_request_text'>Xplocity needs writing to external storage permission to cache map</string>
+
 
     <!-- Log level -->
     <string name='log_level'>verbose</string>

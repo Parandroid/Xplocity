@@ -1,11 +1,12 @@
 package adapters.interfaces;
 
-import com.google.android.gms.maps.model.LatLng;
+
+import org.osmdroid.util.GeoPoint;
 
 /**
  * Created by dmitry on 08.10.17.
  */
 
 public interface RouteLocationsListAdapterInterface {
-    void moveCameraPositionBelowLocation(LatLng position);
+    void moveCameraPositionBelowLocation(GeoPoint position);
 }

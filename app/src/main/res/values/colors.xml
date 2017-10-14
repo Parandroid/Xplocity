@@ -5,4 +5,6 @@
     <color name="colorAccent">#ff4081</color>
     <color name="colorSuccess">#99cc00</color>
     <color name="darkerGray">#aaaaaa</color>
+    <color name="locationUnexplored">#aa0000</color>
+    <color name="locationExplored">#00aa00</color>
 </resources>

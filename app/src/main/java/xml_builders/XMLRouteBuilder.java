@@ -4,6 +4,7 @@ import android.util.Xml;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.StringWriter;
@@ -66,14 +67,14 @@ public class XMLRouteBuilder {
     }
 
 
-    private String pathToString(ArrayList<LatLng> path) {
+    private String pathToString(ArrayList<GeoPoint> path) {
         String result = "";
 
-        for (LatLng pos : path) {
+        for (GeoPoint pos : path) {
             if (result.length() > 0) {
                 result = result + ";";
             }
-            result = result + Double.toString(pos.latitude) + " " + Double.toString(pos.longitude);
+            result = result + Double.toString(pos.getLatitude()) + " " + Double.toString(pos.getLongitude());
         }
 
         return result;

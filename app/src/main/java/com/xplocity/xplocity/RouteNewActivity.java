@@ -1,6 +1,6 @@
 package com.xplocity.xplocity;
 
-import android.animation.ObjectAnimator;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -34,14 +33,11 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.vision.text.Line;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import adapters.RouteLocationsListAdapter;
 import adapters.interfaces.RouteLocationsListAdapterInterface;
@@ -53,7 +49,6 @@ import app.XplocityApplication;
 import managers.MapManager;
 import models.LocationCategory;
 import models.Route;
-import models.RouteDescription;
 import services.ServiceStateReceiver;
 import services.interfaces.ServiceStateReceiverInterface;
 import utils.Factory.LogFactory;
@@ -67,7 +62,6 @@ public class RouteNewActivity
         extends ServiceBindingActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
-        OnMapReadyCallback,
         ServiceStateReceiverInterface,
         RouteLocationsListAdapterInterface {
 
@@ -76,8 +70,10 @@ public class RouteNewActivity
     private static int TIME_SLIDER_DEFAULT_VALUE = 240; //Time slider default value(3.5 hours)
 
     // Permissions
-    private static final int REQUEST_PERMISSIONS_CODE = 100;
+    private static final int REQUEST_ACCESS_FINE_LOCATION_CODE = 100;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 101;
     boolean mLocationPermissionsGranted = false;
+    boolean mWriteExternalStoragePermissionsGranted = false;
 
     //Logger
     Logger mLogger;
@@ -212,12 +208,18 @@ public class RouteNewActivity
 
         fillLocationsList(mService.getRoute().locations);
 
-        initMap();
+        initMapManager();
     }
 
 
     // Permissions
     private void requestPermissions() {
+        requestFineLocationPermission();
+        requestWriteExternalStoragePermission();
+    }
+
+
+    private void requestFineLocationPermission() {
         int requestResult = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (requestResult != PackageManager.PERMISSION_GRANTED) {
@@ -231,7 +233,7 @@ public class RouteNewActivity
                                 mLogger.logInfo("Requesting location permissions");
                                 ActivityCompat.requestPermissions(getParent(),
                                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        REQUEST_PERMISSIONS_CODE);
+                                        REQUEST_ACCESS_FINE_LOCATION_CODE);
                             }
                         })
                         .create()
@@ -240,10 +242,42 @@ public class RouteNewActivity
                 mLogger.logInfo("Requesting location permissions");
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_PERMISSIONS_CODE);
+                        REQUEST_ACCESS_FINE_LOCATION_CODE);
             }
         } else {
             mLocationPermissionsGranted = true;
+            initLocationClient();
+        }
+    }
+
+
+    private void requestWriteExternalStoragePermission() {
+        int requestResult = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (requestResult != PackageManager.PERMISSION_GRANTED) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+                new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.info_write_external_storage_perm_request_head))
+                        .setMessage(getString(R.string.info_write_external_storage_perm_request_text))
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mLogger.logInfo("Requesting write to external storage permissions");
+                                ActivityCompat.requestPermissions(getParent(),
+                                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                mLogger.logInfo("Requesting write to external permissions");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
+            }
+        } else {
+            mWriteExternalStoragePermissionsGranted = true;
             initLocationClient();
         }
     }
@@ -253,7 +287,7 @@ public class RouteNewActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
-            case REQUEST_PERMISSIONS_CODE: {
+            case REQUEST_ACCESS_FINE_LOCATION_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionsGranted = true;
                     initLocationClient();
@@ -261,6 +295,15 @@ public class RouteNewActivity
                 } else {
                     mLogger.logError(getString(R.string.error_location_perm_request_failed));
                     Toast.makeText(getApplicationContext(), getString(R.string.error_location_perm_request_failed), Toast.LENGTH_LONG).show();
+                }
+            }
+            case REQUEST_WRITE_EXTERNAL_STORAGE_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mWriteExternalStoragePermissionsGranted = true;
+                    mLogger.logInfo("Write to external storage permission granted");
+                } else {
+                    mLogger.logError(getString(R.string.error_write_external_storage_perm_request_failed));
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_write_external_storage_perm_request_failed), Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -287,7 +330,7 @@ public class RouteNewActivity
                         if (!locationResult.getLocations().isEmpty()) {
                             Location location = locationResult.getLocations().get(0);
                             requestNewRoute(location.getLatitude(), location.getLongitude());
-                            mService.setLastPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+                            mService.setLastPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
                             mFusedLocationClient.removeLocationUpdates(this);
                         }
                     }
@@ -340,27 +383,21 @@ public class RouteNewActivity
         mService.setRoute(route);
         fillLocationsList(mService.getRoute().locations);
 
-        initMap();
+        initMapManager();
 
         ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
         animator.showNext();
     }
 
-    private void initMap() {
-        //Create the google map
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(this);
-    }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMapManager = new MapManager(googleMap, this);
+    public void initMapManager() {
+        MapView map = (MapView) findViewById(R.id.map);
+        mMapManager = new MapManager(map, this);
 
         if (mLocationPermissionsGranted) {
             try {
-                googleMap.setMyLocationEnabled(true);
+                mMapManager.initMyLocation();
 
                 mMapManager.setRoute(mService.getRoute());
                 updateRouteUI();
@@ -449,7 +486,7 @@ public class RouteNewActivity
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
 
-            mMapManager.setTrackingCamera(mService.getLastposition());
+            mMapManager.animateTrackingCamera(mService.getLastposition());
         }
     }
 
@@ -628,8 +665,9 @@ public class RouteNewActivity
 
 
     @Override
-    public void moveCameraPositionBelowLocation(LatLng position) {
-        mMapManager.setTrackingCamera(new LatLng(position.latitude -0.002, position.longitude));
+    public void moveCameraPositionBelowLocation(GeoPoint position) {
+        //mMapManager.animateTrackingCamera(new GeoPoint(position.latitude -0.002, position.longitude));
+        mMapManager.animateTrackingCamera(position);
     }
 
 
