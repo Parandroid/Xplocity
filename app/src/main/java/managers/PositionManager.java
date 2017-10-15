@@ -103,7 +103,7 @@ public class PositionManager implements Parcelable {
         }
     }
 
-    public float calculateDistance(GeoPoint pos1, GeoPoint pos2) {
+    public static float calculateDistance(GeoPoint pos1, GeoPoint pos2) {
         float[] results = new float[2];
         android.location.Location.distanceBetween(pos1.getLatitude(), pos1.getLongitude(), pos2.getLatitude(), pos2.getLongitude(), results);
 

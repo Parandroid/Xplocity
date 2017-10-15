@@ -666,8 +666,8 @@ public class RouteNewActivity
 
     @Override
     public void moveCameraPositionBelowLocation(GeoPoint position) {
-        //mMapManager.animateTrackingCamera(new GeoPoint(position.latitude -0.002, position.longitude));
-        mMapManager.animateTrackingCamera(position);
+        mMapManager.animateTrackingCamera(new GeoPoint(position.getLatitude() -0.001, position.getLongitude()));
+        //mMapManager.animateTrackingCamera(position);
     }
 
 

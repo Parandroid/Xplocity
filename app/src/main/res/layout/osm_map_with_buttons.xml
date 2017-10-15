@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_height="match_parent"
+<RelativeLayout
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <org.osmdroid.views.MapView android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageButton
+    <!--<android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_goto_current_location"
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -14,5 +16,33 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/ic_location_searching_black_24dp" />
+        app:"@drawable/ic_location_searching_black_24dp" />-->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_goto_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        app:backgroundTint="@color/mapBtnBackground"
+        android:tint="@color/Gray6"
+        app:elevation="0dp"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_location_searching_black_24dp" />
+
+    <!--<ImageView
+        android:id="@+id/mapCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:srcCompat="@drawable/ic_close_black_24dp" />-->
+
+    <ImageView
+        android:id="@+id/location_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/location_arrow"
+        android:visibility="invisible"/>
 </RelativeLayout>

@@ -14,7 +14,12 @@
         android:layout_weight="100">
 
 
-        <include layout="@layout/osm_map_with_buttons"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp">
+            <include layout="@layout/osm_map_with_buttons"/>
+        </LinearLayout>
 
 
         <View
