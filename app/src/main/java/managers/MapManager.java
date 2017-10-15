@@ -2,13 +2,10 @@ package managers;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,7 +27,6 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-import org.osmdroid.views.util.constants.MathConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,12 +93,14 @@ public class MapManager {
 
         MapEventsReceiver mReceive = new MapEventsReceiver() {
 
-            @Override public boolean singleTapConfirmedHelper(GeoPoint p) {
+            @Override
+            public boolean singleTapConfirmedHelper(GeoPoint p) {
                 InfoWindow.closeAllInfoWindowsOn(mMap);
                 return true;
             }
 
-            @Override public boolean longPressHelper(GeoPoint p) {
+            @Override
+            public boolean longPressHelper(GeoPoint p) {
                 //DO NOTHING FOR NOW:
                 return false;
             }
@@ -112,6 +110,7 @@ public class MapManager {
         mMap.getOverlays().add(0, mapEventsOverlay);
 
 
+        calculateNormScreenSize();
         mMap.setMapListener(new MapAdapter() {
             @Override
             public boolean onScroll(ScrollEvent event) {
@@ -120,6 +119,8 @@ public class MapManager {
                 return super.onScroll(event);
             }
         });
+
+        hideArrowToLocation();
     }
 
 
@@ -187,8 +188,7 @@ public class MapManager {
         if (!path.isEmpty()) {
             if (mPolyline != null) {
                 mPolyline.setPoints(path);
-            }
-            else {
+            } else {
                 mPolyline = new Polyline();
                 mPolyline.setWidth(ResourceGetter.getInteger("map_polyline_width"));
                 mPolyline.setColor(Color.RED);
@@ -227,36 +227,44 @@ public class MapManager {
     }
 
 
-
-
     /*******   Location arrow   **********/
+
+    private int mScreenHeight;
+    private int mScreenWidth;
+    private double mNormScreenHeight;
+    private double mNormScreenWidth;
+    private Point mMapCenterPoint;
+
+    private void calculateNormScreenSize() {
+        mScreenHeight = mMap.getMeasuredHeight();
+        mScreenWidth = mMap.getMeasuredWidth();
+        double screenDiag = Math.sqrt(mScreenHeight * mScreenHeight + mScreenWidth * mScreenWidth);
+        mNormScreenHeight = mScreenHeight / screenDiag;
+        mNormScreenWidth = mScreenWidth / screenDiag;
+
+        mMapCenterPoint = new Point(mScreenWidth / 2, mScreenHeight / 2);
+
+    }
+
 
     public void updateLocationArrowPosition() {
         GeoPoint mapCenter = (GeoPoint) mMap.getMapCenter();
-        Location closestLoc = findClosestLocation(mapCenter);
+        Location closestLoc = findTargetLocation(mapCenter);
 
-        if (!isPointVisible(closestLoc.position)) {
+        if (closestLoc != null) {
             mArrow.setVisibility(View.VISIBLE);
 
+            Point locationPosition = new Point();
+            mMap.getProjection().toPixels(closestLoc.position, locationPosition);
 
-            double deltaLatitude = closestLoc.position.getLatitude() - mapCenter.getLatitude();
-            double deltaLongitude = closestLoc.position.getLongitude() - mapCenter.getLongitude();
-            double distanceHorizont = PositionManager.calculateDistance(mapCenter, new GeoPoint(mapCenter.getLatitude(), closestLoc.position.getLongitude())) * Math.signum(deltaLongitude);
-            double distanceVertical = PositionManager.calculateDistance(mapCenter, new GeoPoint(closestLoc.position.getLatitude(), mapCenter.getLongitude())) * Math.signum(deltaLatitude);
-
+            int distanceHorizont = locationPosition.x - mMapCenterPoint.x;
+            int distanceVertical = -(locationPosition.y - mMapCenterPoint.y);
 
             double distance = Math.sqrt(distanceHorizont * distanceHorizont + distanceVertical * distanceVertical);
-            double normDistanceHorizont = distanceHorizont / distance;
+            double normDistanceHorizon = distanceHorizont / distance;
             double normDistanceVertical = distanceVertical / distance;
 
-            int screenHeight = mMap.getHeight();
-            int screenWidth = mMap.getWidth();
-            double screenDiag = Math.sqrt(screenHeight * screenHeight + screenWidth * screenWidth);
-            double normScreenHeight = screenHeight / screenDiag;
-            double normScreenWidth = screenWidth / screenDiag;
-
             RelativeLayout.LayoutParams relativeParams = (RelativeLayout.LayoutParams) mArrow.getLayoutParams();
-
 
             relativeParams.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             relativeParams.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -265,42 +273,50 @@ public class MapManager {
             relativeParams.setMargins(0, 0, 0, 0);
 
 
-            if ((normDistanceVertical >= -1 && normDistanceVertical <= -normScreenHeight) && (normDistanceHorizont > -normScreenWidth && normDistanceHorizont < normScreenWidth)) {
+            if ((normDistanceVertical >= -1 && normDistanceVertical <= -mNormScreenHeight) && (normDistanceHorizon > -mNormScreenWidth && normDistanceHorizon < mNormScreenWidth)) {
                 relativeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                relativeParams.leftMargin = (int) (screenWidth / 2 * (1 + normDistanceHorizont / normScreenWidth));
-            } else if ((normDistanceVertical <= 1 && normDistanceVertical > normScreenHeight) && (normDistanceHorizont > -normScreenWidth && normDistanceHorizont < normScreenWidth)) {
+                relativeParams.leftMargin = (int) (mScreenWidth / 2 * (1 + normDistanceHorizon / mNormScreenWidth));
+            } else if ((normDistanceVertical <= 1 && normDistanceVertical > mNormScreenHeight) && (normDistanceHorizon > -mNormScreenWidth && normDistanceHorizon < mNormScreenWidth)) {
                 relativeParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                relativeParams.leftMargin = (int) (screenWidth / 2 * (1 + normDistanceHorizont / normScreenWidth));
+                relativeParams.leftMargin = (int) (mScreenWidth / 2 * (1 + normDistanceHorizon / mNormScreenWidth));
 
-            } else if (normDistanceHorizont <= 0 && (normDistanceVertical > -normScreenHeight && normDistanceVertical < normScreenHeight)) {
+            } else if (normDistanceHorizon <= 0 && (normDistanceVertical > -mNormScreenHeight && normDistanceVertical < mNormScreenHeight)) {
                 relativeParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                relativeParams.topMargin = screenHeight - (int) (screenHeight / 2 * (1 + normDistanceVertical / normScreenHeight));
-            } else if (normDistanceHorizont > 0 && (normDistanceVertical > -normScreenHeight && normDistanceVertical < normScreenHeight)) {
+                relativeParams.topMargin = mScreenHeight - (int) (mScreenHeight / 2 * (1 + normDistanceVertical / mNormScreenHeight));
+            } else if (normDistanceHorizon > 0 && (normDistanceVertical > -mNormScreenHeight && normDistanceVertical < mNormScreenHeight)) {
                 relativeParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                relativeParams.topMargin = screenHeight - (int) (screenHeight / 2 * (1 + normDistanceVertical / normScreenHeight));
+                relativeParams.topMargin = mScreenHeight - (int) (mScreenHeight / 2 * (1 + normDistanceVertical / mNormScreenHeight));
 
             }
 
-            rotateArrowToLocation(normDistanceHorizont, normDistanceVertical);
+            rotateArrowToLocation(normDistanceHorizon, normDistanceVertical);
             mArrow.requestLayout();
-        }
-        else
-        {
-            mArrow.setVisibility(View.INVISIBLE);
+
+        } else {
+            hideArrowToLocation();
         }
     }
 
 
-    private Location findClosestLocation(GeoPoint position) {
+    // Find closest unexplored location if no such locations are shown on current map view.
+    // if any location is shown, return null
+    private Location findTargetLocation(GeoPoint position) {
 
         Location closestLocation = null;
         float smallestDistance = -1;
 
-        for(Location location:mLocationMarkers.keySet()){
-            float distance  = PositionManager.calculateDistance(position, location.position);
-            if(smallestDistance == -1 || distance < smallestDistance) {
-                closestLocation = location;
-                smallestDistance = distance;
+        for (Location location : mLocationMarkers.keySet()) {
+            if (!location.explored) {
+                if (!isPointVisible(location.position)) {
+
+                    float distance = PositionManager.calculateDistance(position, location.position);
+                    if (smallestDistance == -1 || distance < smallestDistance) {
+                        closestLocation = location;
+                        smallestDistance = distance;
+                    }
+                } else {
+                    return null;
+                }
             }
         }
 
@@ -308,8 +324,7 @@ public class MapManager {
     }
 
 
-    private boolean isPointVisible(GeoPoint point)
-    {
+    private boolean isPointVisible(GeoPoint point) {
         Rect currentMapBoundsRect = new Rect();
         Point locationPosition = new Point();
         //GeoPoint deviceLocation = new GeoPoint((int) (bestCurrentLocation.getLatitude() * 1000000.0), (int) (bestCurrentLocation.getLongitude() * 1000000.0));
@@ -323,9 +338,12 @@ public class MapManager {
     }
 
     public void rotateArrowToLocation(double x, double y) {
-        double angle = -Math.toDegrees(Math.atan2(y,x)) + 90;
+        double angle = -Math.toDegrees(Math.atan2(y, x)) + 90;
         mArrow.setRotation((float) angle);
+    }
 
+    private void hideArrowToLocation() {
+        mArrow.setVisibility(View.INVISIBLE);
     }
 
 }
