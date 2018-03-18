@@ -43,53 +43,18 @@ import models.Route;
  * Created by dmitry on 20.08.17.
  */
 
-public class MapManager {
-    private MapView mMap;
-    private MyLocationNewOverlay mLocationOverlay;
+public class routeMapManager extends mapManager {
     private Polyline mPolyline;
     private ImageView mArrow;
 
-    private Logger mLogger;
-    private Context mContext;
-
-    public static final int DEFAULT_TRACKING_ZOOM = 16;
-    public static final int DEFAULT_OVERVIEW_ZOOM = 11;
 
     private Map<Location, Marker> mLocationMarkers;
 
-    public MapManager(MapView p_map, Context context) {
-        mMap = p_map;
+    public routeMapManager(MapView p_map, View context) {
+        super(p_map, context);
+
         mLocationMarkers = new HashMap<>();
-        mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
-        mContext = context;
-        mArrow = ((Activity) mContext).findViewById(R.id.location_arrow);
-
-        initMap();
-
-        //mMap.setInfoWindowAdapter(new LocationToMapAdapter(mContext));
-    }
-
-
-    private void initMap() {
-        //Create themap
-        //important! set your user agent to prevent getting banned from the osm servers
-        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-        mMap.setMultiTouchControls(true);
-        mMap.setTileSource(TileSourceFactory.MAPNIK);
-        mMap.setTilesScaledToDpi(true);
-
-        ImageButton btn = ((Activity) mContext).findViewById(R.id.btn_goto_current_location);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mLocationOverlay != null) {
-                    GeoPoint currentPos = mLocationOverlay.getMyLocation();
-                    if (currentPos != null)
-                        animateTrackingCamera(mLocationOverlay.getMyLocation());
-                }
-            }
-
-        });
+        mArrow = mContext.findViewById(R.id.location_arrow);
 
         MapEventsReceiver mReceive = new MapEventsReceiver() {
 
@@ -109,6 +74,7 @@ public class MapManager {
         MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(mReceive);
         mMap.getOverlays().add(0, mapEventsOverlay);
 
+        //mMap.setInfoWindowAdapter(new LocationToMapAdapter(mContext));
 
         calculateNormScreenSize();
         mMap.setMapListener(new MapAdapter() {
@@ -124,13 +90,6 @@ public class MapManager {
     }
 
 
-    public void initMyLocation() {
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(mContext), mMap);
-        mLocationOverlay.enableMyLocation();
-        mMap.getOverlays().add(mLocationOverlay);
-    }
-
-
     public void setLocationMarkerExplored(Location loc) {
         try {
             setMarkerIconExplored(mLocationMarkers.get(loc));
@@ -140,7 +99,7 @@ public class MapManager {
     }
 
     private void setMarkerIconExplored(Marker marker) {
-        marker.setIcon(ContextCompat.getDrawable(mContext, R.drawable.location_explored_marker));
+        marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_explored_marker));
     }
 
     public void setRoute(Route route) {
@@ -175,7 +134,7 @@ public class MapManager {
         if (loc.explored) {
             setMarkerIconExplored(marker);
         } else {
-            marker.setIcon(ContextCompat.getDrawable(mContext, R.drawable.location_unexplored_marker));
+            marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_unexplored_marker));
         }
 
         marker.setRelatedObject(loc);
@@ -196,34 +155,6 @@ public class MapManager {
                 mMap.getOverlayManager().add(mPolyline);
             }
         }
-    }
-
-
-    public void animateTrackingCamera(GeoPoint position) {
-        animateCamera(position, DEFAULT_TRACKING_ZOOM);
-    }
-
-    public void animateOverviewCamera(GeoPoint position) {
-        animateCamera(position, DEFAULT_OVERVIEW_ZOOM);
-    }
-
-    public void setTrackingCamera(GeoPoint position) {
-        setCamera(position, DEFAULT_TRACKING_ZOOM);
-    }
-
-    public void setOverviewCamera(GeoPoint position) {
-        setCamera(position, DEFAULT_OVERVIEW_ZOOM);
-    }
-
-
-    private void setCamera(GeoPoint position, int zoom) {
-        mMap.getController().setZoom(zoom);
-        mMap.getController().setCenter(position);
-    }
-
-    private void animateCamera(GeoPoint position, int zoom) {
-        mMap.getController().setZoom(zoom);
-        mMap.getController().animateTo(position);
     }
 
 

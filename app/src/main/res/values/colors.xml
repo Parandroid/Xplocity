@@ -11,4 +11,5 @@
     <color name="locationExploredBorder">#009300</color>
     <color name="locationExploredFill">#5bb95b</color>
     <color name="mapBtnBackground">#80999999</color>
+    <color name="locationArrow">#aab34a4a</color>
 </resources>

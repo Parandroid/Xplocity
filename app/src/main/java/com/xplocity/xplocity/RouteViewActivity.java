@@ -7,12 +7,12 @@ import org.osmdroid.views.MapView;
 
 import api_classes.RouteDownloader;
 import api_classes.interfaces.RouteDownloaderInterface;
-import managers.MapManager;
+import managers.routeMapManager;
 import models.Route;
 
 public class RouteViewActivity extends FragmentActivity implements RouteDownloaderInterface {
 
-    private MapManager mMapManager = null;
+    private routeMapManager mMapManager = null;
     private int mRouteId;
 
     @Override
@@ -30,7 +30,7 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new MapManager(map, this);
+        mMapManager = new routeMapManager(map, findViewById(android.R.id.content));
     }
 
 

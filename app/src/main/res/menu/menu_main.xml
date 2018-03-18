@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/miReportNewLocation"
+        android:title="Report a new location"
+        app:showAsAction="collapseActionView"
+        android:onClick="onReportNewLocation"></item>
+    <item
+        android:id="@+id/miProfile"
+        android:title="Profile"
+        app:showAsAction="collapseActionView|withText"></item>
+    <item
+        android:id="@+id/miSignOut"
+        android:title="Sign out"
+        app:showAsAction="collapseActionView|withText"></item>
+</menu>

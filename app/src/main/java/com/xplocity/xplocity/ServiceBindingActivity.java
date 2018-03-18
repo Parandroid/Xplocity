@@ -15,7 +15,7 @@ import services.XplocityPositionService;
  * Created by skoparov on 8/23/17.
  */
 
-public abstract class ServiceBindingActivity extends AppCompatActivity
+public abstract class ServiceBindingActivity extends XplocityMenuActivity
 {
     private class BindingConnection implements ServiceConnection
     {

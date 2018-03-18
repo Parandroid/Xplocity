@@ -46,7 +46,7 @@ import api_classes.NewRouteDownloader;
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
 import api_classes.interfaces.NewRouteDownloaderInterface;
 import app.XplocityApplication;
-import managers.MapManager;
+import managers.routeMapManager;
 import models.LocationCategory;
 import models.Route;
 import services.ServiceStateReceiver;
@@ -79,7 +79,7 @@ public class RouteNewActivity
     Logger mLogger;
 
     //Managers
-    MapManager mMapManager;
+    routeMapManager mMapManager;
 
     ServiceStateReceiver receiver;
 
@@ -393,7 +393,7 @@ public class RouteNewActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new MapManager(map, this);
+        mMapManager = new routeMapManager(map, findViewById(android.R.id.content));
 
         if (mLocationPermissionsGranted) {
             try {

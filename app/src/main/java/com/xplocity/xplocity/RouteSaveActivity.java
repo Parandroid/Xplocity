@@ -13,7 +13,7 @@ import org.osmdroid.views.MapView;
 
 import api_classes.RouteUploader;
 import api_classes.interfaces.RouteUploaderInterface;
-import managers.MapManager;
+import managers.routeMapManager;
 import models.Route;
 import utils.UI.WaitWheel;
 
@@ -22,7 +22,7 @@ public class RouteSaveActivity
         extends AppCompatActivity
         implements RouteUploaderInterface {
 
-    private MapManager mMapManager;
+    private routeMapManager mMapManager;
     private WaitWheel mWaitWheel;
 
     private Route mRoute;
@@ -41,7 +41,7 @@ public class RouteSaveActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new MapManager(map, this);
+        mMapManager = new routeMapManager(map, findViewById(android.R.id.content));
         mMapManager.setRoute(mRoute);
         mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size()-1));
     }
