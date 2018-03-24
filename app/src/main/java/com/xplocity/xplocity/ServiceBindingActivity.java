@@ -94,4 +94,6 @@ public abstract class ServiceBindingActivity extends XplocityMenuActivity
         startService(intent);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
+
+
 }

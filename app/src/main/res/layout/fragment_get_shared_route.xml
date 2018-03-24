@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="If you received ID of shared route, paste it below." />
+
+    <EditText
+        android:id="@+id/txtShareRouteID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="1" />
+
+    <Button
+        android:id="@+id/btnGetSharedRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Get route"
+        android:textColor="@android:color/white" />
+
+
+</LinearLayout>

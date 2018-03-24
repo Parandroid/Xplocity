@@ -2,6 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/miShareRoute"
+        android:title="Share route"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_share_white_24dp"
+        android:visible="false"></item>
+    <item
+        android:id="@+id/miGetSharedRoute"
+        android:title="Get shared route"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_get_app_white_24dp"
+        android:onClick="onGetSharedRoute"></item>
+    <item
         android:id="@+id/miReportNewLocation"
         android:title="Report a new location"
         app:showAsAction="collapseActionView"

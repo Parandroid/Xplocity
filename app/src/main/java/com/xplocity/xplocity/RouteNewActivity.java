@@ -15,6 +15,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -55,6 +57,7 @@ import utils.Factory.LogFactory;
 import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
+import utils.ResourceGetter;
 import utils.UI.WaitWheel;
 
 
@@ -99,6 +102,10 @@ public class RouteNewActivity
     NewRoutePagerAdapter mPagerAdapter;
     private RouteLocationsListAdapter mLocationAdapter;
     ViewPager mPager;
+
+
+    private boolean mRouteReady = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,9 +213,17 @@ public class RouteNewActivity
         animator.setInAnimation(inAnimation);
         animator.setOutAnimation(outAnimation);
 
-        fillLocationsList(mService.getRoute().locations);
+        onRouteReady();
+    }
 
+
+    // Executed when route downloaded initially or when it was initialized after restoring the app
+    private void onRouteReady() {
+        fillLocationsList(mService.getRoute().locations);
         initMapManager();
+
+        mRouteReady = true;
+        invalidateOptionsMenu(); // to show options that need a route
     }
 
 
@@ -381,9 +396,8 @@ public class RouteNewActivity
     public void onNewRouteDownloaded(Route route) {
         mWaitWheel.hideWaitAnimation();
         mService.setRoute(route);
-        fillLocationsList(mService.getRoute().locations);
 
-        initMapManager();
+        onRouteReady();
 
         ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
         animator.showNext();
@@ -668,6 +682,31 @@ public class RouteNewActivity
     public void moveCameraPositionBelowLocation(GeoPoint position) {
         mMapManager.animateTrackingCamera(new GeoPoint(position.getLatitude() -0.001, position.getLongitude()));
         //mMapManager.animateTrackingCamera(position);
+    }
+
+
+
+
+    /**********   Menu  **************/
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        if (mRouteReady) {
+            menu.findItem(R.id.miShareRoute).setVisible(true);
+            menu.findItem(R.id.miGetSharedRoute).setVisible(false);
+
+            menu.findItem(R.id.miShareRoute).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    RouteShareDialog fragment =  RouteShareDialog.newInstance(mService.getRoute());
+                    fragment.show(fm, "shareRouteFragment");
+
+                    return false;
+                }
+            });
+        }
+        return true;
     }
 
 

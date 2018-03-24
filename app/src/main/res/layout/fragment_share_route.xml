@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Press button to share your route. You will receive unique ID of the route to share with others." />
+
+    <Button
+        android:id="@+id/btnUploadSharedRoute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/cast_intro_overlay_button_background_color"
+        android:text="Share route" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/common_google_signin_btn_text_light_disabled"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/txtShareRouteID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:lines="1"
+            android:text=""
+            android:textIsSelectable="true"
+            android:textAlignment="center"
+            android:textSize="24sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/txtShareRouteID">
+
+            <Button
+                android:id="@+id/btnShareRouteID"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="1dp"
+                android:text="Share"
+                android:textSize="12sp" />
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="1dp"
+                android:text="Cancel"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
