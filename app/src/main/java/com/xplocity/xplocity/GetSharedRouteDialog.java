@@ -13,13 +13,15 @@ import android.widget.Toast;
 
 import api_classes.SharedRouteDownloader;
 import api_classes.SharedRouteUploader;
+import api_classes.interfaces.NewRouteDownloaderInterface;
 import api_classes.interfaces.SharedRouteUploaderInterface;
 import app.XplocityApplication;
 import models.Route;
 
 
 public class GetSharedRouteDialog
-        extends DialogFragment {
+        extends DialogFragment
+        implements NewRouteDownloaderInterface {
 
 
     private TextView mTxtRouteID;
@@ -71,9 +73,15 @@ public class GetSharedRouteDialog
 
 
     public void onGetSharedRouteBtnPressed(View view) {
-        SharedRouteDownloader routeDownloader = new SharedRouteDownloader((RouteNewActivity) this.getDialog().getOwnerActivity());
+        SharedRouteDownloader routeDownloader = new SharedRouteDownloader(this);
         routeDownloader.downloadNewRoute(mTxtRouteID.getText().toString());
 
+    }
+
+    @Override
+    public void onNewRouteDownloaded(Route route) {
+        ((NewRouteDownloaderInterface) this.getDialog().getOwnerActivity()).onNewRouteDownloaded(route);
+        this.dismiss();
     }
 
 

@@ -114,6 +114,7 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:onClick="createRoute"
                 android:text="Get route"
+                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

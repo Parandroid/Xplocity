@@ -48,14 +48,16 @@ public class PositionManager implements Parcelable {
 
     public void addPosToPath(GeoPoint pos) {
         if (pos != null) {
-            route.distance = route.distance + calculateDistance(pos, lastPosition);
-            updateDuration();
+            if (lastPosition != null)
+            {
+                route.distance = route.distance + calculateDistance(pos, lastPosition);
+                updateDuration();
 
-            check_location_reached(pos);
+                check_location_reached(pos);
+                sortLocationsByDistance();
+            }
             route.path.add(pos);
             lastPosition = pos;
-            sortLocationsByDistance();
-
         }
     }
 
@@ -85,6 +87,7 @@ public class PositionManager implements Parcelable {
         route.duration = 0;
         trackingActive = true;
         mLastTime = Calendar.getInstance().getTime();
+        lastPosition = null;
     }
 
     public void stopTracking() {

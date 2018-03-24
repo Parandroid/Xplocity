@@ -37,18 +37,20 @@ public class SharedRouteDownloader extends Loader {
 
     @Override
     protected void onResponse(String xml, int http_code) {
-        mLogger.logError("RESPONSE");
-        InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        XMLLocationsParser newRouteParser = new XMLLocationsParser();
+        //mLogger.logError("RESPONSE");
+        //TODO: handle invalid response
+        if (http_code == HTTP_OK) {
+            InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+            XMLLocationsParser newRouteParser = new XMLLocationsParser();
 
-        Route route = new Route();
+            Route route = new Route();
 
-        try {
-            route.locations = newRouteParser.parse(stream);
-            mCallback.onNewRouteDownloaded(route);
-        }
-        catch (Throwable e) {
-            mLogger.logError("Error parsing new mRoute: ", e);
+            try {
+                route.locations = newRouteParser.parse(stream);
+                mCallback.onNewRouteDownloaded(route);
+            } catch (Throwable e) {
+                mLogger.logError("Error parsing new mRoute: ", e);
+            }
         }
     }
 

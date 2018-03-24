@@ -104,6 +104,7 @@ public class RouteNewActivity
     ViewPager mPager;
 
 
+    private GeoPoint mCurrentPosition;
     private boolean mRouteReady = false;
 
 
@@ -139,6 +140,9 @@ public class RouteNewActivity
         receiver = new ServiceStateReceiver(this);
 
         requestPermissions(); //TODO мб вынести работу с разрешениями в отдельный класс?
+        if (savedInstanceState == null) {
+            getCurrentPosition();
+        }
 
     }
 
@@ -328,8 +332,7 @@ public class RouteNewActivity
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    // Called when "Get locations" button is pressed
-    public void createRoute(View view) {
+    private void getCurrentPosition() {
         if (mLocationPermissionsGranted) {
             try {
                 LocationRequest locationRequest = LocationRequest.create()
@@ -344,9 +347,10 @@ public class RouteNewActivity
                         mWaitWheel.hideWaitAnimation();
                         if (!locationResult.getLocations().isEmpty()) {
                             Location location = locationResult.getLocations().get(0);
-                            requestNewRoute(location.getLatitude(), location.getLongitude());
-                            mService.setLastPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
+                            //mService.setLastPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
                             mFusedLocationClient.removeLocationUpdates(this);
+                            mCurrentPosition = new GeoPoint(location);
+                            ((Button) findViewById(R.id.btn_create_chain)).setEnabled(true);
                         }
                     }
                 };
@@ -360,6 +364,12 @@ public class RouteNewActivity
             mLogger.logVerbose("Failed to create mRoute: permissions not granted");
             Toast.makeText(getApplicationContext(), getString(R.string.info_location_perm_request_text), Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    // Called when "Get locations" button is pressed
+    public void createRoute(View view) {
+        requestNewRoute(mCurrentPosition.getLatitude(), mCurrentPosition.getLongitude());
     }
 
     private void requestNewRoute(final Double lat, final Double lon) {
@@ -500,7 +510,7 @@ public class RouteNewActivity
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
 
-            mMapManager.animateTrackingCamera(mService.getLastposition());
+            mMapManager.animateTrackingCamera(mCurrentPosition);
         }
     }
 
@@ -705,6 +715,10 @@ public class RouteNewActivity
                     return false;
                 }
             });
+        }
+        else
+        {
+            menu.findItem(R.id.miGetSharedRoute).setVisible(true);
         }
         return true;
     }

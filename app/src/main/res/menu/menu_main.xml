@@ -12,7 +12,8 @@
         android:title="Get shared route"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_get_app_white_24dp"
-        android:onClick="onGetSharedRoute"></item>
+        android:onClick="onGetSharedRoute"
+        android:visible="false"></item>
     <item
         android:id="@+id/miReportNewLocation"
         android:title="Report a new location"
