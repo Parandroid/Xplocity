@@ -271,7 +271,7 @@ public class XplocityPositionService
     public Route getRoute() {
         return mPositionManager.route;
     }
-    
+
 
     public GeoPoint getLastposition() {
         return mPositionManager.lastPosition;

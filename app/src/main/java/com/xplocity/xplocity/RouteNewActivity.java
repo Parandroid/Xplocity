@@ -355,8 +355,9 @@ public class RouteNewActivity
                     }
                 };
 
-                mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
                 mWaitWheel.showWaitAnimation();
+                mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
             } catch (SecurityException e) {
                 mLogger.logError("Failed to create mRoute", e);
             }
