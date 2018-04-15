@@ -22,7 +22,7 @@
             android:orientation="vertical"
             android:background="@mipmap/map_foreground"
             android:backgroundTintMode="src_atop"
-            android:backgroundTint="#99ffffff">
+            android:backgroundTint="#ccffffff">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,12 +73,6 @@
                 android:layout_height="4dp" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date"
-                android:textSize="12sp"/>
-
-            <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,7 +84,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="4dp" />
+                android:layout_height="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -163,7 +157,7 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
             android:scaleType="center"
