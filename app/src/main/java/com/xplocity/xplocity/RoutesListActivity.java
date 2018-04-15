@@ -1,6 +1,7 @@
 package com.xplocity.xplocity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,12 +16,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import adapters.RouteDescriptionsListAdapter;
+import api_classes.RouteDescriptionImageDownloader;
 import api_classes.RoutesDescriptionsDownloader;
+import api_classes.interfaces.RouteDescriptionImageDownloaderInterface;
 import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import models.RouteDescription;
 
-public class RoutesListActivity extends XplocityMenuActivity implements RoutesDescriptionsDownloaderInterface {
+public class RoutesListActivity extends XplocityMenuActivity
+        implements
+            RoutesDescriptionsDownloaderInterface,
+            RouteDescriptionImageDownloaderInterface {
+
+
     private RouteDescriptionsListAdapter mAdapter;
+    private ArrayList<RouteDescription> mRouteDescriptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -52,10 +61,31 @@ public class RoutesListActivity extends XplocityMenuActivity implements RoutesDe
 
     @Override
     public void onRouteDescriptionsDownloaded(ArrayList<RouteDescription> routeDescriptions) {
-        Collections.sort(routeDescriptions);
-        mAdapter = new RouteDescriptionsListAdapter(this, routeDescriptions);
+        mRouteDescriptions = routeDescriptions;
+        Collections.sort(mRouteDescriptions);
+        mAdapter = new RouteDescriptionsListAdapter(this, mRouteDescriptions);
         ListView listView = (ListView)findViewById(R.id.chain_list);
         listView.setAdapter(mAdapter);
+
+
+        //TODO: load images only for visible routes and couple routes below
+        for (RouteDescription r : routeDescriptions) {
+            RouteDescriptionImageDownloader loader = new RouteDescriptionImageDownloader(this);
+            loader.downloadRoute(r.id);
+        }
+
+    }
+
+
+    @Override
+    public void onRouteDescriptionImageDownloaded(int routeId, Bitmap image) {
+        for(RouteDescription r : mRouteDescriptions){
+            if(r.id == routeId) {
+                r.image = image;
+                //mAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
     }
 
     AdapterView.OnItemClickListener listListener = new AdapterView.OnItemClickListener() {

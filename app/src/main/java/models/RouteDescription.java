@@ -1,5 +1,7 @@
 package models;
 
+import android.graphics.Bitmap;
+
 import java.util.Date;
 
 /**
@@ -15,6 +17,7 @@ public class RouteDescription implements Comparable<RouteDescription> {
     public int locCntExplored;
     public int locCntTotal;
     public int id;
+    public Bitmap image;
 
     public RouteDescription() {}
 

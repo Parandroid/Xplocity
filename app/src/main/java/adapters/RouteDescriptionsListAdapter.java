@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -63,7 +64,16 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
 
 
         View blurredLayout = convertView.findViewById(R.id.routeInfoBlurredLayout);
-        Bitmap originalBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.map_foreground), 0,0, 130, 200);
+        ImageView routeImageView = convertView.findViewById(R.id.route_image);
+
+        Bitmap originalBitmap;
+        if(routeDescription.image == null)
+            originalBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.map_foreground), 0,0, 130, 200);
+        else
+            originalBitmap = routeDescription.image;
+
+        routeImageView.setImageBitmap(originalBitmap);
+
 
         // Flip bitmap horizontally
         Matrix matrix = new Matrix();

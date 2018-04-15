@@ -155,12 +155,12 @@
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
 
-        <ImageView
+        <ImageView android:id="@+id/route_image"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
-            android:scaleType="center"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/map" />
     </LinearLayout>
 
