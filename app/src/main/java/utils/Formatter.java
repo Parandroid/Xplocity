@@ -8,22 +8,24 @@ import java.util.Date;
  */
 
 public class Formatter {
+
+    // Convert distance to kilometers and display it with formatting
     public static String formatDistance(int distance) {
         double distanceKm = distance/1000f;
 
         if (distanceKm < 100) {
-            return String.format("%.2f", distanceKm) + " km";
+            return String.format("%.2f", distanceKm);
         }
         else if (distanceKm < 1000) {
-            return String.format("%.1f", distanceKm) + " km";
+            return String.format("%.1f", distanceKm);
         }
         else {
-            return String.format("%.0f", distanceKm) + " km";
+            return String.format("%.0f", distanceKm);
         }
     }
 
     public static String formatDate(Date date) {
-        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yyyy");
         return simpleDate.format(date);
     }
 

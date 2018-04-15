@@ -8,6 +8,7 @@ import java.util.Date;
 
 public class RouteDescription implements Comparable<RouteDescription> {
     public int distance; //distance in meters
+    public String distanceMeasure;
     public Date date;
     public int duration; //duration in seconds
     public String name;

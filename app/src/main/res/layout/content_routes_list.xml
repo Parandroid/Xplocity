@@ -12,7 +12,9 @@
         android:id="@+id/chain_list"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:divider="@android:color/white"
+        android:dividerHeight="4dp"
         android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
         tools:ignore="MissingConstraints" />
 </android.support.constraint.ConstraintLayout>

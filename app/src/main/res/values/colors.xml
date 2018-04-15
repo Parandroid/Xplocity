@@ -5,11 +5,13 @@
     <color name="colorAccent">#ff4081</color>
     <color name="colorSuccess">#99cc00</color>
     <color name="darkerGray">#aaaaaa</color>
-    <color name="Gray6">#666666</color>
+    <color name="Gray6">#67666666</color>
     <color name="locationUnexploredBorder">#890000</color>
     <color name="locationUnexploredFill">#b34a4a</color>
     <color name="locationExploredBorder">#009300</color>
     <color name="locationExploredFill">#5bb95b</color>
     <color name="mapBtnBackground">#80999999</color>
     <color name="locationArrow">#aab34a4a</color>
+    <color name="routeDescriptionMapDefaultColor">#bfd6b1</color>
+    <color name="routeDescriptionInfoBackground">#fe0182fb</color>
 </resources>

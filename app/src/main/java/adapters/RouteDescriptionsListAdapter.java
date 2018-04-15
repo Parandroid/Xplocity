@@ -1,6 +1,10 @@
 package adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,9 @@ import java.util.Date;
 
 import models.RouteDescription;
 import utils.Formatter;
+import utils.UI.BlurBuilder;
+
+import static utils.ResourceGetter.getResources;
 
 
 /**
@@ -23,8 +30,11 @@ import utils.Formatter;
  */
 
 public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription> {
+
+    private Context mContext;
     public RouteDescriptionsListAdapter(Context context, ArrayList<RouteDescription> chains) {
         super(context, 0, chains);
+        mContext = context;
     }
 
     @Override
@@ -39,7 +49,7 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         TextView distanceTxtView = (TextView) convertView.findViewById(R.id.distance);
         TextView durationTxtView = (TextView) convertView.findViewById(R.id.duration);
         TextView dateTxtView = (TextView) convertView.findViewById(R.id.date);
-        TextView nameTxtView = (TextView) convertView.findViewById(R.id.name);
+        //TextView nameTxtView = (TextView) convertView.findViewById(R.id.name);
         TextView locationsExploredTxtView = (TextView) convertView.findViewById(R.id.locations_explored);
         TextView locationsTotalTxtView = (TextView) convertView.findViewById(R.id.locations_total);
 
@@ -47,9 +57,23 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         distanceTxtView.setText(Formatter.formatDistance(routeDescription.distance));
         dateTxtView.setText(Formatter.formatDate(routeDescription.date));
         durationTxtView.setText(Formatter.formatDuration(routeDescription.duration));
-        nameTxtView.setText(routeDescription.name);
+        //nameTxtView.setText(routeDescription.name);
         locationsExploredTxtView.setText(Integer.toString(routeDescription.locCntExplored));
         locationsTotalTxtView.setText(Integer.toString(routeDescription.locCntTotal));
+
+
+        View blurredLayout = convertView.findViewById(R.id.routeInfoBlurredLayout);
+        Bitmap originalBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.map_foreground), 0,0, 130, 200);
+
+        // Flip bitmap horizontally
+        Matrix matrix = new Matrix();
+        matrix.preScale(-1.0f, 1.0f);
+        originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
+
+        Bitmap blurredBitmap = BlurBuilder.blur( mContext, originalBitmap );
+
+
+        blurredLayout.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
 
         return convertView;
     }
