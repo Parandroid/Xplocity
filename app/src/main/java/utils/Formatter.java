@@ -29,7 +29,7 @@ public class Formatter {
         return simpleDate.format(date);
     }
 
-    //format milliseconds to readable duration
+    //format milliseconds to hh:mm:ss format
     public static String formatDuration(int durationMs) {
         int durationSec = durationMs/1000;
 
@@ -38,6 +38,13 @@ public class Formatter {
         int seconds = durationSec % 60;
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    //format minutes to "5 h 20 m" format
+    public static String formatHoursAndMinutes(final int totalMinutes) {
+        String minutes = Integer.toString(totalMinutes % 60);
+        minutes = minutes.length() == 1 ? "0" + minutes : minutes;
+        return (totalMinutes / 60) + " h " + minutes + " m";
     }
 
 

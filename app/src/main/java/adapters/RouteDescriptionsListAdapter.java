@@ -57,7 +57,7 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
 
         distanceTxtView.setText(Formatter.formatDistance(routeDescription.distance));
         dateTxtView.setText(Formatter.formatDate(routeDescription.date));
-        durationTxtView.setText(Formatter.formatDuration(routeDescription.duration));
+        durationTxtView.setText(Formatter.formatHoursAndMinutes(routeDescription.duration/60000));
         //nameTxtView.setText(routeDescription.name);
         locationsExploredTxtView.setText(Integer.toString(routeDescription.locCntExplored));
         locationsTotalTxtView.setText(Integer.toString(routeDescription.locCntTotal));

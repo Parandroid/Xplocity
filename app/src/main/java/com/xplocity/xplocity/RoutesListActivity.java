@@ -30,6 +30,7 @@ public class RoutesListActivity extends XplocityMenuActivity
 
     private RouteDescriptionsListAdapter mAdapter;
     private ArrayList<RouteDescription> mRouteDescriptions;
+    private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -48,8 +49,8 @@ public class RoutesListActivity extends XplocityMenuActivity
             }
         });
 
-        ListView newsListView = (ListView) findViewById(R.id.chain_list);
-        newsListView.setOnItemClickListener(listListener);
+        mListView = (ListView) findViewById(R.id.chain_list);
+        mListView.setOnItemClickListener(listListener);
 
         routesListInit();
     }
@@ -64,8 +65,8 @@ public class RoutesListActivity extends XplocityMenuActivity
         mRouteDescriptions = routeDescriptions;
         Collections.sort(mRouteDescriptions);
         mAdapter = new RouteDescriptionsListAdapter(this, mRouteDescriptions);
-        ListView listView = (ListView)findViewById(R.id.chain_list);
-        listView.setAdapter(mAdapter);
+
+        mListView.setAdapter(mAdapter);
 
 
         //TODO: load images only for visible routes and couple routes below
@@ -83,6 +84,7 @@ public class RoutesListActivity extends XplocityMenuActivity
             if(r.id == routeId) {
                 r.image = image;
                 //mAdapter.notifyDataSetChanged();
+                updateListView(routeId);
                 break;
             }
         }
@@ -97,6 +99,16 @@ public class RoutesListActivity extends XplocityMenuActivity
             startActivity(intent);
         }
     };
+
+    private void updateListView(int routeId){
+        int start = mListView.getFirstVisiblePosition();
+        for(int i=start, j=mListView.getLastVisiblePosition();i<=j;i++)
+            if(routeId == ((RouteDescription) mListView.getItemAtPosition(i)).id) {
+                View view = mListView.getChildAt(i-start);
+                mListView.getAdapter().getView(i, view, mListView);
+                break;
+            }
+    }
 
 
 }

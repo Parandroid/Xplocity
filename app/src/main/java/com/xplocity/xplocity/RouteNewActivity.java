@@ -473,11 +473,7 @@ public class RouteNewActivity
         }
     }
 
-    private static String formatHoursAndMinutes(final int totalMinutes) {
-        String minutes = Integer.toString(totalMinutes % 60);
-        minutes = minutes.length() == 1 ? "0" + minutes : minutes;
-        return (totalMinutes / 60) + " h " + minutes + " m";
-    }
+
 
     private void timeSliderInit() {
         SeekBar timeSlider = (SeekBar) findViewById(R.id.SelectTimeSlider);
@@ -496,7 +492,7 @@ public class RouteNewActivity
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textTime.setText(formatHoursAndMinutes(progress + TIME_SLIDER_MIN));
+                textTime.setText(Formatter.formatHoursAndMinutes(progress + TIME_SLIDER_MIN));
             }
         });
 
