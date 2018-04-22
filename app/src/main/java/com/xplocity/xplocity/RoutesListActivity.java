@@ -1,19 +1,19 @@
 package com.xplocity.xplocity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import adapters.RouteDescriptionsListAdapter;
 import api_classes.RouteDescriptionImageDownloader;
@@ -31,14 +31,24 @@ public class RoutesListActivity extends XplocityMenuActivity
     private RouteDescriptionsListAdapter mAdapter;
     private ArrayList<RouteDescription> mRouteDescriptions;
     private ListView mListView;
+    private View mFooterLoading;
+
+    private static final int MAX_ROUTES_PER_REQUEST = 10; //max number of routes returned by single request
+    private int mCurrentOffset = 0;
+
+    private boolean mFlagLoading = false;
+    private boolean mAllRoutesDownloaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routes_list);
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
+        mListView = (ListView) findViewById(R.id.chain_list);
+
+        mFooterLoading = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.route_description_list_item_footer_loading, null, false);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -49,24 +59,67 @@ public class RoutesListActivity extends XplocityMenuActivity
             }
         });
 
-        mListView = (ListView) findViewById(R.id.chain_list);
+
+        mRouteDescriptions = new ArrayList<RouteDescription>();
+        mAdapter = new RouteDescriptionsListAdapter(this, mRouteDescriptions);
+        mListView.setAdapter(mAdapter);
+
+        downloadRoutesDescription();
+
         mListView.setOnItemClickListener(listListener);
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
-        routesListInit();
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+
+            }
+
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if (!mAllRoutesDownloaded) {
+
+                    if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0) {
+                        if (mFlagLoading == false) {
+                            mFlagLoading = true;
+                            downloadRoutesDescription();
+                        }
+                    }
+                }
+            }
+        });
     }
 
-    private void routesListInit() {
+    private void downloadRoutesDescription() {
+        mFlagLoading = true;
+        mListView.addFooterView(mFooterLoading);
+
         RoutesDescriptionsDownloader loader = new RoutesDescriptionsDownloader(this);
-        loader.downloadRoutesDescriptions();
+        loader.downloadRoutesDescriptions(mCurrentOffset, MAX_ROUTES_PER_REQUEST);
     }
+
 
     @Override
     public void onRouteDescriptionsDownloaded(ArrayList<RouteDescription> routeDescriptions) {
-        mRouteDescriptions = routeDescriptions;
-        Collections.sort(mRouteDescriptions);
-        mAdapter = new RouteDescriptionsListAdapter(this, mRouteDescriptions);
+        if (routeDescriptions.size() == 0) {
+            mAllRoutesDownloaded = true;
+        }
+        else {
 
-        mListView.setAdapter(mAdapter);
+            if (mRouteDescriptions == null)
+                mRouteDescriptions = routeDescriptions;
+            else
+                mRouteDescriptions.addAll(routeDescriptions);
+
+            mCurrentOffset = mCurrentOffset + routeDescriptions.size();
+
+            mAdapter.notifyDataSetChanged();
+        }
+
+        mListView.removeFooterView(mFooterLoading);
+        mFlagLoading = false;
+
+        //Collections.sort(mRouteDescriptions);
+
 
 
         //TODO: load images only for visible routes and couple routes below

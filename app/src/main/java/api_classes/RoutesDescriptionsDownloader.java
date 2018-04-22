@@ -32,8 +32,8 @@ public class RoutesDescriptionsDownloader extends Loader {
         mLogger = LogFactory.createLogger(this.getClass(), LogLevelGetter.get());
     }
 
-    public void downloadRoutesDescriptions() {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method;
+    public void downloadRoutesDescriptions(int offset, int limit) {
+        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?offset=" + Integer.toString(offset) + "&limit=" + Integer.toString(limit);
         sendGetRequest(url, true);
     }
 
