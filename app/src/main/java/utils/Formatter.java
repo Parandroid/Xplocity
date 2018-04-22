@@ -1,6 +1,13 @@
 package utils;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -13,21 +20,34 @@ public class Formatter {
     public static String formatDistance(int distance) {
         double distanceKm = distance/1000f;
 
-        if (distanceKm < 100) {
-            return String.format("%.2f", distanceKm);
-        }
-        else if (distanceKm < 1000) {
+        if (distanceKm < 10) {
             return String.format("%.1f", distanceKm);
+        }
+        else if (distanceKm < 100) {
+            return String.format("%.0f", distanceKm);
         }
         else {
             return String.format("%.0f", distanceKm);
         }
     }
 
-    public static String formatDate(Date date) {
-        SimpleDateFormat simpleDate =  new SimpleDateFormat("dd.MM.yyyy");
-        return simpleDate.format(date);
+    public String formatDate(DateTime date) {
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd.MM.yyyy");
+        return dtfOut.print(date);
     }
+
+    public String formatDateToString(DateTime date) {
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM dd");
+        return dtfOut.print(date);
+    }
+
+
+    public int formatDateToYear(DateTime date) {
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy");
+        return Integer.valueOf(dtfOut.print(date));
+    }
+
+
 
     //format milliseconds to hh:mm:ss format
     public static String formatDuration(int durationMs) {
@@ -45,6 +65,11 @@ public class Formatter {
         String minutes = Integer.toString(totalMinutes % 60);
         minutes = minutes.length() == 1 ? "0" + minutes : minutes;
         return (totalMinutes / 60) + " h " + minutes + " m";
+    }
+
+    //format minutes to "5.2" format
+    public static String formatHours(final int totalMinutes) {
+        return String.format("%.1f", (float) totalMinutes / 60);
     }
 
 

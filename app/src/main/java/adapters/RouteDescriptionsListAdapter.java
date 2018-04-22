@@ -17,6 +17,7 @@ import com.xplocity.xplocity.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import models.RouteDescription;
@@ -50,17 +51,34 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         TextView distanceTxtView = (TextView) convertView.findViewById(R.id.distance);
         TextView durationTxtView = (TextView) convertView.findViewById(R.id.duration);
         TextView dateTxtView = (TextView) convertView.findViewById(R.id.date);
+        TextView yearTxtView = (TextView) convertView.findViewById(R.id.year);
         //TextView nameTxtView = (TextView) convertView.findViewById(R.id.name);
+        TextView locationsUnExploredTxtView = (TextView) convertView.findViewById(R.id.locations_unexplored);
         TextView locationsExploredTxtView = (TextView) convertView.findViewById(R.id.locations_explored);
-        TextView locationsTotalTxtView = (TextView) convertView.findViewById(R.id.locations_total);
 
 
-        distanceTxtView.setText(Formatter.formatDistance(routeDescription.distance));
-        dateTxtView.setText(Formatter.formatDate(routeDescription.date));
-        durationTxtView.setText(Formatter.formatHoursAndMinutes(routeDescription.duration/60000));
+
+        Formatter formatter = new Formatter();
+
+        distanceTxtView.setText(formatter.formatDistance(routeDescription.distance));
+        dateTxtView.setText(formatter.formatDateToString(routeDescription.date));
+        //dateTxtView.setText(formatter.formatDate(routeDescription.date));
+
+        int routeYear = routeDescription.date.getYear();
+        if (routeYear != Calendar.getInstance().get(Calendar.YEAR)) {
+            yearTxtView.setText(Integer.toString(routeYear));
+            yearTxtView.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            yearTxtView.setVisibility(View.GONE);
+        }
+
+
+        durationTxtView.setText(formatter.formatHours(routeDescription.duration/60000));
         //nameTxtView.setText(routeDescription.name);
         locationsExploredTxtView.setText(Integer.toString(routeDescription.locCntExplored));
-        locationsTotalTxtView.setText(Integer.toString(routeDescription.locCntTotal));
+        locationsUnExploredTxtView.setText(Integer.toString(routeDescription.locCntTotal-routeDescription.locCntExplored));
 
 
         View blurredLayout = convertView.findViewById(R.id.routeInfoBlurredLayout);
@@ -76,14 +94,14 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
 
 
         // Flip bitmap horizontally
-        Matrix matrix = new Matrix();
+       /* Matrix matrix = new Matrix();
         matrix.preScale(-1.0f, 1.0f);
         originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, true);
 
         Bitmap blurredBitmap = BlurBuilder.blur( mContext, originalBitmap );
 
 
-        blurredLayout.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+        blurredLayout.setBackground(new BitmapDrawable(getResources(), blurredBitmap));*/
 
         return convertView;
     }

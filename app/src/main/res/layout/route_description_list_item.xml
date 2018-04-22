@@ -11,153 +11,357 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/colorSuccess"
+        android:paddingBottom="1dp"
+        android:paddingTop="1dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="1dp">
 
         <LinearLayout
             android:id="@+id/routeInfoBlurredLayout"
-            android:layout_width="130dp"
+            android:layout_width="160dp"
             android:layout_height="match_parent"
-            android:paddingLeft="8dp"
-            android:paddingTop="8dp"
-            android:orientation="vertical"
-            android:background="@mipmap/map_foreground"
+            android:background="@drawable/map_blurred"
+            android:backgroundTint="#ddffffff"
             android:backgroundTintMode="src_atop"
-            android:backgroundTint="#ccffffff">
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingTop="8dp">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-
-
-                    app:srcCompat="@drawable/osm_ic_follow_me" />
-
+                
                 <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="sans-serif"
+                        android:text="Apr 24"
+                        android:textColor="@color/place_autocomplete_search_text"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/year"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="sans-serif"
+                        android:text="2018"
+                        android:textColor="@color/place_autocomplete_search_text"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="match_parent" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:srcCompat="@drawable/ic_walking" />
+
+
+            </LinearLayout>
+
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="18dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/distance"
-                        android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
-                        android:text="122.5"
                         android:lines="1"
+                        android:text="122"
                         android:textAlignment="center"
                         android:textColor="@color/place_autocomplete_search_text"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/place_autocomplete_search_text"
                         android:text="km"
-                        android:textStyle="bold"/>
+                        android:textAlignment="center"
+                        android:textColor="#666666"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toLeftOf="@+id/distance"
+                        app:layout_constraintRight_toRightOf="@+id/distance"
+                        app:layout_constraintTop_toBottomOf="@+id/distance" />
 
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:lines="1"
+                        android:text="5.2"
+                        android:textAlignment="center"
+                        android:textColor="@color/place_autocomplete_search_text"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="h"
+                        android:textAlignment="center"
+                        android:textColor="#666666"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toLeftOf="@+id/duration"
+                        app:layout_constraintRight_toRightOf="@+id/duration"
+                        app:layout_constraintTop_toBottomOf="@+id/duration" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_gravity="bottom">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/location_explored_marker"/>
+
+                        <TextView
+                            android:id="@+id/locations_explored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/place_autocomplete_search_text"
+                            android:textSize="16sp"
+                            android:text="47"/>
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/location_unexplored_marker"/>
+
+                        <TextView
+                            android:id="@+id/locations_unexplored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/place_autocomplete_search_text"
+                            android:textSize="16sp"
+                            android:text="14"/>
+                    </LinearLayout>
                 </LinearLayout>
-
-
-
             </LinearLayout>
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="4dp" />
 
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="24.08.2017"
-                android:textColor="@color/place_autocomplete_search_text"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
 
-
-            <Space
+            <!--<LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="4dp" />
-
-
-            <TextView
-                android:id="@+id/duration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="5 h 30 m"
-                android:textColor="@color/place_autocomplete_search_text"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Locations explored"
-                android:textSize="10sp"/>
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/locations_explored"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="46"
-                    android:textColor="@color/locationExploredFill"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintRight_toLeftOf="@+id/delimiter"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
 
-                <TextView
-                    android:id="@+id/delimiter"
-                    android:layout_width="wrap_content"
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="4dp"
-                    android:text="/"
-                    android:textSize="16sp"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/locations_explored"
-                    app:layout_constraintRight_toLeftOf="@+id/locations_total"
-                    android:layout_marginEnd="4dp" />
-`
-                <TextView
-                    android:id="@+id/locations_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:text="98"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/place_autocomplete_search_text"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/delimiter"
-                    app:layout_constraintRight_toRightOf="parent"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            </android.support.constraint.ConstraintLayout>
+                    <ImageView
+                        android:textAlignment="center"
+                        app:layout_constraintLeft_toLeftOf="@+id/location_explored"
+                        app:layout_constraintRight_toRightOf="@+id/location_explored"
+                        app:layout_constraintBottom_toTopOf="@+id/location_explored"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/location_explored_marker"/>
+
+                    <TextView
+                        android:id="@+id/location_explored"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:lines="1"
+                        android:text="47"
+                        android:textAlignment="center"
+                        android:textColor="@color/place_autocomplete_search_text"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </android.support.constraint.ConstraintLayout>
+
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:textAlignment="center"
+                        app:layout_constraintLeft_toLeftOf="@+id/location_unexplored"
+                        app:layout_constraintRight_toRightOf="@+id/location_unexplored"
+                        app:layout_constraintBottom_toTopOf="@+id/location_unexplored"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        app:srcCompat="@drawable/location_unexplored_marker"/>
+
+                    <TextView
+                        android:id="@+id/location_unexplored"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:lines="1"
+                        android:text="12"
+                        android:textAlignment="center"
+                        android:textColor="@color/place_autocomplete_search_text"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </LinearLayout>-->
         </LinearLayout>
 
-        <ImageView android:id="@+id/route_image"
-            android:layout_width="match_parent"
+
+        <ImageView
+            android:id="@+id/route_image"
+            android:layout_width="0dp"
             android:layout_height="150dp"
+            android:layout_weight="1"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/map" />
+
+        <!--<RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="20"
+                    android:background="#eeeeee" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="80"
+                    android:background="#aae299" />
+
+                &lt;!&ndash;<TextView
+                    android:id="@+id/locations_explored"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="80"
+                    android:text="22"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/locations_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="20"
+                    android:text="46"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    app:srcCompat="@drawable/location_explored_marker"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/place_autocomplete_search_text"
+                    android:textSize="16sp"
+                    android:text="47"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="24dp">
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    app:srcCompat="@drawable/location_unexplored_marker"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/place_autocomplete_search_text"
+                    android:textSize="16sp"
+                    android:text="14"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>-->
+
+
     </LinearLayout>
 
 

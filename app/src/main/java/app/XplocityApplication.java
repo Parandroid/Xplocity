@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.facebook.stetho.Stetho;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 /**
  * Created by dmitry on 09.08.17.
  */
@@ -19,6 +21,7 @@ public class XplocityApplication extends Application {
         super.onCreate();
         mContext = getApplicationContext();
 
+        JodaTimeAndroid.init(this);
         //подключаем карту с выбором позиции к эмулятору
         Stetho.initializeWithDefaults(this);
     }

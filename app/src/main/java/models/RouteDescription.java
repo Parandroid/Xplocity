@@ -2,6 +2,8 @@ package models;
 
 import android.graphics.Bitmap;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 
 /**
@@ -11,7 +13,7 @@ import java.util.Date;
 public class RouteDescription implements Comparable<RouteDescription> {
     public int distance; //distance in meters
     public String distanceMeasure;
-    public Date date;
+    public DateTime date;
     public int duration; //duration in seconds
     public String name;
     public int locCntExplored;
@@ -24,10 +26,10 @@ public class RouteDescription implements Comparable<RouteDescription> {
     @Override
     public int compareTo(RouteDescription routeDescription) {
 
-        if (this.date.before(routeDescription.date)) {
+        if (this.date.getMillis() < routeDescription.date.getMillis()) {
             return 1;
         }
-        else if (this.date.after(routeDescription.date)) {
+        else if (this.date.getMillis() > routeDescription.date.getMillis()) {
             return -1;
         }
         else {

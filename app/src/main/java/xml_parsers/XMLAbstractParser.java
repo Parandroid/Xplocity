@@ -1,5 +1,7 @@
 package xml_parsers;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -40,9 +42,9 @@ public abstract class XMLAbstractParser {
     }
 
 
-    protected Date parseDate(String strDate) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");  //2016-02-11 22:59:46 UTC
-        Date date = format.parse(strDate);
+    protected DateTime parseDate(String strDate) throws ParseException {
+        String pattern = "yyyy-MM-dd HH:mm:ss z";
+        DateTime date  = DateTime.parse(strDate, DateTimeFormat.forPattern(pattern));
         return date;
     }
 
