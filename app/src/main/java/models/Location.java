@@ -1,14 +1,20 @@
 package models;
 
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.osmdroid.util.GeoPoint;
+
+import java.io.Serializable;
 
 /**
  * Created by dmitry on 20.08.17.
  */
 
-public class Location implements Comparable<Location> {
+public class Location
+        implements Comparable<Location>,
+        Serializable {
     public int id;
     public boolean explored;
 
@@ -43,7 +49,5 @@ public class Location implements Comparable<Location> {
         }
 
     }
-
-
 
 }

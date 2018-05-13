@@ -10,40 +10,80 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/common_google_signin_btn_text_dark_pressed"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/layoutLocationinfo"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:ellipsize="end"
-        android:text="fdsfsdfsdfsdf"
-        android:textColor="#ff000000"
-        android:textSize="14dp"
-        android:textStyle="bold" />
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_max="250dp"
+        android:padding="8dp"
+        android:orientation="vertical"
+        android:background="@color/common_google_signin_btn_text_dark_pressed">
 
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:text="fsdfsdfsdfsdfsdf sdf"
-        android:textColor="#ff7f7f7f"
-        android:textSize="14dp" />
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="fdsfsdfsdfsdf"
+            android:textColor="#ff000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:text="5435 43 53 r fsdf dsf er wfsd fds fdsf sdf sdf "
-        android:textColor="#ff7f7f7f"
-        android:textSize="14dp" />
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="fsdfsdfsdfsdfsdf sdf"
+            android:textColor="#ff7f7f7f"
+            android:textSize="14sp" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="6"
+            android:text="5435 43 53 r fsdf dsf er wfsd fds fdsf sdf sdf "
+            android:textColor="#ff7f7f7f"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_open_location_info_dialog"
+            style="@android:style/Widget.DeviceDefault.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="more"
+            android:layout_gravity="end"
+            android:textAppearance="@style/TextAppearance.Design.Hint" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="10dp"
+        android:padding="0dp"
+        android:layout_margin="0dp"
+        app:srcCompat="@drawable/info_window_bottom_triangle"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toBottomOf="@+id/layoutLocationinfo"
+        app:layout_constraintLeft_toLeftOf="@+id/layoutLocationinfo"
+        app:layout_constraintRight_toRightOf="@+id/layoutLocationinfo"
+        />
+</android.support.constraint.ConstraintLayout>

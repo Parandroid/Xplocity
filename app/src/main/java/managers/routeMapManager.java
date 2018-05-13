@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import adapters.LocationMarkerInfoWindow;
 import models.Location;
 import utils.Factory.LogFactory;
 import utils.LogLevelGetter;
@@ -129,6 +130,9 @@ public class routeMapManager extends mapManager {
         marker.setTitle(loc.name);
         marker.setSubDescription(loc.address);
         marker.setSnippet(loc.description);
+
+        InfoWindow infoWindow = new LocationMarkerInfoWindow(R.layout.location_map_marker_info, mMap);
+        marker.setInfoWindow(infoWindow);
 
 
         if (loc.explored) {
