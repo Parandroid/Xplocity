@@ -15,9 +15,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -57,7 +59,6 @@ import utils.Factory.LogFactory;
 import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
-import utils.ResourceGetter;
 import utils.UI.WaitWheel;
 
 
@@ -418,7 +419,8 @@ public class RouteNewActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new routeMapManager(map, findViewById(android.R.id.content));
+        View bottomSheetView = findViewById(R.id.bottom_sheet_panel);
+        mMapManager = new routeMapManager(map, bottomSheetView, mPagerAdapter.getLocationsPage(), findViewById(android.R.id.content));
 
         if (mLocationPermissionsGranted) {
             try {
@@ -630,8 +632,9 @@ public class RouteNewActivity
 
     /***************** Pager ********************/
 
-    class NewRoutePagerAdapter extends FragmentPagerAdapter {
+    public class NewRoutePagerAdapter extends FragmentPagerAdapter {
         private ArrayList<String> mFragmentsNames;
+        private SparseArray<Fragment> registeredFragments = new SparseArray<>();
         private Context mContext;
 
         public NewRoutePagerAdapter(FragmentManager fm, Context context) {
@@ -642,6 +645,19 @@ public class RouteNewActivity
 
         public void addFragment(String fragmentClass) {
             mFragmentsNames.add(fragmentClass);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            registeredFragments.remove(position);
+            super.destroyItem(container, position, object);
         }
 
         @Override
@@ -656,16 +672,24 @@ public class RouteNewActivity
             return mFragmentsNames.size();
         }
 
+        public Fragment getRegisteredFragment(int position) {
+            return registeredFragments.get(position);
+        }
+
         @Override
         public int getItemPosition(Object object) {
             return POSITION_NONE;
+        }
+
+        public RouteLocationList getLocationsPage() {
+            return (RouteLocationList) getRegisteredFragment(0);
         }
     }
 
 
     public void fillLocationsList(ArrayList<models.Location> locations) {
-        mLocationAdapter = new RouteLocationsListAdapter(this, locations, this);
-        ListView listView = (ListView)findViewById(R.id.listLocations);
+        mLocationAdapter = new RouteLocationsListAdapter(this, locations, this, mPagerAdapter.getLocationsPage());
+        ListView listView = (ListView)findViewById(R.id.bottom_sheet_page_locations_list);
         listView.setAdapter(mLocationAdapter);
 
         // Update locations info on bottom sheet expanded

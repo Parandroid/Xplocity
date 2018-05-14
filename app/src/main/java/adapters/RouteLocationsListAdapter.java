@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.xplocity.xplocity.R;
+import com.xplocity.xplocity.RouteLocationList;
 
 import java.util.ArrayList;
 
@@ -39,13 +40,15 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
     private Logger mLogger;
     private Context mContext;
     private RouteLocationsListAdapterInterface mCallback;
+    private RouteLocationList mLocationInfoFragment;
 
-    public RouteLocationsListAdapter(Context context, ArrayList<Location> locations, RouteLocationsListAdapterInterface callback) {
+    public RouteLocationsListAdapter(Context context, ArrayList<Location> locations, RouteLocationsListAdapterInterface callback, RouteLocationList locationInfoFragment) {
         super(context, 0, locations);
 
         mContext = context;
         mCallback = callback;
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
+        mLocationInfoFragment = locationInfoFragment;
     }
 
     @Override
@@ -90,9 +93,10 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
         LinearLayout layoutLocationInfo = (LinearLayout) convertView.findViewById(R.id.layoutLocationInfo);
         layoutLocationInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                cycleTextViewExpansion(txtLocationName);
+                /*cycleTextViewExpansion(txtLocationName);
                 cycleTextViewExpansion(txtLocationAddress);
-                cycleTextViewExpansion(txtLocationDescription);
+                cycleTextViewExpansion(txtLocationDescription);*/
+                mLocationInfoFragment.showLocationInfo();
             }
         });
 
@@ -107,7 +111,6 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
                 tv.getMaxLines() == collapsedMaxLines? tv.getLineCount() : collapsedMaxLines);
         animation.setDuration(tv.getLineCount()*100).start();
     }
-
 
 
 

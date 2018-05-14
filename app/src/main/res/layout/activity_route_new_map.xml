@@ -32,7 +32,7 @@
         <LinearLayout
             android:id="@+id/bottom_sheet_panel"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="350dp"
             android:background="@color/wallet_bright_foreground_holo_dark"
             android:orientation="vertical"
             app:behavior_hideable="false"

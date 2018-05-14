@@ -41,7 +41,7 @@ public class RouteSaveActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new routeMapManager(map, findViewById(android.R.id.content));
+        mMapManager = new routeMapManager(map, null, null, findViewById(android.R.id.content));
         mMapManager.setRoute(mRoute);
         mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size()-1));
     }

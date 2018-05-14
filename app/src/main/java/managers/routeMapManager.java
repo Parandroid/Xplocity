@@ -5,14 +5,19 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.xplocity.xplocity.BuildConfig;
 import com.xplocity.xplocity.R;
+import com.xplocity.xplocity.RouteLocationList;
+import com.xplocity.xplocity.RouteNewActivity;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapAdapter;
@@ -48,14 +53,19 @@ public class routeMapManager extends mapManager {
     private Polyline mPolyline;
     private ImageView mArrow;
 
+    private View mBottomSheet;
+    private RouteLocationList mLocationInfoFragment;
+
 
     private Map<Location, Marker> mLocationMarkers;
 
-    public routeMapManager(MapView p_map, View context) {
+    public routeMapManager(MapView p_map, View locationBottomSheetView, RouteLocationList locationInfoFragment, View context) {
         super(p_map, context);
 
         mLocationMarkers = new HashMap<>();
         mArrow = mContext.findViewById(R.id.location_arrow);
+        mBottomSheet = locationBottomSheetView;
+        mLocationInfoFragment = locationInfoFragment;
 
         MapEventsReceiver mReceive = new MapEventsReceiver() {
 
@@ -130,9 +140,27 @@ public class routeMapManager extends mapManager {
         marker.setTitle(loc.name);
         marker.setSubDescription(loc.address);
         marker.setSnippet(loc.description);
+        marker.setRelatedObject(loc);
 
-        InfoWindow infoWindow = new LocationMarkerInfoWindow(R.layout.location_map_marker_info, mMap);
-        marker.setInfoWindow(infoWindow);
+        if (mBottomSheet != null) {
+            marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker, MapView mapView) {
+                    Location loc = (Location) marker.getRelatedObject();
+
+                    BottomSheetBehavior.from(mBottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                    mLocationInfoFragment.showLocationInfo();
+
+                    ((TextView) mBottomSheet.findViewById(R.id.name)).setText(loc.name);
+
+                    return false;
+                }
+            });
+        }
+        else {
+            InfoWindow infoWindow = new LocationMarkerInfoWindow(R.layout.location_map_marker_info, mMap);
+            marker.setInfoWindow(infoWindow);
+        }
 
 
         if (loc.explored) {
@@ -141,7 +169,6 @@ public class routeMapManager extends mapManager {
             marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_unexplored_marker));
         }
 
-        marker.setRelatedObject(loc);
         mLocationMarkers.put(loc, marker);
         mMap.getOverlays().add(marker);
     }

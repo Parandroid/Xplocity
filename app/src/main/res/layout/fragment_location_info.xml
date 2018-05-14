@@ -1,78 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_page_location_info"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical">
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:text="fdsfsdfsdfsdf"
-        android:textColor="#ff000000"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="4"
-        android:text="fsdfsdfsdfsdfsdf sdf"
-        android:textColor="#ff7f7f7f"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="20"
-        android:text="5435 43 53 r fsdf dsf er wfsd fds fdsf sdf sdf "
-        android:textColor="#ff7f7f7f"
-        android:textSize="14sp" />
-
-    <Button
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_edit_location_black_24dp"
-        android:elevation="0dp"
-        android:text="Report"
-        android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small" />
-
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:background="@android:color/white">
 
-        <Spinner
-            android:id="@+id/spinner"
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingStart="4dp"
+            android:text="fdsfsdfsdfsdf"
+            android:textColor="#ff000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
-    </android.support.design.widget.TextInputLayout>
+            android:orientation="vertical"
+            android:paddingStart="8dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp">
 
-        <EditText
-            android:id="@+id/locationName"
-            android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_place_black_24dp" />
+
+                <TextView
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="4"
+                    android:text="fsdfsdfsdfsdfsdf sdf"
+                    android:textColor="#ff7f7f7f"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toEndOf="@+id/imageView" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_description_black_24dp" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="20"
+                    android:text="5435 43 53 r fsdf dsf er wfsd fds fdsf sdf sdf "
+                    android:textColor="#ff7f7f7f"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toEndOf="@+id/imageView3" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Message"
-            android:inputType="textMultiLine"
-            android:lines="2"/>
-    </android.support.design.widget.TextInputLayout>
+            android:drawableTop="@drawable/ic_edit_location_black_24dp"
+            android:elevation="0dp"
+            android:text="Report"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-</LinearLayout>
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/locationName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Message"
+                android:inputType="textMultiLine"
+                android:lines="2" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

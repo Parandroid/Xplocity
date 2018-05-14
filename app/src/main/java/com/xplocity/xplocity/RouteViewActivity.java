@@ -30,7 +30,7 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new routeMapManager(map, findViewById(android.R.id.content));
+        mMapManager = new routeMapManager(map, null, null, findViewById(android.R.id.content));
     }
 
 
