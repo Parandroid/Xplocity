@@ -96,7 +96,7 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
                 /*cycleTextViewExpansion(txtLocationName);
                 cycleTextViewExpansion(txtLocationAddress);
                 cycleTextViewExpansion(txtLocationDescription);*/
-                mLocationInfoFragment.showLocationInfo();
+                mLocationInfoFragment.showLocationInfo(location);
             }
         });
 

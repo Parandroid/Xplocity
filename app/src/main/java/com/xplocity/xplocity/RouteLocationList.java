@@ -5,10 +5,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+import models.Location;
 
 
 /**
@@ -70,14 +75,37 @@ public class RouteLocationList extends Fragment {
         }
     }
 
-    public void showLocationInfo() {
+    public void showLocationInfo(final Location loc) {
+
+        ((NestedScrollView) mLocationInfoPage).scrollTo(0, 0);;;
+
         mLocationInfoPage.setVisibility(View.VISIBLE);
         mLocationsListPage.setVisibility(View.GONE);
+
+        ((TextView) mLocationInfoPage.findViewById(R.id.name)).setText(loc.name);
+        ((TextView) mLocationInfoPage.findViewById(R.id.address)).setText(loc.address);
+        ((TextView) mLocationInfoPage.findViewById(R.id.description)).setText(loc.description);
+        ((ImageButton) mLocationInfoPage.findViewById(R.id.closeButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLocationList();
+            }
+        });
+
+        ((Button) mLocationInfoPage.findViewById(R.id.btn_comment_location)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomsheetLocationCommentFragment fragment = BottomsheetLocationCommentFragment.newInstance(loc);
+                fragment.show(getFragmentManager(), fragment.getTag());
+            }
+        });
     }
 
     public void showLocationList() {
         mLocationInfoPage.setVisibility(View.GONE);
         mLocationsListPage.setVisibility(View.VISIBLE);
+
+
     }
 
 

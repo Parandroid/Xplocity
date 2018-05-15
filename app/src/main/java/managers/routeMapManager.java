@@ -149,9 +149,8 @@ public class routeMapManager extends mapManager {
                     Location loc = (Location) marker.getRelatedObject();
 
                     BottomSheetBehavior.from(mBottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
-                    mLocationInfoFragment.showLocationInfo();
+                    mLocationInfoFragment.showLocationInfo(loc);
 
-                    ((TextView) mBottomSheet.findViewById(R.id.name)).setText(loc.name);
 
                     return false;
                 }
