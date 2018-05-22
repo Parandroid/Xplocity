@@ -689,7 +689,7 @@ public class RouteNewActivity
 
     public void fillLocationsList(ArrayList<models.Location> locations) {
         mLocationAdapter = new RouteLocationsListAdapter(this, locations, this, mPagerAdapter.getLocationsPage());
-        ListView listView = (ListView)findViewById(R.id.bottom_sheet_page_locations_list);
+        ListView listView = (ListView)findViewById(R.id.locations_list);
         listView.setAdapter(mLocationAdapter);
 
         // Update locations info on bottom sheet expanded

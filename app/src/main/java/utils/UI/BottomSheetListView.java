@@ -62,14 +62,5 @@ public class BottomSheetListView extends ListView {
     }
 
 
-    /*private ViewParent getBottomSheetParent(View view) {
-        ViewParent parent = view.getParent();
-        if (((View) parent).getId() == R.id.pager) {
-            return parent;
-        }
-        else
-        {
-            return getBottomSheetParent((View) parent);
-        }
-    }*/
+
 }
