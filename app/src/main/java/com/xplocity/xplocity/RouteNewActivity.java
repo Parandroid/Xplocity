@@ -382,14 +382,18 @@ public class RouteNewActivity
         RadioGroup travelType = (RadioGroup) findViewById(R.id.travel_type);
         int selectedId = travelType.getCheckedRadioButtonId();
 
-        double optimalDistance = 3d;
+        double optimalDistance = 2d;
         if (selectedId == R.id.radio_cycling) {
-            optimalDistance = 3d;
-        } else if (selectedId == R.id.radio_walking) {
-            optimalDistance = 1d;
-        } else if (selectedId == R.id.radio_running) {
             optimalDistance = 2d;
+        } else if (selectedId == R.id.radio_walking) {
+            optimalDistance = 0.5d;
+        } else if (selectedId == R.id.radio_running) {
+            optimalDistance = 1d;
+        } else if (selectedId == R.id.radio_test) {
+            optimalDistance = 0.01d;
+            locCount = 200;
         }
+
 
         // Populate array with IDs of checked categories
         ArrayList<Integer> checkedLocationCategories = new ArrayList<>();

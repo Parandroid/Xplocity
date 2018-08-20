@@ -55,6 +55,11 @@ public abstract class Loader {
                     }
                 });
 
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         VolleySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
