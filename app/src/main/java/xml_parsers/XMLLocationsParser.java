@@ -86,6 +86,9 @@ public class XMLLocationsParser extends XMLAbstractParser {
         GeoPoint pos = new GeoPoint(lat, lon);
         loc.position = pos;
 
+        loc.setStateCircle();
+        loc.hasCircle = true;
+
 
         return loc;
     }

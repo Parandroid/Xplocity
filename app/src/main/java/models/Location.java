@@ -1,22 +1,23 @@
 package models;
 
-import android.os.Parcelable;
-
-import com.google.android.gms.maps.model.LatLng;
-
 import org.osmdroid.util.GeoPoint;
 
 import java.io.Serializable;
+import java.util.Random;
+
+import models.enums.LocationExploreState;
 
 /**
  * Created by dmitry on 20.08.17.
  */
 
+
+
 public class Location
         implements Comparable<Location>,
         Serializable {
     public int id;
-    public boolean explored;
+    public LocationExploreState exploreState;
 
     public String name;
     public String description;
@@ -25,17 +26,59 @@ public class Location
     public GeoPoint position;
     public float distance; //distance to location in meters
 
-    public Location() {
+    public LocationCircle circle;
+    public boolean hasCircle; //true - for active routes, false - when viewing old routes
 
+    public Location() {
+        //generateLocationCircle(300, 150);
     }
+
+
+    public boolean explored() {
+        return exploreState == LocationExploreState.POINT_EXPLORED ? true : false;
+    }
+
+
+    public void setStateCircle() {
+        exploreState = LocationExploreState.CIRCLE;
+        generateLocationCircle(300, 150);
+    }
+
+
+    public void setStateUnexplored() {
+        exploreState = LocationExploreState.POINT_NOT_EXPLORED;
+    }
+
+    public void setStateExplored() {
+            exploreState = LocationExploreState.POINT_EXPLORED;
+    }
+
+
+    private void generateLocationCircle(double pRadius, double pMaxOffset) {
+        if (circle == null) {
+            final double r_earth = 6371000.0;
+
+            Random r = new Random();
+            double dx = pMaxOffset * (-1 + 2 * r.nextDouble());
+            double dy = pMaxOffset * (-1 + 2 * r.nextDouble());
+
+
+            double new_latitude = position.getLatitude() + (dy / r_earth) * (180 / Math.PI);
+            double new_longitude = position.getLongitude() + (dx / r_earth) * (180 / Math.PI) / Math.cos(position.getLatitude() * Math.PI / 180);
+
+            circle = new LocationCircle(new GeoPoint(new_latitude, new_longitude), pRadius);
+        }
+    }
+
+
 
     @Override
     public int compareTo(Location loc) {
 
-        if (this.explored && !loc.explored) {
+        if (this.explored() && !loc.explored()) {
             return 1;
         }
-        else if (!this.explored && loc.explored) {
+        else if (!this.explored() && loc.explored()) {
             return -1;
         }
         else if (this.distance > loc.distance) {
@@ -51,3 +94,4 @@ public class Location
     }
 
 }
+

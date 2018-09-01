@@ -583,12 +583,26 @@ public class RouteNewActivity
         if (mMapManager != null) {
             for (models.Location loc : mService.getRoute().locations) {
                 if (loc.id == locationId) {
-                    mMapManager.setLocationMarkerExplored(loc);
+                    mMapManager.updateLocationOnMap(loc);
                     break;
                 }
             }
         }
     }
+
+    @Override
+    public void onLocationCircleReached(int locationId) {
+        if (mMapManager != null) {
+            for (models.Location loc : mService.getRoute().locations) {
+                if (loc.id == locationId) {
+                    mMapManager.updateLocationOnMap(loc);
+                    break;
+                }
+            }
+        }
+    }
+
+
 
 
     @Override

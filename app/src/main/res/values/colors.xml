@@ -10,6 +10,8 @@
     <color name="locationUnexploredFill">#b34a4a</color>
     <color name="locationExploredBorder">#009300</color>
     <color name="locationExploredFill">#5bb95b</color>
+    <color name="locationCircleFill">#66969696</color>
+    <color name="locationCircleStroke">#66969696</color>
     <color name="mapBtnBackground">#80999999</color>
     <color name="locationArrow">#aab34a4a</color>
     <color name="routeDescriptionMapDefaultColor">#bfd6b1</color>

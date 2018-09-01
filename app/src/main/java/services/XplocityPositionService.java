@@ -218,6 +218,15 @@ public class XplocityPositionService
     }
 
 
+    @Override
+    public void onLocationCircleReached(models.Location location) {
+        Intent localIntent =
+                new Intent(getString(R.string.broadcast_location_circle_reached));
+        localIntent.putExtra("locationId", location.id);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+    }
+
+
     public void startTracking() {
         if (!mPositionManager.trackingActive) {
             mPositionManager.startTracking();

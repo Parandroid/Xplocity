@@ -48,7 +48,7 @@ public class XMLRouteBuilder {
                 serializer.startTag("", "Location");
                 serializer.attribute("", "id", Integer.toString(loc.id));
                 serializer.startTag("", "explored");
-                serializer.text(loc.explored ? "1" : "0");
+                serializer.text(loc.explored() ? "1" : "0");
                 serializer.endTag("", "explored");
                 serializer.endTag("", "Location");
             }

@@ -70,7 +70,7 @@ public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
         txtLocationDescription.setText(location.description);
         btnLocationTrack.setText(Formatter.formatDistance((int) location.distance));
 
-        if (location.explored) {
+        if (location.explored()) {
             txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.colorSuccess));
             txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
             txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));

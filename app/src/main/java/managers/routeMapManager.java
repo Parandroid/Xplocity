@@ -1,53 +1,56 @@
 package managers;
 
-import android.app.Activity;
-import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.xplocity.xplocity.BuildConfig;
 import com.xplocity.xplocity.R;
 import com.xplocity.xplocity.RouteLocationList;
-import com.xplocity.xplocity.RouteNewActivity;
 
-import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapAdapter;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.infowindow.InfoWindow;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import adapters.LocationMarkerInfoWindow;
 import models.Location;
-import utils.Factory.LogFactory;
-import utils.LogLevelGetter;
-import utils.Log.Logger;
+import models.LocationCircle;
+import models.enums.LocationExploreState;
 import utils.ResourceGetter;
 import models.Route;
+import utils.UI.GridPolygon;
 
 /**
  * Created by dmitry on 20.08.17.
  */
+
+
+class LocationOnMap {
+    Marker marker;
+    Polygon circle;
+
+    public LocationOnMap(Marker pMarker, Polygon pCircle) {
+        marker = pMarker;
+        circle = pCircle;
+    }
+}
 
 public class routeMapManager extends mapManager {
     private Polyline mPolyline;
@@ -57,12 +60,17 @@ public class routeMapManager extends mapManager {
     private RouteLocationList mLocationInfoFragment;
 
 
-    private Map<Location, Marker> mLocationMarkers;
+    /*private Map<Location, Marker> mLocationMarkers;
+    private Map<Location, Polygon> mLocationCircles;*/
+    private Map<Location, LocationOnMap> mLocationsOnMap;
 
     public routeMapManager(MapView p_map, View locationBottomSheetView, RouteLocationList locationInfoFragment, View context) {
         super(p_map, context);
 
-        mLocationMarkers = new HashMap<>();
+        /*mLocationMarkers = new HashMap<>();
+        mLocationCircles = new HashMap<>();*/
+        mLocationsOnMap = new HashMap<>();
+
         mArrow = mContext.findViewById(R.id.location_arrow);
         mBottomSheet = locationBottomSheetView;
         mLocationInfoFragment = locationInfoFragment;
@@ -101,39 +109,100 @@ public class routeMapManager extends mapManager {
     }
 
 
-    public void setLocationMarkerExplored(Location loc) {
-        try {
-            setMarkerIconExplored(mLocationMarkers.get(loc));
-        } catch (Exception e) {
-            mLogger.logError("Failed to set location marker as explored", e);
+    public void updateLocationOnMap(Location loc) {
+        LocationOnMap locOnMap = mLocationsOnMap.get(loc);
+
+        Marker marker = locOnMap.marker;
+
+        Polygon circle = null;
+        if (loc.hasCircle)
+            circle = locOnMap.circle;
+
+        refreshMarkerAndCircle(marker, circle, loc.exploreState);
+    }
+
+    private void refreshMarkerAndCircle(Marker marker, Polygon circle, LocationExploreState locState) {
+        switch (locState) {
+            case CIRCLE:
+                if (circle != null)
+                    circle.setVisible(true);
+                hideMarker(marker);
+                break;
+            case POINT_NOT_EXPLORED:
+                if (circle != null)
+                    circle.setVisible(false);
+                setMarkerIconUnexplored(marker);
+                showMarker(marker);
+                break;
+            case POINT_EXPLORED:
+                if (circle != null)
+                    circle.setVisible(false);
+                setMarkerIconExplored(marker);
+                showMarker(marker);
         }
+    }
+
+
+    private void showMarker(Marker marker) {
+        if (!mMap.getOverlays().contains(marker))
+            mMap.getOverlays().add(marker);
+    }
+
+    private void hideMarker(Marker marker) {
+        if (mMap.getOverlays().contains(marker))
+            mMap.getOverlays().remove(marker);
+    }
+
+
+    private void setMarkerIconUnexplored(Marker marker) {
+        marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_unexplored_marker));
     }
 
     private void setMarkerIconExplored(Marker marker) {
         marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_explored_marker));
     }
 
+
+    /*public void setLocationMarkerExplored(Marker marker) {
+        try {
+            setMarkerIconExplored(mLocationMarkers.get(loc));
+            hideLocationCircle(mLocationCircles.get(loc));
+        } catch (Exception e) {
+            mLogger.logError("Failed to set location marker as explored", e);
+        }
+    }
+
+
+    private void hideLocationCircle(Polygon circle) {
+        circle.setVisible(false);
+    }*/
+
+
     public void setRoute(Route route) {
         drawPath(route.path);
 
         for (Location loc : route.locations) {
-            addLocationMarker(loc);
+            addLocationToMap(loc);
         }
 
     }
 
 
     public void updateLocationMarkers() {
-        for (Map.Entry<Location, Marker> entry : mLocationMarkers.entrySet()) {
-            if (entry.getKey().explored) {
-                setMarkerIconExplored(entry.getValue());
-            }
+        for (Map.Entry<Location, LocationOnMap> entry : mLocationsOnMap.entrySet()) {
+            LocationOnMap locOnMap = entry.getValue();
+            Location loc = entry.getKey();
+
+            Polygon circle = null;
+            if (loc.hasCircle)
+                circle = locOnMap.circle;
+
+            refreshMarkerAndCircle(locOnMap.marker, circle, loc.exploreState);
         }
     }
 
 
-    private void addLocationMarker(Location loc) {
-
+    private void addLocationToMap(Location loc) {
         Marker marker = new Marker(mMap);
         marker.setPosition(loc.position);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -162,14 +231,14 @@ public class routeMapManager extends mapManager {
         }
 
 
-        if (loc.explored) {
-            setMarkerIconExplored(marker);
-        } else {
-            marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_unexplored_marker));
-        }
+        Polygon circle = null;
+        if (loc.hasCircle)
+            circle = drawCircle(loc.circle);
 
-        mLocationMarkers.put(loc, marker);
-        mMap.getOverlays().add(marker);
+        refreshMarkerAndCircle(marker, circle, loc.exploreState);
+
+        mLocationsOnMap.put(loc, new LocationOnMap(marker, circle));
+        //mMap.getOverlays().add(marker);
     }
 
 
@@ -185,6 +254,22 @@ public class routeMapManager extends mapManager {
                 mMap.getOverlayManager().add(mPolyline);
             }
         }
+    }
+
+
+
+    private Polygon drawCircle(LocationCircle locCircle) {
+        List<GeoPoint> circle = Polygon.pointsAsCircle(locCircle.center, locCircle.raduis);
+        final GridPolygon p = new GridPolygon();
+        p.setPoints(circle);
+        p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.locationCircleStroke));
+        p.setStrokeWidth(0);
+        p.setFillColor(ResourceGetter.getResources().getColor(R.color.locationUnexploredFill));
+        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.location_circle_pattern));
+
+        mMap.getOverlays().add(p);
+        return p;
+        //mMap.invalidate();
     }
 
 
@@ -266,8 +351,8 @@ public class routeMapManager extends mapManager {
         Location closestLocation = null;
         float smallestDistance = -1;
 
-        for (Location location : mLocationMarkers.keySet()) {
-            if (!location.explored) {
+        for (Location location : mLocationsOnMap.keySet()) {
+            if (!location.explored()) {
                 if (!isPointVisible(location.position)) {
 
                     float distance = PositionManager.calculateDistance(position, location.position);

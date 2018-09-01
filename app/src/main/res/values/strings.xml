@@ -23,6 +23,8 @@
     <string name='route_id_key'>route_id</string>
     <string name="broadcast_position_changed">Xplocity.broadcast.positionChanged</string>
     <string name="broadcast_location_reached">Xplocity.broadcast.locationReached</string>
+    <string name="broadcast_location_circle_reached">Xplocity.broadcast.locationCircleReached</string>
+
 
     <!-- Error messages -->
     <string name='error_location_perm_request_failed'>Failed to acquire location permissions</string>

@@ -88,7 +88,10 @@ public class XMLRouteParser extends XMLAbstractParser {
             }
             String name = parser.getName();
             if (name.equals("explored")) {
-                loc.explored = Integer.parseInt(readText(parser)) == 1 ? true : false;
+                if (Integer.parseInt(readText(parser)) == 1)
+                    loc.setStateExplored();
+                else
+                    loc.setStateUnexplored();
             } else if (name.equals("name")) {
                 loc.name = readText(parser);
             } else if (name.equals("description")) {
@@ -102,6 +105,7 @@ public class XMLRouteParser extends XMLAbstractParser {
             }
         }
 
+        loc.hasCircle = false;
         return loc;
     }
 

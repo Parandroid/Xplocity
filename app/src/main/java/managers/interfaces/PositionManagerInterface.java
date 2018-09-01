@@ -8,4 +8,5 @@ import models.Location;
 
 public interface PositionManagerInterface {
     void onLocationReached(Location location);
+    void onLocationCircleReached(Location location);
 }

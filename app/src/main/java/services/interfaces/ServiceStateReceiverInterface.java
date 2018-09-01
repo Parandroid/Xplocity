@@ -9,4 +9,5 @@ import models.Location;
 public interface ServiceStateReceiverInterface {
     void onPositionChanged();
     void onLocationReached(int locationId);
+    void onLocationCircleReached(int locationId);
 }

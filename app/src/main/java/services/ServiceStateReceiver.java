@@ -36,6 +36,10 @@ public class ServiceStateReceiver extends BroadcastReceiver {
         else if (s.equals(ResourceGetter.getString("broadcast_location_reached"))) {
             mCallback.onLocationReached(intent.getIntExtra("locationId", 0));
         }
+        else if (s.equals(ResourceGetter.getString("broadcast_location_circle_reached"))) {
+            mCallback.onLocationCircleReached(intent.getIntExtra("locationId", 0));
+        }
+
 
 
 
@@ -45,6 +49,7 @@ public class ServiceStateReceiver extends BroadcastReceiver {
         IntentFilter statusIntentFilter = new IntentFilter();
         statusIntentFilter.addAction(ResourceGetter.getString("broadcast_position_changed"));
         statusIntentFilter.addAction(ResourceGetter.getString("broadcast_location_reached"));
+        statusIntentFilter.addAction(ResourceGetter.getString("broadcast_location_circle_reached"));
 
         LocalBroadcastManager.getInstance(context).registerReceiver(
                 this,

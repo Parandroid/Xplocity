@@ -48,8 +48,7 @@ public class PositionManager implements Parcelable {
 
     public void addPosToPath(GeoPoint pos) {
         if (pos != null) {
-            if (lastPosition != null)
-            {
+            if (lastPosition != null) {
                 route.distance = route.distance + calculateDistance(pos, lastPosition);
                 updateDuration();
 
@@ -66,9 +65,16 @@ public class PositionManager implements Parcelable {
         for (Location loc : route.locations) {
             loc.distance = calculateDistanceToLocation(position, loc);
 
-            if (!loc.explored && loc.distance <= LOCATION_REACHED_DISTANCE) {
-                loc.explored = true;
-                mCallback.onLocationReached(loc);
+            if (!loc.explored()) {
+
+                if (loc.distance <= LOCATION_REACHED_DISTANCE){
+                    loc.setStateExplored();
+                    mCallback.onLocationReached(loc);
+                }
+                else if (loc.circle.isPointInside(position)) {
+                    loc.setStateUnexplored();
+                    mCallback.onLocationCircleReached(loc);
+                }
             }
         }
     }
@@ -106,6 +112,7 @@ public class PositionManager implements Parcelable {
         }
     }
 
+    //Return distance in meters between two points
     public static float calculateDistance(GeoPoint pos1, GeoPoint pos2) {
         float[] results = new float[2];
         android.location.Location.distanceBetween(pos1.getLatitude(), pos1.getLongitude(), pos2.getLatitude(), pos2.getLongitude(), results);
