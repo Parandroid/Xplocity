@@ -28,7 +28,6 @@ public class PositionManager implements Parcelable {
 
     public Route route;
     public GeoPoint lastPosition;
-    public boolean trackingActive;
 
     private Date mLastTime;
 
@@ -91,13 +90,8 @@ public class PositionManager implements Parcelable {
     public void startTracking() {
         route.distance = 0;
         route.duration = 0;
-        trackingActive = true;
         mLastTime = Calendar.getInstance().getTime();
         lastPosition = null;
-    }
-
-    public void stopTracking() {
-        trackingActive = false;
     }
 
 
@@ -156,6 +150,5 @@ public class PositionManager implements Parcelable {
 
         this.route = c.route;
         this.lastPosition = c.lastPosition;
-        this.trackingActive = c.trackingActive;
     }
 }

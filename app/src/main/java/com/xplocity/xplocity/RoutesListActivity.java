@@ -22,7 +22,7 @@ import api_classes.interfaces.RouteDescriptionImageDownloaderInterface;
 import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import models.RouteDescription;
 
-public class RoutesListActivity extends XplocityMenuActivity
+public class RoutesListActivity extends ServiceBindingActivity
         implements
             RoutesDescriptionsDownloaderInterface,
             RouteDescriptionImageDownloaderInterface {
@@ -87,6 +87,24 @@ public class RoutesListActivity extends XplocityMenuActivity
                 }
             }
         });
+    }
+
+
+    @Override
+    protected void onServiceBound() {
+        if (mService.trackingActive()) {
+            Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
+            startActivity(intent);
+        }
+        else if (mService.savingActive()) {
+            Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onServiceUnbound() {
+
     }
 
     private void downloadRoutesDescription() {

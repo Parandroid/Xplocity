@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -518,13 +519,24 @@ public class RouteNewActivity
     }
 
     public void stopTrackingBtnPressed(View view) {
-        if (mIsBound && mService.trackingActive()) {
-            //get last path update from service then stop the service
-            updateRouteUI();
-            Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
-            intent.putExtra("route", mService.getRoute());
-            stopTracking();
-            startActivity(intent);
+        try {
+            if (mIsBound && mService.trackingActive()) {
+                //get last path update from service then stop the service
+                updateRouteUI();
+                Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
+                /*intent.putExtra("route", mService.getRoute());*/
+                stopTracking();
+                startActivity(intent);
+            }
+        }
+        catch (Throwable e) {
+            mLogger.logError("Redirection to route save screen failed", e);
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
+                    .setContentTitle("Xplocity. Redirection to route save screen failed.")
+                    .setContentText(e.getMessage());
+
         }
     }
 

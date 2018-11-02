@@ -1,11 +1,15 @@
 package com.xplocity.xplocity;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -15,27 +19,48 @@ import api_classes.RouteUploader;
 import api_classes.interfaces.RouteUploaderInterface;
 import managers.routeMapManager;
 import models.Route;
+import utils.Factory.LogFactory;
+import utils.Log.Logger;
+import utils.LogLevelGetter;
 import utils.UI.WaitWheel;
 
 
 public class RouteSaveActivity
-        extends AppCompatActivity
+        extends ServiceBindingActivity
         implements RouteUploaderInterface {
 
     private routeMapManager mMapManager;
     private WaitWheel mWaitWheel;
+    private View mSaveBtn;
 
     private Route mRoute;
+
+    //Logger
+    Logger mLogger;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_save);
 
-        mRoute = getIntent().getParcelableExtra("route");
-
+        mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
+        mSaveBtn = findViewById(R.id.btnOk);
+        mSaveBtn.setEnabled(false);
+    }
+
+
+    @Override
+    protected void onServiceBound() {
+        mRoute = mService.getRoute();
         initMapManager();
+        mSaveBtn.setEnabled(true);
+    }
+
+    @Override
+    protected void onServiceUnbound() {
+
     }
 
 
@@ -43,7 +68,7 @@ public class RouteSaveActivity
         MapView map = (MapView) findViewById(R.id.map);
         mMapManager = new routeMapManager(map, null, null, findViewById(android.R.id.content));
         mMapManager.setRoute(mRoute);
-        mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size()-1));
+        mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size() - 1));
     }
 
 
@@ -61,8 +86,8 @@ public class RouteSaveActivity
     @Override
     public void onSuccessUploadRoute() {
         mWaitWheel.hideWaitAnimation();
-        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
-        startActivity(intent);
+
+        finishRoute();
     }
 
     @Override
@@ -86,8 +111,7 @@ public class RouteSaveActivity
                 "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
-                        startActivity(intent);
+                        finishRoute();
                         dialog.cancel();
                     }
                 });
@@ -102,5 +126,12 @@ public class RouteSaveActivity
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
+
+
+    private void finishRoute() {
+        mService.destroyService();
+        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+        startActivity(intent);
     }
 }

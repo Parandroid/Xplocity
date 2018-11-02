@@ -40,8 +40,15 @@ public class XplocityPositionService
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
 
-    private PositionManager mPositionManager;
+    public static final int TRACKING_STATE_NOT_STARTED = 1;
+    public static final int TRACKING_STATE_ACTIVE = 2;
+    public static final int TRACKING_STATE_FINISHED = 3;
 
+
+
+    public int trackingState;
+
+    private PositionManager mPositionManager;
     private LocationManager mLocationManager;
 
 
@@ -56,11 +63,11 @@ public class XplocityPositionService
 
         @Override
         public void onLocationChanged(Location location) {
-            if (mPositionManager.trackingActive) {
+            if (trackingState == TRACKING_STATE_ACTIVE) {
                 mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
                 broadcastPositionChanged();
 
-                writeStateToStorage();
+                //writeStateToStorage();
                 mLogger.logVerbose("Location update: " + location.toString());
             }
         }
@@ -118,25 +125,9 @@ public class XplocityPositionService
                 .build();
 
         startForeground(ResourceGetter.getInteger("location_service_id"), notification);
-
-        // load tasks from preference
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-        if (prefs.contains("positionManager")) {
-            Gson gson = new Gson();
-            mPositionManager = gson.fromJson(prefs.getString("positionManager", ""), new TypeToken<PositionManager>() {
-            }.getType());
-            mPositionManager.setCallback(this);
-            clearStorage();
-        }
-        else {
-            mPositionManager = new PositionManager(this);
-        }
+        loadStateFromStorage();
 
 
-        if (mPositionManager.trackingActive) {
-            requestLocationUpdates();
-        }
     }
 
     @Override
@@ -173,7 +164,35 @@ public class XplocityPositionService
         Gson gson = new Gson();
         String json = gson.toJson(mPositionManager);
         editor.putString("positionManager", json);
+        editor.putInt("trackingState", trackingState);
         editor.commit();
+    }
+
+    private void loadStateFromStorage() {
+        // load tasks from preference
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        if (prefs.contains("positionManager")) {
+            Gson gson = new Gson();
+            mPositionManager = gson.fromJson(prefs.getString("positionManager", ""), new TypeToken<PositionManager>() {
+            }.getType());
+            mPositionManager.setCallback(this);
+        }
+        else {
+            mPositionManager = new PositionManager(this);
+        }
+
+        if (prefs.contains("trackingState")) {
+            trackingState = prefs.getInt("trackingState", TRACKING_STATE_NOT_STARTED);
+            if (trackingState == TRACKING_STATE_ACTIVE) {
+                requestLocationUpdates();
+            }
+        }
+        else {
+            trackingState = TRACKING_STATE_NOT_STARTED;
+        }
+
+        clearStorage();
+
     }
 
     private void clearStorage() {
@@ -181,6 +200,7 @@ public class XplocityPositionService
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.remove("positionManager");
+        editor.remove("trackingState");
         editor.commit();
 
     }
@@ -228,8 +248,9 @@ public class XplocityPositionService
 
 
     public void startTracking() {
-        if (!mPositionManager.trackingActive) {
+        if (trackingState != TRACKING_STATE_ACTIVE) {
             mPositionManager.startTracking();
+            trackingState = TRACKING_STATE_ACTIVE;
 
             requestLocationUpdates();
         } else {
@@ -250,10 +271,9 @@ public class XplocityPositionService
     }
 
     public void stopTracking() {
-        if (mPositionManager.trackingActive) {
-            mPositionManager.stopTracking();
+        if (trackingState == TRACKING_STATE_ACTIVE) {
+            trackingState = TRACKING_STATE_FINISHED;
 
-            clearStorage();
 
             if (mLocationManager != null) {
                 try {
@@ -269,8 +289,17 @@ public class XplocityPositionService
         }
     }
 
+    public void destroyService() {
+        clearStorage();
+        trackingState = TRACKING_STATE_NOT_STARTED;
+        stopSelf();
+    }
+
     public boolean trackingActive() {
-        return mPositionManager.trackingActive;
+        return trackingState == TRACKING_STATE_ACTIVE;
+    }
+    public boolean savingActive() {
+        return trackingState == TRACKING_STATE_FINISHED;
     }
 
     public void setRoute(Route route) {
