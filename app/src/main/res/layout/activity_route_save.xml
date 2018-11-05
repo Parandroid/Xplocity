@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/wait_wheel"/>
+    <include layout="@layout/wait_wheel" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="100">
+        android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/my_toolbar"
@@ -42,7 +42,7 @@
                     android:background="?android:selectableItemBackground"
                     android:minWidth="100dp"
                     android:onClick="cancelRoute"
-                    android:src="@drawable/ic_close_black_24dp"
+                    app:srcCompat="@drawable/ic_close_black_24dp"
                     android:tint="@color/cast_expanded_controller_text_color" />
 
                 <TextView
@@ -66,7 +66,7 @@
                     android:elevation="0dp"
                     android:minWidth="100dp"
                     android:onClick="uploadRoute"
-                    android:src="@drawable/ic_done_black_24dp"
+                    app:srcCompat="@drawable/ic_done_black_24dp"
                     android:tint="@color/cast_expanded_controller_text_color" />
 
 
@@ -79,21 +79,165 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="60">
-            <include layout="@layout/osm_map_with_buttons"/>
+            android:layout_weight="1"
+            android:minHeight="260dp"
+            android:padding="8dp">
+
+            <include layout="@layout/osm_map_with_buttons" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lines="1"
+                    android:text="122"
+                    android:textAlignment="center"
+                    android:textColor="@color/place_autocomplete_search_text"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="distance"
+                    android:textAlignment="center"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="@+id/distance"
+                    app:layout_constraintRight_toRightOf="@+id/distance"
+                    app:layout_constraintTop_toBottomOf="@+id/distance" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lines="1"
+                    android:text="5.2"
+                    android:textAlignment="center"
+                    android:textColor="@color/place_autocomplete_search_text"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="duration"
+                    android:textAlignment="center"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="@+id/duration"
+                    app:layout_constraintRight_toRightOf="@+id/duration"
+                    app:layout_constraintTop_toBottomOf="@+id/duration" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:lines="1"
+                    android:text="5.2"
+                    android:textAlignment="center"
+                    android:textColor="@color/place_autocomplete_search_text"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="avg. speed"
+                    android:textAlignment="center"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="@+id/speed"
+                    app:layout_constraintRight_toRightOf="@+id/speed"
+                    app:layout_constraintTop_toBottomOf="@+id/speed" />
+
+            </android.support.constraint.ConstraintLayout>
         </LinearLayout>
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="30">
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
 
-            <TextView
-                android:id="@+id/textView"
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <ImageView
+                    android:id="@+id/location_explored_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/location_explored_marker"/>
 
+                <TextView
+                    android:id="@+id/locations_explored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toRightOf="@id/location_explored_icon"
+                    app:layout_constraintTop_toTopOf="@+id/location_explored_icon"
+                    app:layout_constraintBottom_toBottomOf="@+id/location_explored_icon"
+                    android:textColor="@color/place_autocomplete_search_text"
+                    android:textSize="32sp"
+                    android:text="142"/>
+            </android.support.constraint.ConstraintLayout>
+
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:progressDrawable="@drawable/progress_circle_shape"
+                android:background="@drawable/progress_circle_background"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="78"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>

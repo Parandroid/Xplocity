@@ -566,7 +566,7 @@ public class RouteNewActivity
 
     private void updateDistance() {
         if (mService.getRoute() != null) {
-            mTxtDistance.setText(Formatter.formatDistance((int) mService.getRoute().distance));
+            mTxtDistance.setText(Formatter.formatDistance((int) mService.getRoute().distance) + " km");
         }
     }
 
@@ -585,7 +585,7 @@ public class RouteNewActivity
                 speed = 0f;
             }
 
-            mTxtSpeed.setText(Formatter.formatSpeed(speed));
+            mTxtSpeed.setText(Formatter.formatSpeed(speed) + " km/h");
         }
     }
 

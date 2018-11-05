@@ -51,6 +51,8 @@ public class NewRouteDownloader extends Loader {
 
         try {
             route.locations = newRouteParser.parse(stream);
+            route.loc_cnt_explored = 0;
+            route.loc_cnt_total = route.locations.size();
             mCallback.onNewRouteDownloaded(route);
         }
         catch (Throwable e) {

@@ -68,6 +68,7 @@ public class PositionManager implements Parcelable {
 
                 if (loc.distance <= LOCATION_REACHED_DISTANCE){
                     loc.setStateExplored();
+                    route.loc_cnt_explored = route.loc_cnt_explored + 1;
                     mCallback.onLocationReached(loc);
                 }
                 else if (loc.circle.isPointInside(position)) {

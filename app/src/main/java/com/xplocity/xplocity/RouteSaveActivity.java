@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.views.MapView;
@@ -20,6 +22,7 @@ import api_classes.interfaces.RouteUploaderInterface;
 import managers.routeMapManager;
 import models.Route;
 import utils.Factory.LogFactory;
+import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 import utils.UI.WaitWheel;
@@ -56,6 +59,16 @@ public class RouteSaveActivity
         mRoute = mService.getRoute();
         initMapManager();
         mSaveBtn.setEnabled(true);
+
+        ((TextView) findViewById(R.id.distance)).setText(Formatter.formatDistance((int) mRoute.distance) + " km");
+        ((TextView) findViewById(R.id.duration)).setText(Formatter.formatHours(mRoute.duration/60000) + " h");
+        updateSpeed();
+
+        int percentVisited = Math.round(mRoute.loc_cnt_explored * 100f / mRoute.loc_cnt_total);
+        ((TextView) findViewById(R.id.locations_explored)).setText(Integer.toString(mRoute.loc_cnt_explored));
+        ((ProgressBar) findViewById(R.id.progressBar)).setProgress(percentVisited);
+
+
     }
 
     @Override
@@ -63,9 +76,22 @@ public class RouteSaveActivity
 
     }
 
+    private void updateSpeed() {
+        if (mRoute != null) {
+            float speed;
+            if (mRoute.duration != 0) {
+                speed = mRoute.distance / (mRoute.duration / 1000f);
+            } else {
+                speed = 0f;
+            }
+
+            ((TextView) findViewById(R.id.speed)).setText(Formatter.formatSpeed(speed) + " km/h");
+        }
+    }
+
 
     public void initMapManager() {
-        MapView map = (MapView) findViewById(R.id.map);
+        MapView map = findViewById(R.id.map);
         mMapManager = new routeMapManager(map, null, null, findViewById(android.R.id.content));
         mMapManager.setRoute(mRoute);
         mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size() - 1));

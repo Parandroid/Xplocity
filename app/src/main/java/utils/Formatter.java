@@ -24,7 +24,7 @@ public class Formatter {
             return String.format("%.1f", distanceKm);
         }
         else if (distanceKm < 100) {
-            return String.format("%.0f", distanceKm);
+            return String.format("%.1f", distanceKm);
         }
         else {
             return String.format("%.0f", distanceKm);
@@ -75,6 +75,6 @@ public class Formatter {
 
     //convert from m/sec to km/h
     public static String formatSpeed(float speed) {
-        return String.format("%.2f km/h", speed*3.6);
+        return formatDistance(Math.round(speed*3600));
     }
 }
