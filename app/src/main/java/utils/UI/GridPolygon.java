@@ -10,6 +10,7 @@ import android.graphics.Shader;
 import android.support.annotation.NonNull;
 
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.util.TileSystem;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Polygon;
@@ -39,7 +40,7 @@ public class GridPolygon extends Polygon {
     }
 
     protected void recalculateMatrix(@NonNull final MapView mapView) {
-        //final int mapSize = TileSystem.MapSize(mapView.getZoomLevel());
+        final int zoomLevel = mapView.getZoomLevel();
 
         final Projection projection = mapView.getProjection();
         final IGeoPoint geoPoint = mapView.getMapCenter();
@@ -70,8 +71,12 @@ public class GridPolygon extends Polygon {
 
         final Matrix matrix = new Matrix();
         matrix.reset();
-        matrix.setScale(1,1);
-        matrix.preTranslate(xOffset, yOffset);
+
+        float scale = getScale(zoomLevel);
+
+        //matrix.setScale(scale,scale);
+        matrix.postScale(scale,scale);
+        matrix.postTranslate(xOffset, yOffset);
         //matrix.setTranslate(xOffset, yOffset);
         bitmapShader.setLocalMatrix(matrix);
 
@@ -87,7 +92,19 @@ public class GridPolygon extends Polygon {
 
     @Override
     public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-        recalculateMatrix(mapView);
+        if (bitmapShader != null)
+            recalculateMatrix(mapView);
         super.draw(canvas, mapView, shadow);
+    }
+
+
+    private float getScale(int zoomLevel) {
+        float scale = 1f;
+        final int MAX_ZOOM_LEVEL = 16;
+
+        if (zoomLevel < MAX_ZOOM_LEVEL)
+            scale = 1f /(MAX_ZOOM_LEVEL - zoomLevel);
+
+        return scale;
     }
 }

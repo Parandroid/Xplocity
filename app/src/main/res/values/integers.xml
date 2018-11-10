@@ -4,5 +4,5 @@
     <integer name="location_service_id">1488</integer>
 
     <!-- UI -->
-    <integer name="map_polyline_width">5</integer>
+    <integer name="map_polyline_width">10</integer>
 </resources>

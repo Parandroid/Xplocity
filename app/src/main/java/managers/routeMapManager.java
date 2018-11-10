@@ -262,10 +262,10 @@ public class routeMapManager extends mapManager {
         List<GeoPoint> circle = Polygon.pointsAsCircle(locCircle.center, locCircle.raduis);
         final GridPolygon p = new GridPolygon();
         p.setPoints(circle);
-        p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.locationCircleStroke));
+        p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.transparent));
         p.setStrokeWidth(0);
-        p.setFillColor(ResourceGetter.getResources().getColor(R.color.locationUnexploredFill));
-        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.location_circle_pattern));
+        p.setFillColor(ResourceGetter.getResources().getColor(R.color.black));
+        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions));
 
         mMap.getOverlays().add(p);
         return p;

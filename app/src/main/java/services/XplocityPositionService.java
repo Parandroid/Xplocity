@@ -45,7 +45,6 @@ public class XplocityPositionService
     public static final int TRACKING_STATE_FINISHED = 3;
 
 
-
     public int trackingState;
 
     private PositionManager mPositionManager;
@@ -68,7 +67,7 @@ public class XplocityPositionService
                 broadcastPositionChanged();
 
                 //writeStateToStorage();
-                mLogger.logVerbose("Location update: " + location.toString());
+                //mLogger.logVerbose("Location update: " + location.toString());
             }
         }
 
@@ -176,8 +175,7 @@ public class XplocityPositionService
             mPositionManager = gson.fromJson(prefs.getString("positionManager", ""), new TypeToken<PositionManager>() {
             }.getType());
             mPositionManager.setCallback(this);
-        }
-        else {
+        } else {
             mPositionManager = new PositionManager(this);
         }
 
@@ -186,8 +184,7 @@ public class XplocityPositionService
             if (trackingState == TRACKING_STATE_ACTIVE) {
                 requestLocationUpdates();
             }
-        }
-        else {
+        } else {
             trackingState = TRACKING_STATE_NOT_STARTED;
         }
 
@@ -252,6 +249,14 @@ public class XplocityPositionService
             mPositionManager.startTracking();
             trackingState = TRACKING_STATE_ACTIVE;
 
+            try {
+                Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
+                broadcastPositionChanged();
+            } catch (java.lang.SecurityException e) {
+                mLogger.logError("Failed to start tracking: Failed to request location update", e);
+            }
+
             requestLocationUpdates();
         } else {
             mLogger.logWarning("Failed to start tracking: tracking already in progress");
@@ -298,6 +303,7 @@ public class XplocityPositionService
     public boolean trackingActive() {
         return trackingState == TRACKING_STATE_ACTIVE;
     }
+
     public boolean savingActive() {
         return trackingState == TRACKING_STATE_FINISHED;
     }

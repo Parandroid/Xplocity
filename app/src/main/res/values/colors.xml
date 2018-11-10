@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00ffffff</color>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#ff4081</color>
+    <color name="black">#000000</color>
     <color name="colorSuccess">#99cc00</color>
     <color name="darkerGray">#aaaaaa</color>
     <color name="Gray6">#67666666</color>
-    <color name="locationUnexploredBorder">#890000</color>
-    <color name="locationUnexploredFill">#b34a4a</color>
+    <color name="locationUnexploredBorder">#666</color>
+    <color name="locationUnexploredFill">#888</color>
     <color name="locationExploredBorder">#009300</color>
     <color name="locationExploredFill">#5bb95b</color>
     <color name="locationCircleFill">#66969696</color>
