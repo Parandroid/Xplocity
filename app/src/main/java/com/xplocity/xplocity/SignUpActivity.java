@@ -45,6 +45,7 @@ public class SignUpActivity
         mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
 
         mSignUpBtn.setEnabled(false);
+        mErrorsTxt.setVisibility(View.GONE);
 
         TextWatcher watcher = new TextWatcher() {
 
@@ -75,13 +76,9 @@ public class SignUpActivity
 
     public void changeSignUpBtnStyle() {
         if ((mEmailInput.getText().length() > 0) && (mPasswordInput.getText().length() > 0)) {
-            mSignUpBtn.setTextColor(getResources().getColor(R.color.btnColoredText));
-            mSignUpBtn.setBackgroundColor(getResources().getColor(R.color.btnColoredBackground));
             mSignUpBtn.setEnabled(true);
         }
         else {
-            mSignUpBtn.setTextColor(getResources().getColor(R.color.btnColoredDisabledText));
-            mSignUpBtn.setBackgroundColor(getResources().getColor(R.color.btnColoredDisabledBackground));
             mSignUpBtn.setEnabled(false);
         }
     }
@@ -100,7 +97,7 @@ public class SignUpActivity
 
     @Override
     public void onSuccessUploadSignUpInfo(AuthToken authToken) {
-        mErrorsTxt.setText("");
+        mErrorsTxt.setVisibility(View.GONE);
 
         if (authToken != null) {
             // TODO мб вынести работу с хранилищем в отдельный класс?
@@ -131,6 +128,7 @@ public class SignUpActivity
         }
 
         mErrorsTxt.setText(error);
+        mErrorsTxt.setVisibility(View.VISIBLE);
 
         mWaitWheel.hideWaitAnimation();
 

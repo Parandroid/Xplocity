@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,6 +21,12 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="com.xplocity.xplocity.SignUpActivity">
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/XplocityTextView"
+            android:text="@string/action_sign_up" />
 
         <ScrollView
             android:id="@+id/login_form"
@@ -64,14 +71,12 @@
 
                 <Button
                     android:id="@+id/btn_sign_up"
-                    style="@style/Widget.AppCompat.Button.Colored"
+                    style="@style/XplocityColoredButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@color/btnColoredDisabledBackground"
                     android:onClick="signUp"
-                    android:text="@string/action_sign_up"
-                    android:textColor="@color/btnColoredDisabledText" />
+                    android:text="@string/action_sign_up_short" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -81,7 +86,9 @@
                     android:id="@+id/txtError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorError" />
+                    android:textColor="@color/colorError"
+                    android:visibility="gone"
+                    android:textSize="18sp" />
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -91,7 +98,7 @@
                         android:id="@+id/textView5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="If you alreade have account:"
+                        android:text="If you already have an account:"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         app:layout_constraintBaseline_toBaselineOf="@+id/btn_sign_in" />
 
@@ -104,6 +111,7 @@
                         android:layout_marginStart="8dp"
                         android:onClick="redirectToSignIn"
                         android:text="@string/action_sign_in"
+                        android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView5" />
                 </android.support.constraint.ConstraintLayout>
