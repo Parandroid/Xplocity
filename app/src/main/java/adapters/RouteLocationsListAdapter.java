@@ -1,19 +1,13 @@
 package adapters;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.xplocity.xplocity.R;
@@ -27,90 +21,114 @@ import utils.Factory.LogFactory;
 import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
-import utils.ResourceGetter;
-import utils.UI.BottomSheetListView;
 
 
 /**
  * Created by dmitry on 02.08.17.
  */
 
-public class RouteLocationsListAdapter extends ArrayAdapter<Location> {
+public class RouteLocationsListAdapter extends RecyclerView.Adapter<RouteLocationsListAdapter.ViewHolder> {
 
     private Logger mLogger;
     private Context mContext;
     private RouteLocationsListAdapterInterface mCallback;
     private RouteLocationList mLocationInfoFragment;
 
-    public RouteLocationsListAdapter(Context context, ArrayList<Location> locations, RouteLocationsListAdapterInterface callback, RouteLocationList locationInfoFragment) {
-        super(context, 0, locations);
+    private ArrayList<Location> mDataset;
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView txtLocationAddress;
+        public TextView txtLocationName;
+        public TextView txtLocationDescription;
+        public Button btnLocationTrack;
+        public LinearLayout layoutLocationInfo;
+
+        public ViewHolder(View v) {
+            super(v);
+
+            txtLocationAddress = (TextView) v.findViewById(R.id.txtLocationAddress);
+            txtLocationName = (TextView) v.findViewById(R.id.txtLocationName);
+            txtLocationDescription = (TextView) v.findViewById(R.id.txtLocationDescription);
+            btnLocationTrack = (Button) v.findViewById(R.id.btnLocationTrack);
+            layoutLocationInfo = (LinearLayout) v.findViewById(R.id.layoutLocationInfo);
+        }
+    }
+
+    public RouteLocationsListAdapter(Context context, ArrayList<Location> locations, RouteLocationsListAdapterInterface callback, RouteLocationList locationInfoFragment) {
         mContext = context;
         mCallback = callback;
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         mLocationInfoFragment = locationInfoFragment;
+        mDataset = locations;
     }
 
+
+
     @Override
-    public View getView(int position, View convertView, final ViewGroup parent) {
-        final Location location = getItem(position);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.route_locations_list_item, parent, false);
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.route_locations_list_item, parent, false);
-        }
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
 
-        final TextView txtLocationAddress = (TextView) convertView.findViewById(R.id.txtLocationAddress);
-        final TextView txtLocationName = (TextView) convertView.findViewById(R.id.txtLocationName);
-        final TextView txtLocationDescription = (TextView) convertView.findViewById(R.id.txtLocationDescription);
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
 
-        Button btnLocationTrack = (Button) convertView.findViewById(R.id.btnLocationTrack);
+        Location location = mDataset.get(position);
 
-        txtLocationAddress.setText(location.address);
-        txtLocationName.setText(location.name);
-        txtLocationDescription.setText(location.description);
-        btnLocationTrack.setText(Formatter.formatDistance((int) location.distance));
+        holder.txtLocationAddress.setText(location.address);
+        holder.txtLocationName.setText(location.name);
+        holder.txtLocationDescription.setText(location.description);
+        holder.btnLocationTrack.setText(Formatter.formatDistance((int) location.distance));
 
         if (location.explored()) {
-            txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.colorSuccess));
-            txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
-            txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
-            btnLocationTrack.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
+            holder.txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.colorSuccess));
+            holder.txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
+            holder.txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
+            holder.btnLocationTrack.setTextColor(ContextCompat.getColor(mContext, R.color.darkerGray));
         }
         else {
-            txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
-            txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
-            txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
-            btnLocationTrack.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            holder.txtLocationName.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            holder.txtLocationAddress.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            holder.txtLocationDescription.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
+            holder.btnLocationTrack.setTextColor(ContextCompat.getColor(mContext, R.color.common_google_signin_btn_text_light));
         }
 
-        btnLocationTrack.setOnClickListener(new View.OnClickListener() {
+        holder.btnLocationTrack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mCallback.moveCameraPositionBelowLocation(location.position);
             }
         });
 
 
-        LinearLayout layoutLocationInfo = (LinearLayout) convertView.findViewById(R.id.layoutLocationInfo);
-        layoutLocationInfo.setOnClickListener(new View.OnClickListener() {
+        holder.layoutLocationInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                /*cycleTextViewExpansion(txtLocationName);
-                cycleTextViewExpansion(txtLocationAddress);
-                cycleTextViewExpansion(txtLocationDescription);*/
                 mLocationInfoFragment.showLocationInfo(location);
             }
         });
 
+    }
 
-        return convertView;
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return mDataset.size();
     }
 
 
-    private void cycleTextViewExpansion(TextView tv){
+
+    /*private void cycleTextViewExpansion(TextView tv){
         int collapsedMaxLines = 1;
         ObjectAnimator animation = ObjectAnimator.ofInt(tv, "maxLines",
                 tv.getMaxLines() == collapsedMaxLines? tv.getLineCount() : collapsedMaxLines);
         animation.setDuration(tv.getLineCount()*100).start();
-    }
+    }*/
 
 
 

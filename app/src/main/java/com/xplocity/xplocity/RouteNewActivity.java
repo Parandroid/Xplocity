@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -14,8 +15,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +28,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -51,6 +52,8 @@ import api_classes.NewRouteDownloader;
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
 import api_classes.interfaces.NewRouteDownloaderInterface;
 import app.XplocityApplication;
+import biz.laenger.android.vpbs.BottomSheetUtils;
+import biz.laenger.android.vpbs.ViewPagerBottomSheetBehavior;
 import managers.routeMapManager;
 import models.LocationCategory;
 import models.Route;
@@ -68,7 +71,8 @@ public class RouteNewActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
         ServiceStateReceiverInterface,
-        RouteLocationsListAdapterInterface {
+        RouteLocationsListAdapterInterface,
+        RouteLocationList.OnFragmentInteractionListener {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -104,7 +108,7 @@ public class RouteNewActivity
     NewRoutePagerAdapter mPagerAdapter;
     private RouteLocationsListAdapter mLocationAdapter;
     ViewPager mPager;
-
+    ViewPagerBottomSheetBehavior mBottomSheet;
 
     private GeoPoint mCurrentPosition;
     private boolean mRouteReady = false;
@@ -133,11 +137,17 @@ public class RouteNewActivity
         mTxtDuration = (TextView) findViewById(R.id.textDuration);
         mTxtSpeed = (TextView) findViewById(R.id.textSpeed);
 
+
+        mBottomSheet = ViewPagerBottomSheetBehavior.from(findViewById(R.id.bottom_sheet_panel));
+
         mPagerAdapter = new NewRoutePagerAdapter(getSupportFragmentManager(), this);
         mPagerAdapter.addFragment(RouteLocationList.class.getName());
 
         mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setOffscreenPageLimit(1);
         mPager.setAdapter(mPagerAdapter);
+        BottomSheetUtils.setupViewPager(mPager);
+
 
         receiver = new ServiceStateReceiver(this);
 
@@ -719,12 +729,13 @@ public class RouteNewActivity
 
     public void fillLocationsList(ArrayList<models.Location> locations) {
         mLocationAdapter = new RouteLocationsListAdapter(this, locations, this, mPagerAdapter.getLocationsPage());
-        ListView listView = (ListView)findViewById(R.id.locations_list);
+        RecyclerView listView = findViewById(R.id.locations_list);
         listView.setAdapter(mLocationAdapter);
+        listView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
 
         // Update locations info on bottom sheet expanded
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet_panel));
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        mBottomSheet.setBottomSheetCallback(new ViewPagerBottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
@@ -743,6 +754,12 @@ public class RouteNewActivity
     public void moveCameraPositionBelowLocation(GeoPoint position) {
         mMapManager.animateTrackingCamera(new GeoPoint(position.getLatitude() -0.001, position.getLongitude()));
         //mMapManager.animateTrackingCamera(position);
+    }
+
+    @Override
+    public void onLocationInfoClosed() {
+
+        mBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
 

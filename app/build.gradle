@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         multiDexEnabled true
         applicationId "com.xplocity.xplocity"
@@ -18,25 +18,38 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+ext {
+    supportLibrary = "27.0.2"
 }
 
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile "biz.laenger.android:vpbs:0.0.5"
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation 'com.android.support:appcompat-v7:26.+'
-    implementation 'com.android.support:design:26.+'
+    implementation "com.android.support:appcompat-v7:${supportLibrary}"
+    implementation "com.android.support:mediarouter-v7:${supportLibrary}"
+    implementation "com.android.support:design:${supportLibrary}"
+    implementation "com.android.support:support-vector-drawable:${supportLibrary}"
+    implementation "com.android.support:support-v4:${supportLibrary}"
+    implementation "com.android.support:design:${supportLibrary}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.facebook.stetho:stetho:1.5.0'
     implementation 'com.android.volley:volley:1.0.0'
     implementation 'com.google.android.gms:play-services-maps:11.0.4'
     implementation 'com.google.android.gms:play-services:11.0.4'
     implementation 'com.google.code.gson:gson:2.8.1'
-    implementation 'com.android.support:support-vector-drawable:26.+'
-    implementation 'com.android.support:support-v4:26.+'
+
     implementation 'org.osmdroid:osmdroid-android:5.6.5'
     testCompile 'junit:junit:4.12'
     implementation 'net.danlew:android.joda:2.9.9.3'

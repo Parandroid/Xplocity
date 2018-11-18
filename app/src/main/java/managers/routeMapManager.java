@@ -30,11 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import adapters.LocationMarkerInfoWindow;
+import biz.laenger.android.vpbs.ViewPagerBottomSheetBehavior;
 import models.Location;
 import models.LocationCircle;
+import models.Route;
 import models.enums.LocationExploreState;
 import utils.ResourceGetter;
-import models.Route;
 import utils.UI.GridPolygon;
 
 /**
@@ -217,7 +218,7 @@ public class routeMapManager extends mapManager {
                 public boolean onMarkerClick(Marker marker, MapView mapView) {
                     Location loc = (Location) marker.getRelatedObject();
 
-                    BottomSheetBehavior.from(mBottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
+                    ViewPagerBottomSheetBehavior.from(mBottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
                     mLocationInfoFragment.showLocationInfo(loc);
 
 
