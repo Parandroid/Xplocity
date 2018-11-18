@@ -4,10 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.xplocity.xplocity.R;
+
+import org.json.JSONException;
+import org.osmdroid.views.overlay.Polygon;
+
+import java.io.UnsupportedEncodingException;
 
 import app.XplocityApplication;
 import utils.Factory.LogFactory;
@@ -24,6 +32,7 @@ public abstract class Loader {
     public static final int HTTP_OK = 200;
     public static final int HTTP_CREATED = 201;
     public static final int HTTP_NOT_MODIFIED = 304;
+    public static final int HTTP_NOT_ACCEPTABLE = 406;
 
 
     public Loader() {
@@ -47,11 +56,18 @@ public abstract class Loader {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mLogger.logError("Network error: " + error.getMessage(), error.getCause());
-                        onResponse(error.getMessage(), stringRequest.getHttpCode());
 
-                        //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
+                        NetworkResponse response = error.networkResponse;
+                        if (error instanceof ServerError && response != null) {
+                            String res = new String(response.data);
+                            Loader.this.onResponse(res, stringRequest.getHttpCode());
+                        }
+                        else {
+                            mLogger.logError("Network error: " + error.getMessage(), error.getCause());
+                            onResponse(error.getMessage(), stringRequest.getHttpCode());
 
+                            //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
+                        }
                     }
                 });
 
@@ -81,11 +97,18 @@ public abstract class Loader {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        mLogger.logError("Network error: " + error.getMessage(), error.getCause());
-                        Loader.this.onError(error.getMessage());
 
-                        //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
+                        NetworkResponse response = error.networkResponse;
+                        if (error instanceof ServerError && response != null) {
+                            String res = new String(response.data);
+                            Loader.this.onResponse(res, response.statusCode);
+                        }
+                        else {
+                            mLogger.logError("Network error: " + error.getMessage(), error.getCause());
+                            onResponse(error.getMessage(), stringRequest.getHttpCode());
 
+                            //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
+                        }
                     }
                 });
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
@@ -113,9 +136,7 @@ public abstract class Loader {
             url = url + "user_id=" + Integer.toString(user_id) + "&authentication_token=" + auth_token;
 
             return url;
-        }
-        else
-        {
+        } else {
             // TODO передалать на Exception?
             return null;
         }
@@ -124,5 +145,6 @@ public abstract class Loader {
 
     // Implement in descendants
     protected abstract void onResponse(String response, int http_code);
+
     protected abstract void onError(String error);
 }

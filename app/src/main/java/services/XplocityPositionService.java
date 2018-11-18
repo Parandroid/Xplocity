@@ -37,6 +37,20 @@ import utils.ResourceGetter;
 public class XplocityPositionService
         extends Service
         implements PositionManagerInterface {
+
+    //singleton for accessing the service instance
+    private static XplocityPositionService mInstance;
+
+    public static XplocityPositionService getInstance() {
+        if (mInstance != null) {
+            return mInstance;
+        }
+        else {
+            return null;
+        }
+
+    }
+
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
 
@@ -114,6 +128,8 @@ public class XplocityPositionService
 
     @Override
     public void onCreate() {
+        mInstance = this;
+
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         initializeLocationManager();
 

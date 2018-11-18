@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="white">#ffffff</color>
+    <color name="gray100">#eeeeee</color>
+    <color name="gray300">#cccccc</color>
+    <color name="gray500">#aaaaaa</color>
+    <color name="gray700">#777777</color>
+    <color name="gray900">#444444</color>
+
+
     <color name="transparent">#00ffffff</color>
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#ff4081</color>
     <color name="black">#000000</color>
     <color name="colorSuccess">#99cc00</color>
+    <color name="colorError">#ef5350</color>
     <color name="darkerGray">#aaaaaa</color>
     <color name="Gray6">#67666666</color>
     <color name="locationUnexploredBorder">#666</color>
@@ -18,4 +28,13 @@
     <color name="locationArrow">#aab34a4a</color>
     <color name="routeDescriptionMapDefaultColor">#bfd6b1</color>
     <color name="routeDescriptionInfoBackground">#fe0182fb</color>
+
+
+    <color name="btnColoredBackground">@color/colorAccent</color>
+    <color name="btnColoredText">@color/white</color>
+
+    <color name="btnColoredDisabledBackground">@color/gray300</color>
+    <color name="btnColoredDisabledText">@color/gray900</color>
+
+
 </resources>
