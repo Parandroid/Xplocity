@@ -82,7 +82,7 @@ public class RouteSaveActivity
                 locationsExplored.add(loc);
             }
         }
-        
+
 
         Collections.sort(locationsExplored, new Comparator<Location>() {
             public int compare(Location o1, Location o2) {

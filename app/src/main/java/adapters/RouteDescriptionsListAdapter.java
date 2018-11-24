@@ -3,8 +3,6 @@ package adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.xplocity.xplocity.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import models.RouteDescription;
 import utils.Formatter;
-import utils.UI.BlurBuilder;
 
 import static utils.ResourceGetter.getResources;
 
@@ -105,6 +99,9 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
 
         return convertView;
     }
+
+
+
 
 
 

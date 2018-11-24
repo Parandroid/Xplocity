@@ -1,11 +1,15 @@
 package com.xplocity.xplocity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -16,8 +20,10 @@ import java.util.List;
 
 import adapters.RouteDescriptionsListAdapter;
 import api_classes.RouteDescriptionImageDownloader;
+import api_classes.RoutesDescriptionsDeleter;
 import api_classes.RoutesDescriptionsDownloader;
 import api_classes.interfaces.RouteDescriptionImageDownloaderInterface;
+import api_classes.interfaces.RoutesDescriptionsDeleterInterface;
 import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import managers.PermissionManager;
 import models.RouteDescription;
@@ -25,7 +31,8 @@ import models.RouteDescription;
 public class RoutesListActivity extends ServiceBindingActivity
         implements
             RoutesDescriptionsDownloaderInterface,
-            RouteDescriptionImageDownloaderInterface {
+            RouteDescriptionImageDownloaderInterface,
+            RoutesDescriptionsDeleterInterface {
 
 
     private RouteDescriptionsListAdapter mAdapter;
@@ -87,6 +94,8 @@ public class RoutesListActivity extends ServiceBindingActivity
                 }
             }
         });
+
+        registerForContextMenu(mListView);
 
 
         requestPermissions();
@@ -210,6 +219,73 @@ public class RoutesListActivity extends ServiceBindingActivity
                 break;
             }
     }
+
+     /*   MENU   */
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId()==R.id.chain_list) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            //menu.setHeaderTitle(Countries[info.position]);
+            menu.add("Delete");
+
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+
+        RouteDescription route = mRouteDescriptions.get(info.position);
+        showDeleteRouteDialog(route.id);
+
+        return true;
+    }
+
+    private void showDeleteRouteDialog(int routeId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to delete this route?");
+        builder.setCancelable(true);
+
+        builder.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        RoutesDescriptionsDeleter deleter = new RoutesDescriptionsDeleter(RoutesListActivity.this);
+                        deleter.deleteRoute(routeId);
+                        dialog.cancel();
+                    }
+                });
+
+        builder.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder.create();
+        alert11.show();
+    }
+
+
+    @Override
+    public void onRouteDescriptionsDeleteSuccess(int deletedRouteId) {
+        for(RouteDescription r : mRouteDescriptions){
+            if(r.id == deletedRouteId) {
+                mRouteDescriptions.remove(r);
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
+    };
+
+    @Override
+    public void onRouteDescriptionsDeleteError(String error) {
+
+    };
 
 
 }

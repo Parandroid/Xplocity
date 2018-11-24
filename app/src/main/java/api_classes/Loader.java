@@ -9,13 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.xplocity.xplocity.R;
-
-import org.json.JSONException;
-import org.osmdroid.views.overlay.Polygon;
-
-import java.io.UnsupportedEncodingException;
 
 import app.XplocityApplication;
 import utils.Factory.LogFactory;
@@ -87,6 +81,46 @@ public abstract class Loader {
 
         // Formulate the request and handle the response.
         stringRequest = new UTF8StringRequest(Request.Method.POST, urlString, body,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Loader.this.onResponse(response, stringRequest.getHttpCode());
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        NetworkResponse response = error.networkResponse;
+                        if (error instanceof ServerError && response != null) {
+                            String res = new String(response.data);
+                            Loader.this.onResponse(res, response.statusCode);
+                        }
+                        else {
+                            mLogger.logError("Network error: " + error.getMessage(), error.getCause());
+                            onResponse(error.getMessage(), stringRequest.getHttpCode());
+
+                            //TODO если получили ответ, что токен неверный, просим пользователя ввести логин/пароль заново
+                        }
+                    }
+                });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        VolleySingleton.getInstance().addToRequestQueue(stringRequest);
+    }
+
+
+    protected void sendDeleteRequest(String urlString, boolean useAuth) {
+        if (useAuth) {
+            urlString = addAuthToUrl(urlString);
+        }
+
+        // Formulate the request and handle the response.
+        stringRequest = new UTF8StringRequest(Request.Method.DELETE, urlString, null,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
