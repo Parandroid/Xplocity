@@ -175,11 +175,6 @@ public class RoutesListActivity extends ServiceBindingActivity
         mListView.removeFooterView(mFooterLoading);
         mFlagLoading = false;
 
-        //Collections.sort(mRouteDescriptions);
-
-
-
-        //TODO: load images only for visible routes and couple routes below
         for (RouteDescription r : routeDescriptions) {
             RouteDescriptionImageDownloader loader = new RouteDescriptionImageDownloader(this);
             loader.downloadRoute(r.id);
@@ -193,7 +188,6 @@ public class RoutesListActivity extends ServiceBindingActivity
         for(RouteDescription r : mRouteDescriptions){
             if(r.id == routeId) {
                 r.image = image;
-                //mAdapter.notifyDataSetChanged();
                 updateListView(routeId);
                 break;
             }
@@ -227,9 +221,7 @@ public class RoutesListActivity extends ServiceBindingActivity
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId()==R.id.chain_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-            //menu.setHeaderTitle(Countries[info.position]);
             menu.add("Delete");
-
         }
     }
 
