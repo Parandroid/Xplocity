@@ -27,12 +27,11 @@
             android:layout_width="match_parent"
             android:layout_height="24dp"
             android:background="@drawable/bottom_sheet_shadow" />
-
         <LinearLayout
             android:id="@+id/bottom_sheet_panel"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:background="@color/wallet_bright_foreground_holo_dark"
+            android:background="@color/white"
             android:orientation="vertical"
             app:behavior_hideable="false"
             app:behavior_peekHeight="50dp"
@@ -54,7 +53,6 @@
                 android:layout_height="50dp" />
 
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/routeInfoUpPanel"
@@ -162,6 +160,7 @@
             </android.support.constraint.ConstraintLayout>
 
         </LinearLayout>
+
 
     </android.support.design.widget.CoordinatorLayout>
 

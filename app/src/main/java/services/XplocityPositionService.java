@@ -22,7 +22,6 @@ import com.xplocity.xplocity.R;
 
 import org.osmdroid.util.GeoPoint;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import app.XplocityApplication;
@@ -52,7 +51,7 @@ public class XplocityPositionService
     }
 
     private static final int LOCATION_INTERVAL = 1000;
-    private static final float LOCATION_DISTANCE = 10f;
+    private static final float LOCATION_DISTANCE = 5f;
 
     public static final int TRACKING_STATE_NOT_STARTED = 1;
     public static final int TRACKING_STATE_ACTIVE = 2;
@@ -267,8 +266,10 @@ public class XplocityPositionService
 
             try {
                 Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
-                broadcastPositionChanged();
+                if (location != null) {
+                    mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
+                    broadcastPositionChanged();
+                }
             } catch (java.lang.SecurityException e) {
                 mLogger.logError("Failed to start tracking: Failed to request location update", e);
             }

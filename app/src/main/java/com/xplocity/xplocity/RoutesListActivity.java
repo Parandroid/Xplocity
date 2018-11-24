@@ -3,23 +3,23 @@ package com.xplocity.xplocity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
-
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-
 import java.util.ArrayList;
+import java.util.List;
 
 import adapters.RouteDescriptionsListAdapter;
 import api_classes.RouteDescriptionImageDownloader;
 import api_classes.RoutesDescriptionsDownloader;
 import api_classes.interfaces.RouteDescriptionImageDownloaderInterface;
 import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
+import managers.PermissionManager;
 import models.RouteDescription;
 
 public class RoutesListActivity extends ServiceBindingActivity
@@ -32,6 +32,7 @@ public class RoutesListActivity extends ServiceBindingActivity
     private ArrayList<RouteDescription> mRouteDescriptions;
     private ListView mListView;
     private View mFooterLoading;
+    private FloatingActionButton mFab;
 
     private static final int MAX_ROUTES_PER_REQUEST = 10; //max number of routes returned by single request
     private int mCurrentOffset = 0;
@@ -45,13 +46,12 @@ public class RoutesListActivity extends ServiceBindingActivity
         setContentView(R.layout.activity_routes_list);
 
         mListView = (ListView) findViewById(R.id.chain_list);
-
         mFooterLoading = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.route_description_list_item_footer_loading, null, false);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
@@ -59,12 +59,12 @@ public class RoutesListActivity extends ServiceBindingActivity
             }
         });
 
+        mFab.setVisibility(View.GONE);
+
 
         mRouteDescriptions = new ArrayList<RouteDescription>();
         mAdapter = new RouteDescriptionsListAdapter(this, mRouteDescriptions);
         mListView.setAdapter(mAdapter);
-
-        downloadRoutesDescription();
 
         mListView.setOnItemClickListener(listListener);
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -87,6 +87,30 @@ public class RoutesListActivity extends ServiceBindingActivity
                 }
             }
         });
+
+
+        requestPermissions();
+
+    }
+
+    private void requestPermissions() {
+        if (!PermissionManager.requestPermissions(this)) {
+            // if permissions have been already given
+            mFab.setVisibility(View.VISIBLE);
+            downloadRoutesDescription();
+        }
+        List<String> permissionsNeeded = new ArrayList<String>();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (PermissionManager.permissionsGranted(requestCode, permissions, grantResults)) {
+            mFab.setVisibility(View.VISIBLE);
+            downloadRoutesDescription();
+        };
     }
 
 

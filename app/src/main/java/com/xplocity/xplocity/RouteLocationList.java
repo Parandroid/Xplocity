@@ -3,7 +3,6 @@ package com.xplocity.xplocity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +60,7 @@ public class RouteLocationList extends Fragment {
         mLocationInfoPage = v.findViewById(R.id.bottom_sheet_page_location_info);
         mLocationsListPage = v.findViewById(R.id.bottom_sheet_page_locations_list);
 
-        mLocationInfoPage.setVisibility(View.GONE);
+        showLocationList();
 
         return v;
     }
@@ -69,10 +68,13 @@ public class RouteLocationList extends Fragment {
 
     public void showLocationInfo(final Location loc) {
 
-        ((NestedScrollView) mLocationInfoPage).scrollTo(0, 0);;;
+        //((NestedScrollView) mLocationInfoPage).scrollTo(0, 0);;;
 
         mLocationInfoPage.setVisibility(View.VISIBLE);
         mLocationsListPage.setVisibility(View.GONE);
+        mLocationInfoPage.bringToFront();
+        ((View) mLocationsListPage.getParent()).requestLayout();
+        ((View) mLocationsListPage.getParent()).invalidate();
 
         ((TextView) mLocationInfoPage.findViewById(R.id.name)).setText(loc.name);
         ((TextView) mLocationInfoPage.findViewById(R.id.address)).setText(loc.address);
@@ -97,7 +99,9 @@ public class RouteLocationList extends Fragment {
     public void showLocationList() {
         mLocationInfoPage.setVisibility(View.GONE);
         mLocationsListPage.setVisibility(View.VISIBLE);
-
+        mLocationsListPage.bringToFront();
+        ((View) mLocationsListPage.getParent()).requestLayout();
+        ((View) mLocationsListPage.getParent()).invalidate();
 
     }
 
