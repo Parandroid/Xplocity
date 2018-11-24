@@ -78,7 +78,14 @@ public class RouteLocationList extends Fragment {
 
         ((TextView) mLocationInfoPage.findViewById(R.id.name)).setText(loc.name);
         ((TextView) mLocationInfoPage.findViewById(R.id.address)).setText(loc.address);
-        ((TextView) mLocationInfoPage.findViewById(R.id.description)).setText(loc.description);
+
+        if (loc.explored()) {
+            ((TextView) mLocationInfoPage.findViewById(R.id.description)).setText(loc.description);
+        }
+        else {
+            ((TextView) mLocationInfoPage.findViewById(R.id.description)).setText("???");
+        }
+
         ((ImageButton) mLocationInfoPage.findViewById(R.id.closeButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -66,6 +66,10 @@ public class XplocityPositionService
 
     private Logger mLogger;
 
+    private static final int STICKY_NOTIFICATION_ID = 10000;
+    NotificationCompat.Builder mNotifBuilder;
+    NotificationManager mNotifManager;
+
     private class LocationListener implements android.location.LocationListener {
         private Logger mLogger;
 
@@ -132,11 +136,15 @@ public class XplocityPositionService
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         initializeLocationManager();
 
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Xplocity")
-                .setContentText("Tracking started")
-                .setOngoing(true)
-                .build();
+        mNotifManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifBuilder = new NotificationCompat.Builder(this);
+        mNotifBuilder.setContentTitle("Xplocity")
+                .setContentText("Ready to start tracking")
+                .setSmallIcon(R.drawable.ic_walking)
+                .setOngoing(true);
+
+        Notification notification = mNotifBuilder.build();
+        mNotifManager.notify(STICKY_NOTIFICATION_ID, notification);
 
         startForeground(ResourceGetter.getInteger("location_service_id"), notification);
         loadStateFromStorage();
@@ -264,6 +272,11 @@ public class XplocityPositionService
             mPositionManager.startTracking();
             trackingState = TRACKING_STATE_ACTIVE;
 
+            if (mNotifBuilder != null) {
+                mNotifBuilder.setContentText("Tracking started");
+                mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
+            }
+
             try {
                 Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (location != null) {
@@ -296,6 +309,11 @@ public class XplocityPositionService
         if (trackingState == TRACKING_STATE_ACTIVE) {
             trackingState = TRACKING_STATE_FINISHED;
 
+            if (mNotifBuilder != null) {
+                mNotifBuilder.setContentText("Tracking stopped. Route can be saved.");
+                mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
+            }
+
 
             if (mLocationManager != null) {
                 try {
@@ -314,6 +332,8 @@ public class XplocityPositionService
     public void destroyService() {
         clearStorage();
         trackingState = TRACKING_STATE_NOT_STARTED;
+
+        mNotifManager.cancelAll();
         stopSelf();
     }
 

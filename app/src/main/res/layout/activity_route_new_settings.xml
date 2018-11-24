@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/wait_wheel"/>
+    <include layout="@layout/wait_wheel" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -93,15 +92,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/SelectTimeSlider" />
         </android.support.constraint.ConstraintLayout>
 
-        <LinearLayout
-            android:id="@+id/location_categories_list"
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="45"
-            android:orientation="vertical">
+            android:scrollbars="vertical">
 
+            <LinearLayout
+                android:id="@+id/location_categories_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -120,9 +125,9 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/colorPrimary"
+                android:enabled="false"
                 android:onClick="createRoute"
                 android:text="Get route"
-                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

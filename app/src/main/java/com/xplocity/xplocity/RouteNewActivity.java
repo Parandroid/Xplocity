@@ -573,6 +573,7 @@ public class RouteNewActivity
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         stopTracking();
+                        mService.destroyService();
                         Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
                         startActivity(intent);
                         dialog.cancel();

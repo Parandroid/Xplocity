@@ -115,6 +115,12 @@ public class RoutesListActivity extends ServiceBindingActivity
 
 
     @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
+    }
+
+
+    @Override
     protected void onServiceBound() {
         if (mService.trackingActive()) {
             Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
