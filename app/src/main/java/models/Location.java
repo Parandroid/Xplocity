@@ -1,5 +1,6 @@
 package models;
 
+import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.Serializable;
@@ -22,6 +23,8 @@ public class Location
     public String name;
     public String description;
     public String address;
+
+    public DateTime dateReached;
 
     public GeoPoint position;
     public float distance; //distance to location in meters

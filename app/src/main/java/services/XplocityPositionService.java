@@ -31,7 +31,6 @@ import models.Route;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
-import utils.ResourceGetter;
 
 public class XplocityPositionService
         extends Service
@@ -146,7 +145,7 @@ public class XplocityPositionService
         Notification notification = mNotifBuilder.build();
         mNotifManager.notify(STICKY_NOTIFICATION_ID, notification);
 
-        startForeground(ResourceGetter.getInteger("location_service_id"), notification);
+        startForeground(STICKY_NOTIFICATION_ID, notification);
         loadStateFromStorage();
 
 
@@ -332,7 +331,7 @@ public class XplocityPositionService
     public void destroyService() {
         clearStorage();
         trackingState = TRACKING_STATE_NOT_STARTED;
-
+        stopForeground(true);
         mNotifManager.cancelAll();
         stopSelf();
     }

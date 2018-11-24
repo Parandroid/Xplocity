@@ -2,19 +2,17 @@ package managers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.style.TtsSpan;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import managers.interfaces.PositionManagerInterface;
 import models.Location;
@@ -68,6 +66,7 @@ public class PositionManager implements Parcelable {
 
                 if (loc.distance <= LOCATION_REACHED_DISTANCE){
                     loc.setStateExplored();
+                    loc.dateReached = DateTime.now();
                     route.loc_cnt_explored = route.loc_cnt_explored + 1;
                     mCallback.onLocationReached(loc);
                 }
