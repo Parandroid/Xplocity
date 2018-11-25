@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
-
 /**
  * Created by dmitry on 20.08.17.
  */
@@ -16,6 +14,8 @@ public class RouteDescription implements Comparable<RouteDescription> {
     public DateTime date;
     public int duration; //duration in seconds
     public String name;
+    public String travelType;
+
     public int locCntExplored;
     public int locCntTotal;
     public int id;

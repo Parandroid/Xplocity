@@ -50,6 +50,8 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         TextView locationsUnExploredTxtView = (TextView) convertView.findViewById(R.id.locations_unexplored);
         TextView locationsExploredTxtView = (TextView) convertView.findViewById(R.id.locations_explored);
 
+        ImageView travelTypeImg = convertView.findViewById(R.id.img_travel_type);
+
 
 
         Formatter formatter = new Formatter();
@@ -73,6 +75,17 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         //nameTxtView.setText(routeDescription.name);
         locationsExploredTxtView.setText(Integer.toString(routeDescription.locCntExplored));
         locationsUnExploredTxtView.setText(Integer.toString(routeDescription.locCntTotal-routeDescription.locCntExplored));
+
+        switch (routeDescription.travelType) {
+            case "walking":
+                travelTypeImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_walking));
+                break;
+            case "cycling":
+                travelTypeImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_cycling));
+                break;
+            default:
+                travelTypeImg.setImageDrawable(getResources().getDrawable(R.drawable.ic_walking));
+        }
 
 
         View blurredLayout = convertView.findViewById(R.id.routeInfoBlurredLayout);

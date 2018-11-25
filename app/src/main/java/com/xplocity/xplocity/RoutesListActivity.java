@@ -52,6 +52,8 @@ public class RoutesListActivity extends ServiceBindingActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routes_list);
 
+        //AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
         mListView = (ListView) findViewById(R.id.chain_list);
         mFooterLoading = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.route_description_list_item_footer_loading, null, false);

@@ -307,6 +307,10 @@ public class RouteNewActivity
         requestNewRoute(mCurrentPosition.getLatitude(), mCurrentPosition.getLongitude());
     }
 
+
+
+    private String mTravelType;
+
     private void requestNewRoute(final Double lat, final Double lon) {
         SeekBar sb = (SeekBar) findViewById(R.id.SelectTimeSlider);
 
@@ -317,12 +321,16 @@ public class RouteNewActivity
 
         double optimalDistance = 2d;
         if (selectedId == R.id.radio_cycling) {
+            mTravelType = "cycling";
             optimalDistance = 2d;
         } else if (selectedId == R.id.radio_walking) {
+            mTravelType = "walking";
             optimalDistance = 0.5d;
         } else if (selectedId == R.id.radio_running) {
+            mTravelType = "running";
             optimalDistance = 1d;
         } else if (selectedId == R.id.radio_test) {
+            mTravelType = "walking";
             optimalDistance = 0.01d;
             locCount = 200;
         }
@@ -344,6 +352,7 @@ public class RouteNewActivity
     @Override
     public void onNewRouteDownloaded(Route route) {
         mWaitWheel.hideWaitAnimation();
+        route.travelType = mTravelType;
         mService.setRoute(route);
 
         onRouteReady();

@@ -2,8 +2,6 @@ package xml_builders;
 
 import android.util.Xml;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -38,6 +36,9 @@ public class XMLRouteBuilder {
             serializer.startTag("", "duration");
             serializer.text(Integer.toString(route.duration));
             serializer.endTag("", "duration");
+            serializer.startTag("", "travel_type");
+            serializer.text(route.travelType);
+            serializer.endTag("", "travel_type");
 
             serializer.endTag("", "Info");
 

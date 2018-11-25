@@ -75,6 +75,8 @@ public class XMLRouteDescriptionsParser extends XMLAbstractParser {
                 route.distance = parseInt(readText(parser));
             } else if (name.equals("duration")) {
                 route.duration = parseInt(readText(parser));
+            } else if (name.equals("travel_type")) {
+                route.travelType = readText(parser);
             } else if (name.equals("Locations")) {
                 int[] locs = readLocationsCount(parser);
                 route.locCntExplored = locs[0];

@@ -346,6 +346,7 @@ public class XplocityPositionService
 
     public void setRoute(Route route) {
         mPositionManager.route = route;
+
     }
 
     public Route getRoute() {

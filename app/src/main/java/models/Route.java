@@ -3,7 +3,6 @@ package models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 
 public class Route implements Parcelable {
     public String date;
+    public String travelType;
+
     public int loc_cnt_explored;
     public int loc_cnt_total;
     public int id;
