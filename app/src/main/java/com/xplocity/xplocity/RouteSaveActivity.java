@@ -4,19 +4,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import adapters.RouteSaveLocationsListAdapter;
 import api_classes.RouteUploader;
@@ -43,6 +38,8 @@ public class RouteSaveActivity
 
     private Route mRoute;
 
+    private android.support.v4.app.FragmentManager mFragmentManager;
+
     //Logger
     Logger mLogger;
 
@@ -52,6 +49,7 @@ public class RouteSaveActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_save);
 
+        mFragmentManager = getSupportFragmentManager();
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
         mSaveBtn = findViewById(R.id.btnOk);
@@ -69,67 +67,27 @@ public class RouteSaveActivity
         ((TextView) findViewById(R.id.duration)).setText(Formatter.formatHours(mRoute.duration/60000) + " h");
         updateSpeed();
 
-        int percentVisited = Math.round(mRoute.loc_cnt_explored * 100f / mRoute.loc_cnt_total);
-        ((TextView) findViewById(R.id.locations_explored)).setText(Integer.toString(mRoute.loc_cnt_explored));
-        ((ProgressBar) findViewById(R.id.progressBar)).setProgress(percentVisited);
-
-        // fill location list
-        LinearLayout locationListLayout = findViewById(R.id.locations_list);
-
-        ArrayList<Location> locationsExplored = new ArrayList<Location>();
-        for (Location loc: mRoute.locations) {
-            if (loc.explored()) {
-                locationsExplored.add(loc);
-            }
-        }
-
-
-        Collections.sort(locationsExplored, new Comparator<Location>() {
-            public int compare(Location o1, Location o2) {
-                return o1.dateReached.compareTo(o2.dateReached);
-            }
-        });
-
-
-        for (int i = 0; i < locationsExplored.size(); i++) {
-            Location location = locationsExplored.get(i);
-            View v = LayoutInflater.from(this).inflate(R.layout.route_save_location_list_item, null);
-
-            TextView txtLocationName = (TextView) v.findViewById(R.id.txt_location_name);
-            TextView txtLocationDescription = (TextView) v.findViewById(R.id.txt_location_description);
-            TextView txtLocationTime = (TextView) v.findViewById(R.id.txt_location_time);
-
-            txtLocationName.setText(location.name);
-            txtLocationDescription.setText(location.description);
-            if (location.dateReached != null) {
-                txtLocationTime.setText(Integer.toString(location.dateReached.getHourOfDay()) + ":" + Integer.toString(location.dateReached.getMinuteOfHour()));
-            } else
-            {
-                txtLocationTime.setText("");
-            }
-
-            View rect = v.findViewById(R.id.icon_rect_up);
-            if (i == 0) {
-                int paddingDp = 8;
-                float density = getResources().getDisplayMetrics().density;
-                int paddingPixel = (int)(paddingDp * density);
-                rect.setPadding(0, paddingPixel,0,0);
-            }
-            else if (i == locationsExplored.size() - 1) {
-                int paddingDp = 25;
-                float density = getResources().getDisplayMetrics().density;
-                int paddingPixel = (int)(paddingDp * density);
-                rect.setPadding(0, 0,0,paddingPixel);
-            }
-
-            locationListLayout.addView(v);
-
-        }
-
-
-
-
+        showProgress(mRoute.loc_cnt_total, mRoute.loc_cnt_explored);
+        showLocations(mRoute.locations);
     }
+
+
+    private void showProgress(int allLocCnt, int exploredLocCnt) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        RouteStatProgressCircleFragment progressFragment = RouteStatProgressCircleFragment.newInstance(allLocCnt, exploredLocCnt);
+        fragmentTransaction.replace(R.id.fragment_progress_circle_container, progressFragment);
+        fragmentTransaction.commit();
+    }
+
+    private void showLocations(ArrayList<Location> locations) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        RouteStatLocationsFragment locationsFragment = RouteStatLocationsFragment.newInstance(locations);
+        fragmentTransaction.replace(R.id.fragment_locations_list, locationsFragment);
+        fragmentTransaction.commit();
+    }
+
 
     @Override
     protected void onServiceUnbound() {

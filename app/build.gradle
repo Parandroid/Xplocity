@@ -41,6 +41,7 @@ dependencies {
     implementation "com.android.support:mediarouter-v7:${supportLibrary}"
     implementation "com.android.support:design:${supportLibrary}"
     implementation "com.android.support:support-vector-drawable:${supportLibrary}"
+    implementation "com.android.support:animated-vector-drawable:${supportLibrary}"
     implementation "com.android.support:support-v4:${supportLibrary}"
     implementation "com.android.support:design:${supportLibrary}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'

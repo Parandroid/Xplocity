@@ -2,13 +2,16 @@ package models;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.io.Serializable;
+
 import managers.PositionManager;
 
 /**
  * Created by dmitry on 31.08.18.
  */
 
-public class LocationCircle {
+public class LocationCircle
+    implements Serializable {
 
     public GeoPoint center;
     public double raduis;

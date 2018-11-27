@@ -1,19 +1,23 @@
 package com.xplocity.xplocity;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import org.osmdroid.views.MapView;
+
+import java.util.ArrayList;
 
 import api_classes.RouteDownloader;
 import api_classes.interfaces.RouteDownloaderInterface;
 import managers.routeMapManager;
+import models.Location;
 import models.Route;
 
 public class RouteViewActivity extends FragmentActivity implements RouteDownloaderInterface {
 
     private routeMapManager mMapManager = null;
     private int mRouteId;
+    private android.support.v4.app.FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,8 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
 
         Bundle recdData = getIntent().getExtras();
         mRouteId =  recdData.getInt(getString(R.string.route_id_key));
+
+        mFragmentManager = getSupportFragmentManager();
 
         initMapManager();
         downloadRoute();
@@ -46,6 +52,26 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
             if (route.locations.size() > 0) {
                 mMapManager.setOverviewCamera(route.locations.get(0).position);
             }
+
+
+            showProgress(route.loc_cnt_total, route.loc_cnt_explored);
+            showLocations(route.locations);
         }
+    }
+
+    private void showProgress(int allLocCnt, int exploredLocCnt) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        RouteStatProgressCircleFragment progressFragment = RouteStatProgressCircleFragment.newInstance(allLocCnt, exploredLocCnt);
+        fragmentTransaction.replace(R.id.fragment_progress_circle_container, progressFragment);
+        fragmentTransaction.commit();
+    }
+
+    private void showLocations(ArrayList<Location> locations) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        RouteStatLocationsFragment locationsFragment = RouteStatLocationsFragment.newInstance(locations);
+        fragmentTransaction.replace(R.id.fragment_locations_list, locationsFragment);
+        fragmentTransaction.commit();
     }
 }

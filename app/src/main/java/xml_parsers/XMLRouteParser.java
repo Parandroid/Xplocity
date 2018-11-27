@@ -3,8 +3,6 @@ package xml_parsers;
 
 import android.util.Xml;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -70,6 +68,11 @@ public class XMLRouteParser extends XMLAbstractParser {
             String name = parser.getName();
             if (name.equals("Location")) {
                 Location loc = readLocation(parser);
+
+                route.loc_cnt_total++;
+                if (loc.explored()) {
+                    route.loc_cnt_explored++;
+                }
                 route.locations.add(loc);
             } else {
                 skip(parser);

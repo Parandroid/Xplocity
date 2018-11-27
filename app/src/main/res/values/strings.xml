@@ -3,8 +3,8 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- API -->
-    <!--<string name="API_endpoint">http://br-on.ru:3003/api/v1</string>-->
-    <string name="API_endpoint">http://10.0.2.2:3000/api/v1</string>
+    <string name="API_endpoint">http://br-on.ru:3003/api/v1</string>
+    <!--<string name="API_endpoint">http://10.0.2.2:3000/api/v1</string>-->
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
