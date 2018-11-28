@@ -1,16 +1,11 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import api_classes.interfaces.RouteUploaderInterface;
 import api_classes.interfaces.SharedRouteUploaderInterface;
-import app.XplocityApplication;
 import models.Route;
-import xml_builders.XMLRouteBuilder;
 import xml_builders.XMLSharedRouteBuilder;
 import xml_parsers.XMLSharedRouteIDParser;
 
@@ -28,7 +23,7 @@ public class SharedRouteUploader extends Loader {
     }
 
     public void uploadSharedRoute(Route route) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method;
+        String url = getEndpoint() + API_method;
 
         XMLSharedRouteBuilder xmlBuilder = new XMLSharedRouteBuilder();
         String body = xmlBuilder.toXml(route);

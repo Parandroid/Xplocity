@@ -3,17 +3,21 @@ package com.xplocity.xplocity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import models.Location;
+import models.enums.LocationExploreState;
 
 
 public class RouteStatLocationsFragment extends Fragment {
@@ -57,12 +61,21 @@ public class RouteStatLocationsFragment extends Fragment {
 
     private void fillLocationsList() {
         // fill location list
-        LinearLayout locationListLayout = mView.findViewById(R.id.locations_list);
+        LinearLayout exploredLocationListLayout = mView.findViewById(R.id.explored_locations_list);
+        LinearLayout unexploredLocationListLayout = mView.findViewById(R.id.unexplored_locations_list);
 
         ArrayList<Location> locationsExplored = new ArrayList<Location>();
+        ArrayList<Location> locationsUnexplored = new ArrayList<Location>();
+        int unseenLocationsCount = 0;
+
         for (Location loc: mLocations) {
             if (loc.explored()) {
                 locationsExplored.add(loc);
+            } else if (loc.exploreState == LocationExploreState.POINT_NOT_EXPLORED)
+            {
+                locationsUnexplored.add(loc);
+            } else if (loc.exploreState == LocationExploreState.CIRCLE) {
+                unseenLocationsCount++;
             }
         }
 
@@ -90,7 +103,7 @@ public class RouteStatLocationsFragment extends Fragment {
             txtLocationName.setText(location.name);
             txtLocationDescription.setText(location.description);
             if (location.dateReached != null) {
-                txtLocationTime.setText(Integer.toString(location.dateReached.getHourOfDay()) + ":" + Integer.toString(location.dateReached.getMinuteOfHour()));
+                txtLocationTime.setText(String.format("%02d:%02d", location.dateReached.withZone(DateTimeZone.getDefault()).getHourOfDay(), location.dateReached.withZone(DateTimeZone.getDefault()).getMinuteOfHour()));
             } else
             {
                 txtLocationTime.setText("");
@@ -110,9 +123,38 @@ public class RouteStatLocationsFragment extends Fragment {
                 rect.setPadding(0, 0,0,paddingPixel);
             }
 
-            locationListLayout.addView(v);
+            exploredLocationListLayout.addView(v);
 
         }
+
+
+
+        for (int i = 0; i < locationsUnexplored.size(); i++) {
+            Location location = locationsUnexplored.get(i);
+            View v = LayoutInflater.from(this.getActivity()).inflate(R.layout.route_save_location_list_item_unexplored, null);
+
+            TextView txtLocationName = (TextView) v.findViewById(R.id.txt_location_name);
+            txtLocationName.setText(location.name);
+
+            unexploredLocationListLayout.addView(v);
+        }
+
+
+        View unseenLocationsLayout = mView.findViewById(R.id.unseen_locations_info);
+        if (unseenLocationsCount > 0) {
+            TextView txtUnseenLocationsCount = mView.findViewById(R.id.txt_unseen_locations);
+            String unseenLocationsText = getString(R.string.unseen_locations_text_1)
+                    + "<b> " + Integer.toString(unseenLocationsCount) + " </b>"
+                    + getString(R.string.unseen_locations_text_2)
+                    + "<br/>" + getString(R.string.unseen_locations_text_3);
+            txtUnseenLocationsCount.setText(Html.fromHtml(unseenLocationsText));
+        }
+        else {
+            unseenLocationsLayout.setVisibility(View.GONE);
+        }
+
+
+
     }
 
 

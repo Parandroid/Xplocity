@@ -1,9 +1,6 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import api_classes.interfaces.RouteUploaderInterface;
-import app.XplocityApplication;
 import models.Route;
 import xml_builders.XMLRouteBuilder;
 
@@ -21,7 +18,7 @@ public class RouteUploader extends Loader {
     }
 
     public void uploadRoute(Route route) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method;
+        String url = getEndpoint() + API_method;
 
         XMLRouteBuilder xmlBuilder = new XMLRouteBuilder();
         String body = xmlBuilder.toXml(route);

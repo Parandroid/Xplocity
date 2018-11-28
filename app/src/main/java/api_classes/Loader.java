@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.xplocity.xplocity.BuildConfig;
 import com.xplocity.xplocity.R;
 
 import app.XplocityApplication;
@@ -32,6 +33,13 @@ public abstract class Loader {
     public Loader() {
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
     }
+
+
+    protected String getEndpoint() {
+        return BuildConfig.API_URL;
+
+    }
+
 
     protected void sendGetRequest(String urlString, boolean useAuth) {
         if (useAuth) {

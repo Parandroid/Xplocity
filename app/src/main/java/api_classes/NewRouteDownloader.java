@@ -1,14 +1,11 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import api_classes.interfaces.NewRouteDownloaderInterface;
-import app.XplocityApplication;
 import models.Route;
 import xml_parsers.XMLLocationsParser;
 
@@ -30,7 +27,7 @@ public class NewRouteDownloader extends Loader {
     }
 
     private String generateLocationsUrl(double lat, double lon, int locCount, double optimalDistance, ArrayList<Integer> locationCategories) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?loc_count=" + Integer.toString(locCount)
+        String url = getEndpoint() + API_method + "?loc_count=" + Integer.toString(locCount)
                 + "&optimal_distance=" + Double.toString(optimalDistance) + "&latitude="
                 + Double.toString(lat) + "&longitude=" + Double.toString(lon);
 

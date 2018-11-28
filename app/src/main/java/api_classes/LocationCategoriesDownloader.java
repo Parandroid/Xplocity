@@ -1,14 +1,11 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
-import app.XplocityApplication;
 import models.LocationCategory;
 import xml_parsers.XMLLocationCategoryParser;
 
@@ -26,7 +23,7 @@ public class LocationCategoriesDownloader extends Loader {
     }
 
     public void downloadLocationCategories() {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method;
+        String url = getEndpoint() + API_method;
         sendGetRequest(url, false);
     }
 

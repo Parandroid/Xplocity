@@ -1,7 +1,48 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/locations_list"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/explored_locations_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"></LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <LinearLayout
+        android:id="@+id/unexplored_locations_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/unseen_locations_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="?"
+            android:textSize="48sp"
+            android:textAlignment="center"
+            android:textColor="@color/gray900"/>
+
+        <TextView
+            android:id="@+id/txt_unseen_locations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="И ешё 15 локаций осталось не открытыми. Возвращайтесь за ними в следующий раз!" />
+        
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+    </LinearLayout>
 </LinearLayout>
+

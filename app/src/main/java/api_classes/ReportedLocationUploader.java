@@ -1,14 +1,8 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import api_classes.interfaces.ReportedLocationUploaderInterface;
-import api_classes.interfaces.RouteUploaderInterface;
-import app.XplocityApplication;
 import models.Location;
-import models.Route;
 import xml_builders.XMLReportedLocationBuilder;
-import xml_builders.XMLRouteBuilder;
 
 /**
  * Created by dmitry on 05.09.17.
@@ -24,7 +18,7 @@ public class ReportedLocationUploader extends Loader {
     }
 
     public void uploadReportedLocation(Location location) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method;
+        String url = getEndpoint() + API_method;
 
         XMLReportedLocationBuilder xmlBuilder = new XMLReportedLocationBuilder();
         String body = xmlBuilder.toXml(location);

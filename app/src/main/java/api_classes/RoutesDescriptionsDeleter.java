@@ -1,13 +1,10 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import api_classes.interfaces.RoutesDescriptionsDeleterInterface;
-import app.XplocityApplication;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
@@ -31,7 +28,7 @@ public class RoutesDescriptionsDeleter extends Loader {
     }
 
     public void deleteRoute(int routeID) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?id=" + Integer.toString(routeID);
+        String url = getEndpoint() + API_method + "?id=" + Integer.toString(routeID);
         sendDeleteRequest(url, true);
     }
 

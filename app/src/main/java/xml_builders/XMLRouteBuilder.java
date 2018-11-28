@@ -2,6 +2,8 @@ package xml_builders;
 
 import android.util.Xml;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 
 import models.Location;
 import models.Route;
+import models.enums.LocationExploreState;
 
 /**
  * Created by dmitry on 05.09.17.
@@ -49,8 +52,11 @@ public class XMLRouteBuilder {
                 serializer.startTag("", "Location");
                 serializer.attribute("", "id", Integer.toString(loc.id));
                 serializer.startTag("", "explored");
-                serializer.text(loc.explored() ? "1" : "0");
+                serializer.text(exploredStateToString(loc.exploreState));
                 serializer.endTag("", "explored");
+                serializer.startTag("", "explored_date");
+                serializer.text(dateToString(loc.dateReached));
+                serializer.endTag("", "explored_date");
                 serializer.endTag("", "Location");
             }
             serializer.endTag("", "Locations");
@@ -68,6 +74,28 @@ public class XMLRouteBuilder {
     }
 
 
+    private String exploredStateToString(LocationExploreState state) {
+        if (state == LocationExploreState.POINT_NOT_EXPLORED)
+            return "0";
+        else if (state == LocationExploreState.POINT_EXPLORED)
+            return "1";
+        else
+            return "2"; // Circle
+    }
+
+
+    private String dateToString(DateTime date) {
+        if (date != null) {
+            String pattern = "yyyy-MM-dd HH:mm:ss z";
+            return date.toString(DateTimeFormat.forPattern(pattern));
+        }
+        else {
+            return "";
+        }
+    }
+
+
+
     private String pathToString(ArrayList<GeoPoint> path) {
         String result = "";
 
@@ -80,6 +108,8 @@ public class XMLRouteBuilder {
 
         return result;
     }
+
+
 
 
 }

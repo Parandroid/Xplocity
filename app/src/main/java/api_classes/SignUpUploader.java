@@ -1,18 +1,12 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import api_classes.interfaces.RouteUploaderInterface;
 import api_classes.interfaces.SignUpUploaderInterface;
-import app.XplocityApplication;
 import models.AuthToken;
-import models.Route;
-import xml_builders.XMLRouteBuilder;
 import xml_parsers.XMLAuthTokenParser;
 import xml_parsers.XMLSignUpErrorsParser;
 
@@ -30,7 +24,7 @@ public class SignUpUploader extends Loader {
     }
 
     public void uploadSignUpInfo(String email, String password) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?email=" + email + "&password=" + password;
+        String url = getEndpoint() + API_method + "?email=" + email + "&password=" + password;
 
         sendPostRequest(url, null, false);
     }

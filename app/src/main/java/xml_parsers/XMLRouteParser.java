@@ -9,9 +9,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 
 import models.Location;
 import models.Route;
+import models.enums.LocationExploreState;
 
 
 /**
@@ -30,8 +32,7 @@ public class XMLRouteParser extends XMLAbstractParser {
             parser.setInput(in, null);
             parser.nextTag();
             return readRoute(parser);
-        }
-        finally {
+        } finally {
             in.close();
         }
     }
@@ -81,7 +82,6 @@ public class XMLRouteParser extends XMLAbstractParser {
     }
 
 
-
     private Location readLocation(XmlPullParser parser) throws XmlPullParserException, IOException {
         Location loc = new Location();
         parser.require(XmlPullParser.START_TAG, ns, "Location");
@@ -91,11 +91,18 @@ public class XMLRouteParser extends XMLAbstractParser {
             }
             String name = parser.getName();
             if (name.equals("explored")) {
-                if (Integer.parseInt(readText(parser)) == 1)
-                    loc.setStateExplored();
-                else
-                    loc.setStateUnexplored();
-            } else if (name.equals("name")) {
+                loc.exploreState = parseLocationExploreState(readText(parser));
+            } else if (name.equals("explored_date")) {
+                String str_date = readText(parser);
+                try {
+                    if ((str_date != "") && (str_date != ""))
+                    loc.dateReached = parseDate(str_date);
+                }
+                catch (ParseException e) {
+
+                }
+            }
+            else if (name.equals("name")) {
                 loc.name = readText(parser);
             } else if (name.equals("description")) {
                 loc.description = readText(parser);
@@ -108,8 +115,26 @@ public class XMLRouteParser extends XMLAbstractParser {
             }
         }
 
-        loc.hasCircle = false;
+        if (loc.exploreState == LocationExploreState.CIRCLE) {
+            loc.setStateCircle();
+            loc.hasCircle = true;
+        }
+
+
         return loc;
+    }
+
+
+    private LocationExploreState parseLocationExploreState(String explored) {
+        switch (explored) {
+            case "0":
+                return LocationExploreState.POINT_NOT_EXPLORED;
+            case "1":
+                return LocationExploreState.POINT_EXPLORED;
+            case "2":
+            default:
+                return LocationExploreState.CIRCLE;
+        }
     }
 
 

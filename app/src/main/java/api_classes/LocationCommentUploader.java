@@ -1,14 +1,8 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import api_classes.interfaces.LocationCommentUploaderInterface;
-import api_classes.interfaces.ReportedLocationUploaderInterface;
-import app.XplocityApplication;
-import models.Location;
 import models.LocationComment;
 import xml_builders.XMLLocationCommentBuilder;
-import xml_builders.XMLReportedLocationBuilder;
 
 /**
  * Created by dmitry on 05.09.17.
@@ -24,7 +18,7 @@ public class LocationCommentUploader extends Loader {
     }
 
     public void uploadLocationComment(LocationComment comment) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + Integer.toString(comment.location.id) + "/comments";
+        String url = getEndpoint() + API_method + Integer.toString(comment.location.id) + "/comments";
 
         XMLLocationCommentBuilder xmlBuilder = new XMLLocationCommentBuilder();
         String body = xmlBuilder.toXml(comment);

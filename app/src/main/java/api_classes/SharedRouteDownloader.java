@@ -1,14 +1,10 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 import api_classes.interfaces.NewRouteDownloaderInterface;
-import app.XplocityApplication;
 import models.Route;
 import xml_parsers.XMLLocationsParser;
 
@@ -30,7 +26,7 @@ public class SharedRouteDownloader extends Loader {
     }
 
     private String generateUrl(String id) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?id=" + id;
+        String url = getEndpoint() + API_method + "?id=" + id;
 
         return url;
     }

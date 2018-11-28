@@ -1,15 +1,11 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import api_classes.interfaces.RouteDownloaderInterface;
-import app.XplocityApplication;
 import models.Route;
-
 import xml_parsers.XMLRouteParser;
 
 /**
@@ -26,7 +22,7 @@ public class RouteDownloader extends Loader{
     }
 
     public void downloadRoute(int routeId) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + Integer.toString(routeId);
+        String url = getEndpoint() + API_method + Integer.toString(routeId);
         sendGetRequest(url, true);
     }
 

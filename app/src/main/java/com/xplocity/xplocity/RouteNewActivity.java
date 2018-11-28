@@ -661,7 +661,7 @@ public class RouteNewActivity
 
     public void fillLocationsList(ArrayList<models.Location> locations) {
         mLocationAdapter = new RouteLocationsListAdapter(this, locations, this, mPagerAdapter.getLocationsPage());
-        RecyclerView listView = findViewById(R.id.locations_list);
+        RecyclerView listView = findViewById(R.id.explored_locations_list);
         listView.setAdapter(mLocationAdapter);
         listView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 

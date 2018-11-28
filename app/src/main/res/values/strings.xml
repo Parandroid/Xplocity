@@ -2,10 +2,6 @@
     <string name="app_name">Xplocity</string>
     <string name="title_activity_login">Sign in</string>
 
-    <!-- API -->
-    <string name="API_endpoint">http://br-on.ru:3003/api/v1</string>
-    <!--<string name="API_endpoint">http://10.0.2.2:3000/api/v1</string>-->
-
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -47,6 +43,14 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+
+    <!-- Route saving screen -->
+    <string name='unseen_locations_text_1'>And another</string>
+    <string name='unseen_locations_text_2'>locations have remained in secret.</string>
+    <string name='unseen_locations_text_3'>Come back for them next time!</string>
+
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

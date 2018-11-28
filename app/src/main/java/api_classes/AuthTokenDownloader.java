@@ -1,13 +1,10 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import api_classes.interfaces.AuthTokenDownloaderInterface;
-import app.XplocityApplication;
 import models.AuthToken;
 import xml_parsers.XMLAuthTokenParser;
 
@@ -29,7 +26,7 @@ public class AuthTokenDownloader extends Loader {
     }
 
     private String generateAuthUrl(String email, String password) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?email=" + email + "&password=" + password;
+        String url = getEndpoint() + API_method + "?email=" + email + "&password=" + password;
         return url;
     }
 

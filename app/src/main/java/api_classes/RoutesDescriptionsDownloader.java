@@ -1,14 +1,11 @@
 package api_classes;
 
-import com.xplocity.xplocity.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
-import app.XplocityApplication;
 import models.RouteDescription;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
@@ -33,7 +30,7 @@ public class RoutesDescriptionsDownloader extends Loader {
     }
 
     public void downloadRoutesDescriptions(int offset, int limit) {
-        String url = XplocityApplication.getAppContext().getString(R.string.API_endpoint) + API_method + "?offset=" + Integer.toString(offset) + "&limit=" + Integer.toString(limit);
+        String url = getEndpoint() + API_method + "?offset=" + Integer.toString(offset) + "&limit=" + Integer.toString(limit);
         sendGetRequest(url, true);
     }
 
