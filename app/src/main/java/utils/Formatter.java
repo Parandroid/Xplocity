@@ -4,12 +4,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * Created by dmitry on 09.09.17.
  */
@@ -68,7 +62,7 @@ public class Formatter {
     }
 
     //format minutes to "5.2" format
-    public static String formatHours(final int totalMinutes) {
+    public String formatHours(int totalMinutes) {
         return String.format("%.1f", (float) totalMinutes / 60);
     }
 
@@ -76,5 +70,11 @@ public class Formatter {
     //convert from m/sec to km/h
     public static String formatSpeed(float speed) {
         return formatDistance(Math.round(speed*3600));
+    }
+
+
+    public static int dpToPx(int dp) {
+        float density = ResourceGetter.getResources().getDisplayMetrics().density;
+        return (int)(dp * density);
     }
 }

@@ -3,10 +3,10 @@
 
     <color name="white">#ffffff</color>
     <color name="gray100">#eeeeee</color>
-    <color name="gray300">#cccccc</color>
-    <color name="gray500">#aaaaaa</color>
-    <color name="gray700">#777777</color>
-    <color name="gray900">#444444</color>
+    <color name="gray300">#bbbbbb</color>
+    <color name="gray500">#888888</color>
+    <color name="gray700">#555555</color>
+    <color name="gray900">#222222</color>
 
 
     <color name="transparent">#00ffffff</color>
@@ -26,8 +26,13 @@
     <color name="locationCircleStroke">#66969696</color>
     <color name="mapBtnBackground">#80999999</color>
     <color name="locationArrow">#aab34a4a</color>
+
     <color name="routeDescriptionMapDefaultColor">#bfd6b1</color>
     <color name="routeDescriptionInfoBackground">#fe0182fb</color>
+
+    <color name="routeDescriptionLocProgress100Fill">#4ec14e</color>
+    <color name="routeDescriptionLocProgress100Text">#ffab00</color>
+
 
 
     <color name="btnColoredBackground">@color/colorAccent</color>

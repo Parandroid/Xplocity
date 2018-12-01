@@ -51,6 +51,10 @@
     <string name='unseen_locations_text_3'>Come back for them next time!</string>
 
 
+    <!-- Measures -->
+    <string name='km'>km</string>
+
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

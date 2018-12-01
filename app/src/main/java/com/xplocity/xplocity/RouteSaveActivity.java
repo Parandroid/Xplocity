@@ -63,8 +63,10 @@ public class RouteSaveActivity
         initMapManager();
         mSaveBtn.setEnabled(true);
 
-        ((TextView) findViewById(R.id.distance)).setText(Formatter.formatDistance((int) mRoute.distance) + " km");
-        ((TextView) findViewById(R.id.duration)).setText(Formatter.formatHours(mRoute.duration/60000) + " h");
+        Formatter formatter = new Formatter();
+
+        ((TextView) findViewById(R.id.distance)).setText(formatter.formatDistance((int) mRoute.distance) + " km");
+        ((TextView) findViewById(R.id.duration)).setText(formatter.formatHours(mRoute.duration/60000) + " h");
         updateSpeed();
 
         showProgress(mRoute.loc_cnt_total, mRoute.loc_cnt_explored);
