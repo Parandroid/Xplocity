@@ -92,106 +92,10 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/fragment_result_numbers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="16dp">
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/distance"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:lines="1"
-                            android:text="122"
-                            android:textAlignment="center"
-                            android:textColor="@color/place_autocomplete_search_text"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="distance"
-                            android:textAlignment="center"
-                            android:textColor="#666666"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            app:layout_constraintLeft_toLeftOf="@+id/distance"
-                            app:layout_constraintRight_toRightOf="@+id/distance"
-                            app:layout_constraintTop_toBottomOf="@+id/distance" />
-
-                    </android.support.constraint.ConstraintLayout>
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/duration"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:lines="1"
-                            android:text="5.2"
-                            android:textAlignment="center"
-                            android:textColor="@color/place_autocomplete_search_text"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="duration"
-                            android:textAlignment="center"
-                            android:textColor="#666666"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            app:layout_constraintLeft_toLeftOf="@+id/duration"
-                            app:layout_constraintRight_toRightOf="@+id/duration"
-                            app:layout_constraintTop_toBottomOf="@+id/duration" />
-
-                    </android.support.constraint.ConstraintLayout>
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/speed"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:lines="1"
-                            android:text="5.2"
-                            android:textAlignment="center"
-                            android:textColor="@color/place_autocomplete_search_text"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="avg. speed"
-                            android:textAlignment="center"
-                            android:textColor="#666666"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            app:layout_constraintLeft_toLeftOf="@+id/speed"
-                            app:layout_constraintRight_toRightOf="@+id/speed"
-                            app:layout_constraintTop_toBottomOf="@+id/speed" />
-
-                    </android.support.constraint.ConstraintLayout>
-                </LinearLayout>
+                    android:orientation="vertical" />
 
                 <LinearLayout
                     android:id="@+id/fragment_progress_circle_container"

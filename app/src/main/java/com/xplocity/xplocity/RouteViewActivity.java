@@ -53,10 +53,18 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
                 mMapManager.setOverviewCamera(route.locations.get(0).position);
             }
 
-
+            showResultNumbers((int) route.distance, route.duration);
             showProgress(route.loc_cnt_total, route.loc_cnt_explored);
             showLocations(route.locations);
         }
+    }
+
+    private void showResultNumbers(int distance, int duration) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        RouteStatResultNumbersFragment resultFragment = RouteStatResultNumbersFragment.newInstance(distance, duration);
+        fragmentTransaction.replace(R.id.fragment_result_numbers, resultFragment);
+        fragmentTransaction.commit();
     }
 
     private void showProgress(int allLocCnt, int exploredLocCnt) {

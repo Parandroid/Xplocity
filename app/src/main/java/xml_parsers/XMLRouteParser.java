@@ -47,7 +47,22 @@ public class XMLRouteParser extends XMLAbstractParser {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("Locations")) {
+            if (name.equals("date")) {
+                String str_date = readText(parser);
+                try {
+                    if ((str_date != "") && (str_date != ""))
+                        route.date = parseDate(str_date);
+                } catch (ParseException e) {
+
+                }
+
+            } else if (name.equals("distance")) {
+                route.distance = parseInt(readText(parser));
+            } else if (name.equals("duration")) {
+                route.duration = parseInt(readText(parser));
+            } else if (name.equals("travel_type")) {
+                route.travelType = readText(parser);
+            } else if (name.equals("Locations")) {
                 readLocations(parser);
             } else if (name.equals("Route")) {
                 route.path = Route.string_to_route(readText(parser));
@@ -96,13 +111,11 @@ public class XMLRouteParser extends XMLAbstractParser {
                 String str_date = readText(parser);
                 try {
                     if ((str_date != "") && (str_date != ""))
-                    loc.dateReached = parseDate(str_date);
-                }
-                catch (ParseException e) {
+                        loc.dateReached = parseDate(str_date);
+                } catch (ParseException e) {
 
                 }
-            }
-            else if (name.equals("name")) {
+            } else if (name.equals("name")) {
                 loc.name = readText(parser);
             } else if (name.equals("description")) {
                 loc.description = readText(parser);

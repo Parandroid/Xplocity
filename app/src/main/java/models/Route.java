@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
 
 import java.lang.reflect.Modifier;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  */
 
 public class Route implements Parcelable {
-    public String date;
+    public DateTime date;
     public String travelType;
 
     public int loc_cnt_explored;

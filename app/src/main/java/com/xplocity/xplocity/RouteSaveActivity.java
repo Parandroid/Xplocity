@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.views.MapView;
@@ -20,7 +19,6 @@ import managers.routeMapManager;
 import models.Location;
 import models.Route;
 import utils.Factory.LogFactory;
-import utils.Formatter;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
 import utils.UI.WaitWheel;
@@ -63,16 +61,19 @@ public class RouteSaveActivity
         initMapManager();
         mSaveBtn.setEnabled(true);
 
-        Formatter formatter = new Formatter();
 
-        ((TextView) findViewById(R.id.distance)).setText(formatter.formatDistance((int) mRoute.distance) + " km");
-        ((TextView) findViewById(R.id.duration)).setText(formatter.formatHours(mRoute.duration/60000) + " h");
-        updateSpeed();
-
+        showResultNumbers((int) mRoute.distance, mRoute.duration);
         showProgress(mRoute.loc_cnt_total, mRoute.loc_cnt_explored);
         showLocations(mRoute.locations);
     }
 
+    private void showResultNumbers(int distance, int duration) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+
+        RouteStatResultNumbersFragment resultFragment = RouteStatResultNumbersFragment.newInstance(distance, duration);
+        fragmentTransaction.replace(R.id.fragment_result_numbers, resultFragment);
+        fragmentTransaction.commit();
+    }
 
     private void showProgress(int allLocCnt, int exploredLocCnt) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -96,18 +97,6 @@ public class RouteSaveActivity
 
     }
 
-    private void updateSpeed() {
-        if (mRoute != null) {
-            float speed;
-            if (mRoute.duration != 0) {
-                speed = mRoute.distance / (mRoute.duration / 1000f);
-            } else {
-                speed = 0f;
-            }
-
-            ((TextView) findViewById(R.id.speed)).setText(Formatter.formatSpeed(speed) + " km/h");
-        }
-    }
 
 
     public void initMapManager() {
