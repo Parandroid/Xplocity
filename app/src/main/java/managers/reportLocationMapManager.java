@@ -3,17 +3,13 @@ package managers;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
-
-import com.xplocity.xplocity.R;
 
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.infowindow.InfoWindow;
 
 import app.XplocityApplication;
 
@@ -21,7 +17,7 @@ import app.XplocityApplication;
  * Created by dmitry on 17.03.18.
  */
 
-public class reportLocationMapManager extends mapManager {
+public class reportLocationMapManager extends MapManager {
     private Marker mMarker;
 
     public reportLocationMapManager(MapView p_map, View context) {

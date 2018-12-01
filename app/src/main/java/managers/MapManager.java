@@ -1,51 +1,31 @@
 package managers;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.xplocity.xplocity.BuildConfig;
 import com.xplocity.xplocity.R;
 
 import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapAdapter;
-import org.osmdroid.events.MapEventsReceiver;
-import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import models.Location;
-import models.Route;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
-import utils.ResourceGetter;
 
 /**
  * Created by dmitry on 20.08.17.
  */
 
-public class mapManager {
+public class MapManager {
     protected MapView mMap;
     protected MyLocationNewOverlay mLocationOverlay;
 
@@ -57,7 +37,7 @@ public class mapManager {
 
     private Map<Location, Marker> mLocationMarkers;
 
-    public mapManager(MapView p_map, View context) {
+    public MapManager(MapView p_map, View context) {
         mMap = p_map;
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         mContext = context;
@@ -131,8 +111,16 @@ public class mapManager {
         mMap.getController().setCenter(position);
     }
 
+    public void setCamera(GeoPoint position) {
+        mMap.getController().setCenter(position);
+    }
+
     private void animateCamera(GeoPoint position, int zoom) {
         mMap.getController().setZoom(zoom);
+        mMap.getController().animateTo(position);
+    }
+
+    public void animateCamera(GeoPoint position) {
         mMap.getController().animateTo(position);
     }
 

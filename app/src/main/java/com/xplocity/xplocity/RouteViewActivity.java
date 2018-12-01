@@ -9,15 +9,22 @@ import java.util.ArrayList;
 
 import api_classes.RouteDownloader;
 import api_classes.interfaces.RouteDownloaderInterface;
-import managers.routeMapManager;
+import managers.RouteMapManager;
+import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.Route;
 
-public class RouteViewActivity extends FragmentActivity implements RouteDownloaderInterface {
+public class RouteViewActivity
+        extends FragmentActivity
+        implements RouteDownloaderInterface,
+        MapManagerInterface,
+        RouteStatLocationsFragment.FragmentListener {
 
-    private routeMapManager mMapManager = null;
+    private RouteMapManager mMapManager = null;
     private int mRouteId;
     private android.support.v4.app.FragmentManager mFragmentManager;
+
+    private RouteStatLocationsFragment mLocationsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +32,7 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
         setContentView(R.layout.activity_route_view);
 
         Bundle recdData = getIntent().getExtras();
-        mRouteId =  recdData.getInt(getString(R.string.route_id_key));
+        mRouteId = recdData.getInt(getString(R.string.route_id_key));
 
         mFragmentManager = getSupportFragmentManager();
 
@@ -36,8 +43,19 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new routeMapManager(map, null, null, findViewById(android.R.id.content));
+        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this);
     }
+
+    @Override
+    public void onMarkerClicked(models.Location location) {
+        mLocationsFragment.scrollToLocation(location);
+    }
+
+    @Override
+    public void onLocationSelected(Location location) {
+        mMapManager.focusOnLocation(location);
+    }
+
 
 
     public void downloadRoute() {
@@ -47,7 +65,7 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
 
     @Override
     public void onRouteDownloaded(Route route) {
-        if( mMapManager != null ) {
+        if (mMapManager != null) {
             mMapManager.setRoute(route);
             if (route.locations.size() > 0) {
                 mMapManager.setOverviewCamera(route.locations.get(0).position);
@@ -78,8 +96,8 @@ public class RouteViewActivity extends FragmentActivity implements RouteDownload
     private void showLocations(ArrayList<Location> locations) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 
-        RouteStatLocationsFragment locationsFragment = RouteStatLocationsFragment.newInstance(locations);
-        fragmentTransaction.replace(R.id.fragment_locations_list, locationsFragment);
+        mLocationsFragment = RouteStatLocationsFragment.newInstance(locations);
+        fragmentTransaction.replace(R.id.fragment_locations_list, mLocationsFragment);
         fragmentTransaction.commit();
     }
 }

@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import adapters.RouteSaveLocationsListAdapter;
 import api_classes.RouteUploader;
 import api_classes.interfaces.RouteUploaderInterface;
-import managers.routeMapManager;
+import managers.RouteMapManager;
+import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.Route;
 import utils.Factory.LogFactory;
@@ -26,9 +27,11 @@ import utils.UI.WaitWheel;
 
 public class RouteSaveActivity
         extends ServiceBindingActivity
-        implements RouteUploaderInterface {
+        implements RouteUploaderInterface,
+        MapManagerInterface,
+        RouteStatLocationsFragment.FragmentListener {
 
-    private routeMapManager mMapManager;
+    private RouteMapManager mMapManager;
     private RouteSaveLocationsListAdapter mLocationAdapter;
 
     private WaitWheel mWaitWheel;
@@ -37,6 +40,7 @@ public class RouteSaveActivity
     private Route mRoute;
 
     private android.support.v4.app.FragmentManager mFragmentManager;
+    private RouteStatLocationsFragment mLocationsFragment;
 
     //Logger
     Logger mLogger;
@@ -86,8 +90,8 @@ public class RouteSaveActivity
     private void showLocations(ArrayList<Location> locations) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 
-        RouteStatLocationsFragment locationsFragment = RouteStatLocationsFragment.newInstance(locations);
-        fragmentTransaction.replace(R.id.fragment_locations_list, locationsFragment);
+        mLocationsFragment = RouteStatLocationsFragment.newInstance(locations);
+        fragmentTransaction.replace(R.id.fragment_locations_list, mLocationsFragment);
         fragmentTransaction.commit();
     }
 
@@ -101,13 +105,23 @@ public class RouteSaveActivity
 
     public void initMapManager() {
         MapView map = findViewById(R.id.map);
-        mMapManager = new routeMapManager(map, null, null, findViewById(android.R.id.content));
+        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this);
         mMapManager.setRoute(mRoute);
 
         if (mRoute.path.size() > 0)
             mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size() - 1));
         else
             mMapManager.setOverviewCamera(mService.getLastposition());
+    }
+
+    @Override
+    public void onMarkerClicked(models.Location location) {
+        mLocationsFragment.scrollToLocation(location);
+    };
+
+    @Override
+    public void onLocationSelected(Location location) {
+        mMapManager.focusOnLocation(location);
     }
 
 

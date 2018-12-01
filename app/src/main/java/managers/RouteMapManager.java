@@ -4,14 +4,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.xplocity.xplocity.R;
-import com.xplocity.xplocity.RouteLocationList;
 
 import org.osmdroid.events.MapAdapter;
 import org.osmdroid.events.MapEventsReceiver;
@@ -29,8 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import adapters.LocationMarkerInfoWindow;
-import biz.laenger.android.vpbs.ViewPagerBottomSheetBehavior;
+import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.LocationCircle;
 import models.Route;
@@ -53,28 +50,29 @@ class LocationOnMap {
     }
 }
 
-public class routeMapManager extends mapManager {
+public class RouteMapManager extends MapManager {
     private Polyline mPolyline;
     private ImageView mArrow;
+    Marker mFocusedMarker;
 
-    private View mBottomSheet;
-    private RouteLocationList mLocationInfoFragment;
+
+    private MapManagerInterface mCallback;
 
 
     /*private Map<Location, Marker> mLocationMarkers;
     private Map<Location, Polygon> mLocationCircles;*/
     private Map<Location, LocationOnMap> mLocationsOnMap;
 
-    public routeMapManager(MapView p_map, View locationBottomSheetView, RouteLocationList locationInfoFragment, View context) {
+    public RouteMapManager(MapView p_map, View context, MapManagerInterface callback) {
         super(p_map, context);
+
+        mCallback = callback;
 
         /*mLocationMarkers = new HashMap<>();
         mLocationCircles = new HashMap<>();*/
         mLocationsOnMap = new HashMap<>();
 
         mArrow = mContext.findViewById(R.id.location_arrow);
-        mBottomSheet = locationBottomSheetView;
-        mLocationInfoFragment = locationInfoFragment;
 
         MapEventsReceiver mReceive = new MapEventsReceiver() {
 
@@ -110,6 +108,7 @@ public class routeMapManager extends mapManager {
     }
 
 
+
     public void updateLocationOnMap(Location loc) {
         LocationOnMap locOnMap = mLocationsOnMap.get(loc);
 
@@ -132,13 +131,26 @@ public class routeMapManager extends mapManager {
             case POINT_NOT_EXPLORED:
                 if (circle != null)
                     circle.setVisible(false);
-                setMarkerIconUnexplored(marker);
+
+                if (marker == mFocusedMarker) {
+                    setMarkerIconUnexploredFocused(marker);
+                }
+                else {
+                    setMarkerIconUnexplored(marker);
+                }
+
                 showMarker(marker);
                 break;
             case POINT_EXPLORED:
                 if (circle != null)
                     circle.setVisible(false);
-                setMarkerIconExplored(marker);
+
+                if (marker == mFocusedMarker) {
+                    setMarkerIconExploredFocused(marker);
+                }
+                else {
+                    setMarkerIconExplored(marker);
+                }
                 showMarker(marker);
         }
     }
@@ -163,20 +175,13 @@ public class routeMapManager extends mapManager {
         marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_explored_marker));
     }
 
-
-    /*public void setLocationMarkerExplored(Marker marker) {
-        try {
-            setMarkerIconExplored(mLocationMarkers.get(loc));
-            hideLocationCircle(mLocationCircles.get(loc));
-        } catch (Exception e) {
-            mLogger.logError("Failed to set location marker as explored", e);
-        }
+    private void setMarkerIconExploredFocused(Marker marker) {
+        marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_explored_focused_marker));
     }
 
-
-    private void hideLocationCircle(Polygon circle) {
-        circle.setVisible(false);
-    }*/
+    private void setMarkerIconUnexploredFocused(Marker marker) {
+        marker.setIcon(ContextCompat.getDrawable(mContext.getContext(), R.drawable.location_unexplored_focused_marker));
+    }
 
 
     public void setRoute(Route route) {
@@ -212,25 +217,16 @@ public class routeMapManager extends mapManager {
         marker.setSnippet(loc.description);
         marker.setRelatedObject(loc);
 
-        if (mBottomSheet != null) {
-            marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker, MapView mapView) {
-                    Location loc = (Location) marker.getRelatedObject();
+        marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
 
-                    ViewPagerBottomSheetBehavior.from(mBottomSheet).setState(BottomSheetBehavior.STATE_EXPANDED);
-                    mLocationInfoFragment.showLocationInfo(loc);
+                focusOnMarker(marker);
+                mCallback.onMarkerClicked(loc);
 
-
-                    return false;
-                }
-            });
-        }
-        else {
-            InfoWindow infoWindow = new LocationMarkerInfoWindow(R.layout.location_map_marker_info, mMap);
-            marker.setInfoWindow(infoWindow);
-        }
-
+                return true;
+            }
+        });
 
         Polygon circle = null;
         if (loc.hasCircle)
@@ -240,6 +236,30 @@ public class routeMapManager extends mapManager {
 
         mLocationsOnMap.put(loc, new LocationOnMap(marker, circle));
         //mMap.getOverlays().add(marker);
+    }
+
+    public void focusOnLocation(Location loc) {
+        LocationOnMap locOnMap = mLocationsOnMap.get(loc);
+        Marker marker = locOnMap.marker;
+        focusOnMarker(marker);
+    }
+
+    private void focusOnMarker(Marker marker) {
+        Marker lastFocusedMarker = mFocusedMarker;
+        mFocusedMarker = marker;
+
+        if (lastFocusedMarker != null) {
+            Location loc = (Location) lastFocusedMarker.getRelatedObject();
+            refreshMarkerAndCircle(lastFocusedMarker, mLocationsOnMap.get(loc).circle, loc.exploreState);
+        }
+
+        Location loc = (Location) mFocusedMarker.getRelatedObject();
+        refreshMarkerAndCircle(mFocusedMarker, mLocationsOnMap.get(loc).circle, loc.exploreState);
+
+        animateCamera(loc.position);
+        mMap.invalidate();
+
+        mFocusedMarker = marker;
     }
 
 
@@ -256,7 +276,6 @@ public class routeMapManager extends mapManager {
             }
         }
     }
-
 
 
     private Polygon drawCircle(LocationCircle locCircle) {

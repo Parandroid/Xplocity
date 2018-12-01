@@ -22,6 +22,7 @@
     <color name="locationUnexploredFill">#888</color>
     <color name="locationExploredBorder">#009300</color>
     <color name="locationExploredFill">#5bb95b</color>
+    <color name="locationFocusedBorder">@color/routeStatLocationBackgroundFocused</color>
     <color name="locationCircleFill">#66969696</color>
     <color name="locationCircleStroke">#66969696</color>
     <color name="mapBtnBackground">#80999999</color>
@@ -33,6 +34,7 @@
     <color name="routeDescriptionLocProgress100Fill">#4ec14e</color>
     <color name="routeDescriptionLocProgress100Text">#ffab00</color>
 
+    <color name="routeStatLocationBackgroundFocused">#ffe57f</color>
 
 
     <color name="btnColoredBackground">@color/colorAccent</color>

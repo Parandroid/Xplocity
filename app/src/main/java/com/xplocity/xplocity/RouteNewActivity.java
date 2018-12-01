@@ -51,7 +51,8 @@ import app.XplocityApplication;
 import biz.laenger.android.vpbs.BottomSheetUtils;
 import biz.laenger.android.vpbs.ViewPagerBottomSheetBehavior;
 import managers.PermissionManager;
-import managers.routeMapManager;
+import managers.RouteMapManager;
+import managers.interfaces.MapManagerInterface;
 import models.LocationCategory;
 import models.Route;
 import services.ServiceStateReceiver;
@@ -69,7 +70,8 @@ public class RouteNewActivity
         NewRouteDownloaderInterface,
         ServiceStateReceiverInterface,
         RouteLocationsListAdapterInterface,
-        RouteLocationList.OnFragmentInteractionListener {
+        RouteLocationList.OnFragmentInteractionListener,
+        MapManagerInterface {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -80,7 +82,7 @@ public class RouteNewActivity
     Logger mLogger;
 
     //Managers
-    routeMapManager mMapManager;
+    RouteMapManager mMapManager;
 
     ServiceStateReceiver receiver;
 
@@ -364,8 +366,7 @@ public class RouteNewActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        View bottomSheetView = findViewById(R.id.bottom_sheet_panel);
-        mMapManager = new routeMapManager(map, bottomSheetView, mPagerAdapter.getLocationsPage(), findViewById(android.R.id.content));
+        mMapManager = new RouteMapManager(map,findViewById(android.R.id.content), this);
 
         if (mLocationPermissionsGranted) {
             try {
@@ -389,6 +390,13 @@ public class RouteNewActivity
             Toast.makeText(getApplicationContext(), getString(R.string.info_location_perm_request_text), Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    public void onMarkerClicked(models.Location location) {
+        View bottomSheetView = findViewById(R.id.bottom_sheet_panel);
+        ViewPagerBottomSheetBehavior.from(bottomSheetView).setState(BottomSheetBehavior.STATE_EXPANDED);
+        mPagerAdapter.getLocationsPage().showLocationInfo(location);
+    };
 
 
     private void initRouteSettings() {
