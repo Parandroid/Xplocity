@@ -3,6 +3,7 @@ package com.xplocity.xplocity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
@@ -28,6 +29,7 @@ public class RouteStatLocationsFragment extends Fragment {
 
     public interface FragmentListener {
         void onLocationSelected(Location location);
+        void onLocationUnselected();
     }
 
 
@@ -73,6 +75,19 @@ public class RouteStatLocationsFragment extends Fragment {
 
         }*/
     }
+
+
+    public void dropFocus() {
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            public void run() {
+                mView.findViewById(R.id.container).requestFocus();
+            }
+        });
+
+
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,14 +172,10 @@ public class RouteStatLocationsFragment extends Fragment {
 
             exploredLocationListLayout.addView(v);
 
-            v.findViewById(R.id.container).setOnTouchListener(new View.OnTouchListener() {
+            v.findViewById(R.id.container_explored).setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (mCallback != null)
-                    {
-                        mCallback.onLocationSelected(location);
-                    }
-
+                    onLocationItemTouched(v, event, location);
                     return false;
                 }
             });
@@ -182,13 +193,10 @@ public class RouteStatLocationsFragment extends Fragment {
 
             unexploredLocationListLayout.addView(v);
 
-            v.findViewById(R.id.container).setOnTouchListener(new View.OnTouchListener() {
+            v.findViewById(R.id.container_unexplored).setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (mCallback != null)
-                    {
-                        mCallback.onLocationSelected(location);
-                    }
+                    onLocationItemTouched(v, event, location);
 
                     return false;
                 }
@@ -208,6 +216,23 @@ public class RouteStatLocationsFragment extends Fragment {
             unseenLocationsLayout.setVisibility(View.GONE);
         }
 
+    }
+
+
+    private void onLocationItemTouched(View v, MotionEvent event, Location location) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (!v.hasFocus()) {
+                if (mCallback != null) {
+                    mCallback.onLocationSelected(location);
+                }
+            } else {
+                if (mCallback != null) {
+                    dropFocus();
+
+                    mCallback.onLocationUnselected();
+                }
+            }
+        }
     }
 
 

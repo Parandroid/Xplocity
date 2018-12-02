@@ -399,6 +399,12 @@ public class RouteNewActivity
     };
 
 
+    @Override
+    public void onFocusDropped() {
+        onLocationInfoClosed();
+    }
+
+
     private void initRouteSettings() {
         timeSliderInit();
         LocationCategoriesDownloader downloader = new LocationCategoriesDownloader(this);

@@ -120,8 +120,19 @@ public class RouteSaveActivity
     };
 
     @Override
+    public void onFocusDropped() {
+        mLocationsFragment.dropFocus();
+    }
+
+    @Override
     public void onLocationSelected(Location location) {
         mMapManager.focusOnLocation(location);
+    }
+
+
+    @Override
+    public void onLocationUnselected() {
+        mMapManager.dropFocus();
     }
 
 

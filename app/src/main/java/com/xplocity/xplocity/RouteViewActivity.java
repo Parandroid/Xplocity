@@ -1,6 +1,7 @@
 package com.xplocity.xplocity;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentActivity;
 
 import org.osmdroid.views.MapView;
@@ -48,12 +49,23 @@ public class RouteViewActivity
 
     @Override
     public void onMarkerClicked(models.Location location) {
+        ((AppBarLayout) findViewById(R.id.appbar)).setExpanded(false);
         mLocationsFragment.scrollToLocation(location);
+    }
+
+    @Override
+    public void onFocusDropped() {
+        mLocationsFragment.dropFocus();
     }
 
     @Override
     public void onLocationSelected(Location location) {
         mMapManager.focusOnLocation(location);
+    }
+
+    @Override
+    public void onLocationUnselected() {
+        mMapManager.dropFocus();
     }
 
 

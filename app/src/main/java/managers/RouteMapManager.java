@@ -20,7 +20,6 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.infowindow.InfoWindow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,7 +77,9 @@ public class RouteMapManager extends MapManager {
 
             @Override
             public boolean singleTapConfirmedHelper(GeoPoint p) {
-                InfoWindow.closeAllInfoWindowsOn(mMap);
+                mCallback.onFocusDropped();
+                dropFocus();
+                mMap.invalidate();
                 return true;
             }
 
@@ -260,6 +261,18 @@ public class RouteMapManager extends MapManager {
         mMap.invalidate();
 
         mFocusedMarker = marker;
+    }
+
+
+    public void dropFocus() {
+        if (mFocusedMarker != null) {
+            Marker lastFocusedMarker = mFocusedMarker;
+            mFocusedMarker = null;
+
+            Location loc = (Location) lastFocusedMarker.getRelatedObject();
+            refreshMarkerAndCircle(lastFocusedMarker, mLocationsOnMap.get(loc).circle, loc.exploreState);
+            mMap.invalidate();
+        }
     }
 
 
