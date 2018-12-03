@@ -16,6 +16,7 @@ import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
@@ -109,7 +110,6 @@ public class RouteMapManager extends MapManager {
     }
 
 
-
     public void updateLocationOnMap(Location loc) {
         LocationOnMap locOnMap = mLocationsOnMap.get(loc);
 
@@ -135,8 +135,7 @@ public class RouteMapManager extends MapManager {
 
                 if (marker == mFocusedMarker) {
                     setMarkerIconUnexploredFocused(marker);
-                }
-                else {
+                } else {
                     setMarkerIconUnexplored(marker);
                 }
 
@@ -148,8 +147,7 @@ public class RouteMapManager extends MapManager {
 
                 if (marker == mFocusedMarker) {
                     setMarkerIconExploredFocused(marker);
-                }
-                else {
+                } else {
                     setMarkerIconExplored(marker);
                 }
                 showMarker(marker);
@@ -292,7 +290,7 @@ public class RouteMapManager extends MapManager {
 
 
     private Polygon drawCircle(LocationCircle locCircle) {
-        List<GeoPoint> circle = Polygon.pointsAsCircle(locCircle.center, locCircle.raduis);
+        List<GeoPoint> circle = Polygon.pointsAsCircle(locCircle.center, locCircle.radius);
         final GridPolygon p = new GridPolygon();
         p.setPoints(circle);
         p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.transparent));
@@ -328,13 +326,13 @@ public class RouteMapManager extends MapManager {
 
     public void updateLocationArrowPosition() {
         GeoPoint mapCenter = (GeoPoint) mMap.getMapCenter();
-        Location closestLoc = findTargetLocation(mapCenter);
+        GeoPoint closestLoc = findTargetLocation(mapCenter);
 
         if (closestLoc != null) {
             mArrow.setVisibility(View.VISIBLE);
 
             Point locationPosition = new Point();
-            mMap.getProjection().toPixels(closestLoc.position, locationPosition);
+            mMap.getProjection().toPixels(closestLoc, locationPosition);
 
             int distanceHorizont = locationPosition.x - mMapCenterPoint.x;
             int distanceVertical = -(locationPosition.y - mMapCenterPoint.y);
@@ -379,22 +377,37 @@ public class RouteMapManager extends MapManager {
 
     // Find closest unexplored location if no such locations are shown on current map view.
     // if any location is shown, return null
-    private Location findTargetLocation(GeoPoint position) {
+    private GeoPoint findTargetLocation(GeoPoint position) {
 
-        Location closestLocation = null;
+        GeoPoint closestLocation = null;
         float smallestDistance = -1;
 
         for (Location location : mLocationsOnMap.keySet()) {
             if (!location.explored()) {
-                if (!isPointVisible(location.position)) {
+                GeoPoint targetPos;
 
-                    float distance = PositionManager.calculateDistance(position, location.position);
-                    if (smallestDistance == -1 || distance < smallestDistance) {
-                        closestLocation = location;
-                        smallestDistance = distance;
+
+                if (location.exploreState == LocationExploreState.POINT_NOT_EXPLORED) {
+                    if (!isPointVisible(location.position)) {
+                        targetPos = location.position;
+                    } else {
+                        return null;
                     }
                 } else {
-                    return null;
+                    //Circle
+                    if (!isCircleVisible(location.circle)) {
+                        targetPos = location.circle.center;
+
+                    } else {
+                        return null;
+                    }
+                }
+
+                float distance = PositionManager.calculateDistance(position, targetPos);
+                if (smallestDistance == -1 || distance < smallestDistance) {
+                    closestLocation = targetPos;
+                    smallestDistance = distance;
+
                 }
             }
         }
@@ -406,15 +419,66 @@ public class RouteMapManager extends MapManager {
     private boolean isPointVisible(GeoPoint point) {
         Rect currentMapBoundsRect = new Rect();
         Point locationPosition = new Point();
-        //GeoPoint deviceLocation = new GeoPoint((int) (bestCurrentLocation.getLatitude() * 1000000.0), (int) (bestCurrentLocation.getLongitude() * 1000000.0));
 
         mMap.getProjection().toPixels(point, locationPosition);
         mMap.getScreenRect(currentMapBoundsRect);
 
 
         return currentMapBoundsRect.contains(locationPosition.x, locationPosition.y);
-
     }
+
+
+    private boolean isCircleVisible(LocationCircle circle) {
+        Rect currentMapBoundsRect = new Rect();
+        Point locationPosition = new Point();
+
+        if (isPointVisible(circle.center)) {
+            return true;
+        } else {
+            Rect rect = new Rect();
+            mMap.getScreenRect(rect);
+
+            Projection projection = mMap.getProjection();
+            Point circleCenter = new Point();
+            mMap.getProjection().toPixels(circle.center, circleCenter);
+            int circleRadius = (int) projection.metersToPixels(circle.radius);
+
+            return checkRectCircleCollision(circleCenter.x, circleCenter.y, circleRadius, rect);
+
+            /*GeoPoint ne, se, sw, nw;
+            BoundingBox visibleRegion = mMap.getBoundingBox();
+
+            ne = new GeoPoint(visibleRegion.getLatNorth(), visibleRegion.getLonEast());
+            se = new GeoPoint(visibleRegion.getLatSouth(), visibleRegion.getLonEast());
+            sw = new GeoPoint(visibleRegion.getLatSouth(), visibleRegion.getLonWest());
+            nw = new GeoPoint(visibleRegion.getLatNorth(), visibleRegion.getLonWest());
+
+            if ((circle.isPointInside(ne)) || (circle.isPointInside(se)) || (circle.isPointInside(sw)) || (circle.isPointInside(nw))) {
+                return true;
+            }*/
+        }
+    }
+
+
+    private boolean checkRectCircleCollision(int circle_x, int circle_y, int circle_r, Rect rect) {
+        {
+            int distX = Math.abs(circle_x - rect.left-rect.width()/2);
+            int distY = Math.abs(circle_y - rect.top-rect.height()/2);
+
+            if (distX > (rect.width()/2 + circle_r)) { return false; }
+            if (distY > (rect.height()/2 + circle_r)) { return false; }
+
+            if (distX <= (rect.width()/2)) { return true; }
+            if (distY <= (rect.height()/2)) { return true; }
+
+            int dx=distX-rect.width()/2;
+            int dy=distY-rect.height()/2;
+            return (dx*dx+dy*dy<=(circle_r*circle_r));
+        }
+    }
+
+
+
 
     public void rotateArrowToLocation(double x, double y) {
         double angle = -Math.toDegrees(Math.atan2(y, x)) + 90;

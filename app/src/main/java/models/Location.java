@@ -32,6 +32,8 @@ public class Location
     public LocationCircle circle;
     public boolean hasCircle; //true - for active routes, false - when viewing old routes
 
+    private final int LOCATION_CIRCLE_RADIUS = 300;
+
     public Location() {
         //generateLocationCircle(300, 150);
     }
@@ -44,7 +46,7 @@ public class Location
 
     public void setStateCircle() {
         exploreState = LocationExploreState.CIRCLE;
-        generateLocationCircle(300, 150);
+        generateLocationCircle(LOCATION_CIRCLE_RADIUS, 150);
     }
 
 
@@ -57,9 +59,9 @@ public class Location
     }
 
 
-    private void generateLocationCircle(double pRadius, double pMaxOffset) {
+    private void generateLocationCircle(float pRadius, float pMaxOffset) {
         if (circle == null) {
-            final double r_earth = 6371000.0;
+            final float r_earth = 6371000.0f;
 
             Random r = new Random();
             double dx = pMaxOffset * (-1 + 2 * r.nextDouble());

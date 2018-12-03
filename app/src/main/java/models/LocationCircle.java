@@ -14,16 +14,16 @@ public class LocationCircle
     implements Serializable {
 
     public GeoPoint center;
-    public double raduis;
+    public float radius;
 
-    public LocationCircle(GeoPoint pCenter, double pRadius) {
+    public LocationCircle(GeoPoint pCenter, float pRadius) {
         center = pCenter;
-        raduis = pRadius;
+        radius = pRadius;
     }
 
     public boolean isPointInside(GeoPoint point) {
         double distance = PositionManager.calculateDistance(point, center);
-        if (distance <= raduis)
+        if (distance <= radius)
             return true;
         else
             return false;
