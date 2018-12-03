@@ -33,7 +33,7 @@ public class MapManager {
     protected View mContext;
 
     public static final int DEFAULT_TRACKING_ZOOM = 16;
-    public static final int DEFAULT_OVERVIEW_ZOOM = 11;
+    public static final int DEFAULT_OVERVIEW_ZOOM = 13;
 
     private Map<Location, Marker> mLocationMarkers;
 

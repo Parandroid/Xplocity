@@ -80,7 +80,7 @@ public class RouteViewActivity
         if (mMapManager != null) {
             mMapManager.setRoute(route);
             if (route.locations.size() > 0) {
-                mMapManager.setOverviewCamera(route.locations.get(0).position);
+                mMapManager.setOverviewCamera(route.path.get(0));
             }
 
             showResultNumbers((int) route.distance, route.duration);

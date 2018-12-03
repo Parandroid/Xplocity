@@ -257,7 +257,7 @@ public class RouteMapManager extends MapManager {
         Location loc = (Location) mFocusedMarker.getRelatedObject();
         refreshMarkerAndCircle(mFocusedMarker, mLocationsOnMap.get(loc).circle, loc.exploreState);
 
-        animateCamera(loc.position);
+        animateOverviewCamera(loc.position);
         mMap.invalidate();
 
         mFocusedMarker = marker;
