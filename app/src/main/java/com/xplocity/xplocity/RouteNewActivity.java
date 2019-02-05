@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -99,18 +100,19 @@ public class RouteNewActivity
     Button mStartTrackingButton;
     Button mStopTrackingButton;
 
+    SeekBar mProgressbar;
+
     NewRoutePagerAdapter mPagerAdapter;
     private RouteLocationsListAdapter mLocationAdapter;
     ViewPager mPager;
     ViewPagerBottomSheetBehavior mBottomSheet;
 
-    private GeoPoint mCurrentPosition;
+    private GeoPoint mInitialPosition;
     private boolean mRouteReady = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routes_new);
 
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
@@ -132,6 +134,19 @@ public class RouteNewActivity
         mTxtSpeed = (TextView) findViewById(R.id.textSpeed);
 
 
+        mProgressbar = findViewById(R.id.progressbar);
+        mProgressbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    mMapManager.animateToClosestUnexploredLocation(RouteNewActivity.this.mService.getLastposition());
+                }
+
+                return true;
+            }
+        });
+
+        mProgressbar.setVisibility(View.GONE);
         mBottomSheet = ViewPagerBottomSheetBehavior.from(findViewById(R.id.bottom_sheet_panel));
 
         mPagerAdapter = new NewRoutePagerAdapter(getSupportFragmentManager(), this);
@@ -144,6 +159,8 @@ public class RouteNewActivity
 
 
         receiver = new ServiceStateReceiver(this);
+
+        super.onCreate(savedInstanceState);
 
         requestPermissions();
 
@@ -220,6 +237,8 @@ public class RouteNewActivity
         animator.setInAnimation(inAnimation);
         animator.setOutAnimation(outAnimation);
 
+        mProgressbar.setVisibility(View.VISIBLE);
+
         onRouteReady();
     }
 
@@ -227,6 +246,7 @@ public class RouteNewActivity
     // Executed when route downloaded initially or when it was initialized after restoring the app
     private void onRouteReady() {
         fillLocationsList(mService.getRoute().locations);
+        updateProgressBar();
         initMapManager();
 
         mRouteReady = true;
@@ -285,7 +305,7 @@ public class RouteNewActivity
                             Location location = locationResult.getLocations().get(0);
                             //mService.setLastPosition(new GeoPoint(location.getLatitude(), location.getLongitude()));
                             mFusedLocationClient.removeLocationUpdates(this);
-                            mCurrentPosition = new GeoPoint(location);
+                            mInitialPosition = new GeoPoint(location);
                             ((Button) findViewById(R.id.btn_create_chain)).setEnabled(true);
                         }
                     }
@@ -306,7 +326,7 @@ public class RouteNewActivity
 
     // Called when "Get locations" button is pressed
     public void createRoute(View view) {
-        requestNewRoute(mCurrentPosition.getLatitude(), mCurrentPosition.getLongitude());
+        requestNewRoute(mInitialPosition.getLatitude(), mInitialPosition.getLongitude());
     }
 
 
@@ -464,10 +484,12 @@ public class RouteNewActivity
         if (mIsBound && !mService.trackingActive()) {
             mService.startTracking();
 
+            mProgressbar.setVisibility(View.VISIBLE);
+
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
 
-            mMapManager.animateTrackingCamera(mCurrentPosition);
+            mMapManager.animateTrackingCamera(mInitialPosition);
         }
     }
 
@@ -557,6 +579,8 @@ public class RouteNewActivity
                 }
             }
         }
+
+        updateProgressBar();
     }
 
     @Override
@@ -709,6 +733,17 @@ public class RouteNewActivity
 
         mBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
+
+
+
+
+    /********** Progressbar  *********/
+
+    private void updateProgressBar() {
+        mProgressbar.setMax(mService.getRoute().loc_cnt_total);
+        mProgressbar.setProgress(mService.getRoute().loc_cnt_explored);
+    }
+
 
 
     /**********   Menu  **************/

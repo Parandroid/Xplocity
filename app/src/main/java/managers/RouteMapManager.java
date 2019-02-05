@@ -304,6 +304,16 @@ public class RouteMapManager extends MapManager {
     }
 
 
+
+    public void animateToClosestUnexploredLocation(GeoPoint position) {
+        GeoPoint closestLocPosition = findClosestUnexploredLocation(position, false);
+        if (closestLocPosition != null) {
+            animateCamera(closestLocPosition);
+        }
+    }
+
+
+
     /*******   Location arrow   **********/
 
     private int mScreenHeight;
@@ -326,7 +336,7 @@ public class RouteMapManager extends MapManager {
 
     public void updateLocationArrowPosition() {
         GeoPoint mapCenter = (GeoPoint) mMap.getMapCenter();
-        GeoPoint closestLoc = findTargetLocation(mapCenter);
+        GeoPoint closestLoc = findClosestUnexploredLocation(mapCenter, true);
 
         if (closestLoc != null) {
             mArrow.setVisibility(View.VISIBLE);
@@ -377,7 +387,7 @@ public class RouteMapManager extends MapManager {
 
     // Find closest unexplored location if no such locations are shown on current map view.
     // if any location is shown, return null
-    private GeoPoint findTargetLocation(GeoPoint position) {
+    private GeoPoint findClosestUnexploredLocation(GeoPoint position, boolean hideVisible) {
 
         GeoPoint closestLocation = null;
         float smallestDistance = -1;
@@ -388,14 +398,14 @@ public class RouteMapManager extends MapManager {
 
 
                 if (location.exploreState == LocationExploreState.POINT_NOT_EXPLORED) {
-                    if (!isPointVisible(location.position)) {
+                    if (!hideVisible || (hideVisible && !isPointVisible(location.position))) {
                         targetPos = location.position;
                     } else {
                         return null;
                     }
                 } else {
                     //Circle
-                    if (!isCircleVisible(location.circle)) {
+                    if (!hideVisible || (hideVisible && !isCircleVisible(location.circle))) {
                         targetPos = location.circle.center;
 
                     } else {

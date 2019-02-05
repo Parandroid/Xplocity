@@ -1,0 +1,33 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp">
+
+    <item>
+        <shape android:shape="oval">
+            <size
+                android:width="37dp"
+                android:height="37dp" />
+            <solid android:color="@color/gray100" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/gray500" />
+        </shape>
+    </item>
+
+    <item android:drawable="@drawable/seekbar_thumb_icon"
+        android:bottom="3dp"
+        android:left="2dp"
+        android:right="3dp"
+        android:top="3dp"
+        />
+
+
+    <item
+        android:drawable="@drawable/ic_question"
+        android:bottom="10dp"
+        android:left="10dp"
+        android:right="10dp"
+        android:top="10dp" />
+</layer-list>
+
+

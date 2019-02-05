@@ -17,17 +17,21 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.xplocity.xplocity.R;
 
+import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
 
+import java.lang.reflect.Modifier;
 import java.util.Calendar;
 
 import app.XplocityApplication;
 import managers.PositionManager;
 import managers.interfaces.PositionManagerInterface;
 import models.Route;
+import utils.DateTimeConverter;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
@@ -42,8 +46,7 @@ public class XplocityPositionService
     public static XplocityPositionService getInstance() {
         if (mInstance != null) {
             return mInstance;
-        }
-        else {
+        } else {
             return null;
         }
 
@@ -182,7 +185,11 @@ public class XplocityPositionService
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.excludeFieldsWithModifiers(/*Modifier.FINAL, */Modifier.TRANSIENT, Modifier.STATIC);
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
+        Gson gson = builder.create();
+
         String json = gson.toJson(mPositionManager);
         editor.putString("positionManager", json);
         editor.putInt("trackingState", trackingState);
@@ -192,27 +199,39 @@ public class XplocityPositionService
     private void loadStateFromStorage() {
         // load tasks from preference
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        if (prefs.contains("positionManager")) {
-            Gson gson = new Gson();
-            mPositionManager = gson.fromJson(prefs.getString("positionManager", ""), new TypeToken<PositionManager>() {
-            }.getType());
-            mPositionManager.setCallback(this);
-        } else {
-            mPositionManager = new PositionManager(this);
-        }
 
-        if (prefs.contains("trackingState")) {
-            trackingState = prefs.getInt("trackingState", TRACKING_STATE_NOT_STARTED);
-            if (trackingState == TRACKING_STATE_ACTIVE) {
-                requestLocationUpdates();
+        if (prefs.contains("positionManager") && prefs.contains("trackingState")) {
+            try {
+                GsonBuilder builder = new GsonBuilder();
+                builder.excludeFieldsWithModifiers(/*Modifier.FINAL, */Modifier.TRANSIENT, Modifier.STATIC);
+                builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
+                Gson gson = builder.create();
+
+                mPositionManager = gson.fromJson(prefs.getString("positionManager", ""), new TypeToken<PositionManager>() {
+                }.getType());
+                mPositionManager.setCallback(this);
+
+                trackingState = prefs.getInt("trackingState", TRACKING_STATE_NOT_STARTED);
+                if (trackingState == TRACKING_STATE_ACTIVE) {
+                    requestLocationUpdates();
+                }
+
+            } catch (Exception e) {
+                mLogger.logError("Couldn't restore position service state.", e);
+                clearStorage();
+                loadStateFromStorage();
             }
         } else {
+            mPositionManager = new PositionManager(this);
             trackingState = TRACKING_STATE_NOT_STARTED;
         }
 
+
         clearStorage();
 
+
     }
+
 
     private void clearStorage() {
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);

@@ -3,6 +3,7 @@
 
     <color name="white">#ffffff</color>
     <color name="gray100">#eeeeee</color>
+    <color name="gray200">#cccccc</color>
     <color name="gray300">#bbbbbb</color>
     <color name="gray500">#888888</color>
     <color name="gray700">#555555</color>

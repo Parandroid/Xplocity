@@ -1,12 +1,20 @@
 package models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.Serializable;
+import java.lang.reflect.Modifier;
 import java.util.Random;
 
 import models.enums.LocationExploreState;
+import utils.DateTimeConverter;
 
 /**
  * Created by dmitry on 20.08.17.
@@ -16,7 +24,8 @@ import models.enums.LocationExploreState;
 
 public class Location
         implements Comparable<Location>,
-        Serializable {
+        Serializable,
+        Parcelable {
     public int id;
     public LocationExploreState exploreState;
 
@@ -96,6 +105,54 @@ public class Location
             return 0;
         }
 
+    }
+
+
+    /// Parcelable
+
+    public int describeContents() {
+        return 0;
+    }
+
+    /** save object in parcel */
+    public void writeToParcel(Parcel out, int flags) {
+        GsonBuilder builder = new GsonBuilder();
+        builder.excludeFieldsWithModifiers(/*Modifier.FINAL, */Modifier.TRANSIENT, Modifier.STATIC);
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
+        Gson gson = builder.create();
+
+        String json = gson.toJson(this);
+        out.writeString(json);
+    }
+
+    public static final Parcelable.Creator<Location> CREATOR
+            = new Parcelable.Creator<Location>() {
+        public Location createFromParcel(Parcel in) {
+            return new Location(in);
+        }
+
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
+
+    /** recreate object from parcel */
+    private Location(Parcel in) {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
+
+        Gson gson = builder.create();
+        Location loc = gson.fromJson(in.readString(), Location.class);
+        this.id = loc.id;
+        this.exploreState = loc.exploreState;
+        this.name = loc.name;
+        this.description = loc.description;
+        this.address = loc.address;
+        this.dateReached = loc.dateReached;
+        this.position = loc.position;
+        this.distance = loc.distance;
+        this.circle = loc.circle;
+        this.hasCircle = loc.hasCircle;
     }
 
 }

@@ -12,6 +12,8 @@ import org.osmdroid.util.GeoPoint;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import utils.DateTimeConverter;
+
 /**
  * Created by dmitry on 20.08.17.
  */
@@ -71,8 +73,9 @@ public class Route implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithModifiers(/*Modifier.FINAL, */Modifier.TRANSIENT, Modifier.STATIC);
-        //builder.excludeFieldsWithoutExposeAnnotation();
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
         Gson gson = builder.create();
+
         String json = gson.toJson(this);
         out.writeString(json);
     }
@@ -90,7 +93,10 @@ public class Route implements Parcelable {
 
     /** recreate object from parcel */
     private Route(Parcel in) {
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
+
+        Gson gson = builder.create();
         Route c = gson.fromJson(in.readString(), Route.class);
         this.id = c.id;
         this.date = c.date;

@@ -10,13 +10,12 @@ import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
 
 import java.lang.reflect.Modifier;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
 import managers.interfaces.PositionManagerInterface;
 import models.Location;
 import models.Route;
+import utils.DateTimeConverter;
 
 /**
  * Created by dmitry on 20.08.17.
@@ -27,7 +26,7 @@ public class PositionManager implements Parcelable {
     public Route route;
     public GeoPoint lastPosition;
 
-    private Date mLastTime;
+    private DateTime mLastTime;
 
     private transient PositionManagerInterface mCallback;
 
@@ -90,16 +89,16 @@ public class PositionManager implements Parcelable {
     public void startTracking() {
         route.distance = 0;
         route.duration = 0;
-        mLastTime = Calendar.getInstance().getTime();
+        mLastTime = DateTime.now();
         lastPosition = null;
     }
 
 
     public void updateDuration() {
         if (mLastTime != null) {
-            Date curTime = Calendar.getInstance().getTime();
+            DateTime curTime = DateTime.now();;
 
-            long diffInMs = curTime.getTime() - mLastTime.getTime();
+            long diffInMs = curTime.getMillis() - mLastTime.getMillis();
 
             route.duration = route.duration + (int) diffInMs;
             mLastTime = curTime;
@@ -124,8 +123,9 @@ public class PositionManager implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithModifiers(/*Modifier.FINAL, */Modifier.TRANSIENT, Modifier.STATIC);
-        //builder.excludeFieldsWithoutExposeAnnotation();
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
         Gson gson = builder.create();
+
         String json = gson.toJson(this);
         out.writeString(json);
     }
@@ -145,10 +145,14 @@ public class PositionManager implements Parcelable {
      * recreate object from parcel
      */
     private PositionManager(Parcel in) {
-        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DateTime.class, new DateTimeConverter());
+        Gson gson = builder.create();
+
         PositionManager c = gson.fromJson(in.readString(), PositionManager.class);
 
         this.route = c.route;
         this.lastPosition = c.lastPosition;
+        this.mLastTime = c.mLastTime;
     }
 }
