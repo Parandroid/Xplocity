@@ -135,6 +135,11 @@ public class RouteSaveActivity
         mMapManager.dropFocus();
     }
 
+    @Override
+    public int getHiddenMapHeight() {
+        return 0;
+    }
+
 
     public void uploadRoute(View view) {
         RouteUploader routeUploader = new RouteUploader(this);

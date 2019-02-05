@@ -1,11 +1,6 @@
 package com.xplocity.xplocity;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -22,6 +17,7 @@ import org.osmdroid.views.MapView;
 import api_classes.ReportedLocationUploader;
 import api_classes.interfaces.ReportedLocationUploaderInterface;
 import app.XplocityApplication;
+import managers.interfaces.MapManagerInterface;
 import managers.reportLocationMapManager;
 import models.Location;
 
@@ -36,7 +32,8 @@ import models.Location;
  */
 public class ReportNewLocation
         extends DialogFragment
-        implements ReportedLocationUploaderInterface {
+        implements ReportedLocationUploaderInterface,
+        MapManagerInterface {
 
     reportLocationMapManager mMapManager;
 
@@ -66,7 +63,7 @@ public class ReportNewLocation
     public void onStart() {
         super.onStart();
         MapView map = getDialog().findViewById(R.id.map);
-        mMapManager = new reportLocationMapManager(map, getView());
+        mMapManager = new reportLocationMapManager(map, getView(), this);
         mMapManager.initMyLocation();
     }
 
@@ -107,6 +104,20 @@ public class ReportNewLocation
 
         return v;
     }
+
+
+
+    @Override
+    public void onMarkerClicked(models.Location location) {};
+
+    @Override
+    public void onFocusDropped() {}
+
+    @Override
+    public int getHiddenMapHeight() {
+        return 0;
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onCancelBtnPressed(View view) {

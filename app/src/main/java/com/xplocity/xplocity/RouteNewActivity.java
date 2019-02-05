@@ -398,7 +398,7 @@ public class RouteNewActivity
                 if (mService.trackingActive()) {
                     mMapManager.setTrackingCamera(mService.getLastposition());
                 } else {
-                    mMapManager.setOverviewCamera(mService.getRoute().locations.get(0).position);
+                    mMapManager.setOverviewCamera(mInitialPosition);
                 }
 
             } catch (SecurityException e) {
@@ -423,6 +423,19 @@ public class RouteNewActivity
     public void onFocusDropped() {
         onLocationInfoClosed();
     }
+
+    @Override
+    public int getHiddenMapHeight() {
+        if (mBottomSheet.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+            return 0;
+        }
+        else {
+            View bottomSheetView = findViewById(R.id.bottom_sheet_panel);
+            int bottomSheetHeight = bottomSheetView.getHeight();
+            return bottomSheetHeight;
+        }
+    }
+
 
 
     private void initRouteSettings() {

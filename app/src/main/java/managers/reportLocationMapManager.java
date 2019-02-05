@@ -12,6 +12,7 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 
 import app.XplocityApplication;
+import managers.interfaces.MapManagerInterface;
 
 /**
  * Created by dmitry on 17.03.18.
@@ -20,8 +21,8 @@ import app.XplocityApplication;
 public class reportLocationMapManager extends MapManager {
     private Marker mMarker;
 
-    public reportLocationMapManager(MapView p_map, View context) {
-        super(p_map, context);
+    public reportLocationMapManager(MapView p_map, View context, MapManagerInterface callback) {
+        super(p_map, context, callback);
 
         createMarker();
         MapEventsReceiver mReceive = new MapEventsReceiver() {

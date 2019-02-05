@@ -68,6 +68,10 @@ public class RouteViewActivity
         mMapManager.dropFocus();
     }
 
+    @Override
+    public int getHiddenMapHeight() {
+        return 0;
+    }
 
 
     public void downloadRoute() {

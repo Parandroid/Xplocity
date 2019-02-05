@@ -9,5 +9,6 @@ import models.Location;
 public interface MapManagerInterface {
     void onMarkerClicked(Location location);
     void onFocusDropped();
+    int getHiddenMapHeight();
 
 }

@@ -16,6 +16,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.Map;
 
+import managers.interfaces.MapManagerInterface;
 import models.Location;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
@@ -28,6 +29,7 @@ import utils.LogLevelGetter;
 public class MapManager {
     protected MapView mMap;
     protected MyLocationNewOverlay mLocationOverlay;
+    protected MapManagerInterface mCallback;
 
     protected Logger mLogger;
     protected View mContext;
@@ -37,14 +39,14 @@ public class MapManager {
 
     private Map<Location, Marker> mLocationMarkers;
 
-    public MapManager(MapView p_map, View context) {
+    public MapManager(MapView p_map, View context, MapManagerInterface callback) {
         mMap = p_map;
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
         mContext = context;
+        mCallback = callback;
+
 
         initMap();
-
-        //mMap.setInfoWindowAdapter(new LocationToMapAdapter(mContext));
     }
 
 
@@ -108,20 +110,38 @@ public class MapManager {
 
     private void setCamera(GeoPoint position, int zoom) {
         mMap.getController().setZoom(zoom);
-        mMap.getController().setCenter(position);
+        mMap.getController().setCenter(getVisibleMapCenterPoint(position));
     }
 
     public void setCamera(GeoPoint position) {
-        mMap.getController().setCenter(position);
+        mMap.getController().setCenter(getVisibleMapCenterPoint(position));
     }
 
     private void animateCamera(GeoPoint position, int zoom) {
         mMap.getController().setZoom(zoom);
-        mMap.getController().animateTo(position);
+        mMap.getController().animateTo(getVisibleMapCenterPoint(position));
     }
 
     public void animateCamera(GeoPoint position) {
-        mMap.getController().animateTo(position);
+        mMap.getController().animateTo(getVisibleMapCenterPoint(position));
+    }
+
+
+
+    private GeoPoint getVisibleMapCenterPoint(GeoPoint target){
+        int hiddenMapHeight = mCallback.getHiddenMapHeight();
+
+        if (hiddenMapHeight == 0 || mMap.getHeight() == 0)
+            return target;
+
+        GeoPoint tl = (GeoPoint) mMap.getProjection().fromPixels(0, 0);
+        GeoPoint br = (GeoPoint) mMap.getProjection().fromPixels(mMap.getWidth(), mMap.getHeight());
+
+        //double newLon = offX * (br.getLongitude() - tl.getLongitude()) / mMap.getWidth() + center.getLongitude();
+        double newLat = (hiddenMapHeight / 2) * (br.getLatitude() - tl.getLatitude()) / mMap.getHeight() + target.getLatitude();
+
+        return new GeoPoint(newLat, target.getLongitude());
+
     }
 
 }

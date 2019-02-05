@@ -56,7 +56,7 @@ public class RouteMapManager extends MapManager {
     Marker mFocusedMarker;
 
 
-    private MapManagerInterface mCallback;
+
 
 
     /*private Map<Location, Marker> mLocationMarkers;
@@ -64,12 +64,8 @@ public class RouteMapManager extends MapManager {
     private Map<Location, LocationOnMap> mLocationsOnMap;
 
     public RouteMapManager(MapView p_map, View context, MapManagerInterface callback) {
-        super(p_map, context);
+        super(p_map, context, callback);
 
-        mCallback = callback;
-
-        /*mLocationMarkers = new HashMap<>();
-        mLocationCircles = new HashMap<>();*/
         mLocationsOnMap = new HashMap<>();
 
         mArrow = mContext.findViewById(R.id.location_arrow);
@@ -220,8 +216,8 @@ public class RouteMapManager extends MapManager {
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
 
-                focusOnMarker(marker);
                 mCallback.onMarkerClicked(loc);
+                focusOnMarker(marker);
 
                 return true;
             }
@@ -255,7 +251,7 @@ public class RouteMapManager extends MapManager {
         Location loc = (Location) mFocusedMarker.getRelatedObject();
         refreshMarkerAndCircle(mFocusedMarker, mLocationsOnMap.get(loc).circle, loc.exploreState);
 
-        animateOverviewCamera(loc.position);
+        animateCamera(loc.position);
         mMap.invalidate();
 
         mFocusedMarker = marker;
