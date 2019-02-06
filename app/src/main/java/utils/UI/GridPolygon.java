@@ -111,10 +111,12 @@ public class GridPolygon extends Polygon {
 
     @Override
     public boolean onSingleTapUp(MotionEvent e, MapView mapView) {
+        if (this.isEnabled() == false)
+            return true;
+
         if (e.getAction() == MotionEvent.ACTION_UP && contains(e)) {
             InfoWindow.closeAllInfoWindowsOn(mapView);
-            return true;
         }
-        return super.onSingleTapUp(e, mapView);
+        return super.onSingleTapConfirmed(e, mapView);
     }
 }

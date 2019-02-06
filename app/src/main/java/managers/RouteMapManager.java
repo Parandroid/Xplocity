@@ -124,13 +124,16 @@ public class RouteMapManager extends MapManager {
     private void refreshMarkerAndCircle(Marker marker, Polygon circle, LocationExploreState locState) {
         switch (locState) {
             case CIRCLE:
-                if (circle != null)
+                if (circle != null) {
                     circle.setVisible(true);
+                }
                 hideMarker(marker);
                 break;
             case POINT_NOT_EXPLORED:
-                if (circle != null)
-                    circle.setVisible(false);
+                if (circle != null) {
+                    hideCircle(circle);
+                }
+
 
                 if (marker == mFocusedMarker) {
                     setMarkerIconUnexploredFocused(marker);
@@ -141,8 +144,9 @@ public class RouteMapManager extends MapManager {
                 showMarker(marker);
                 break;
             case POINT_EXPLORED:
-                if (circle != null)
-                    circle.setVisible(false);
+                if (circle != null) {
+                    hideCircle(circle);
+                }
 
                 if (marker == mFocusedMarker) {
                     setMarkerIconExploredFocused(marker);
@@ -162,6 +166,10 @@ public class RouteMapManager extends MapManager {
     private void hideMarker(Marker marker) {
         if (mMap.getOverlays().contains(marker))
             mMap.getOverlays().remove(marker);
+    }
+
+    private void hideCircle(Polygon circle) {
+        mMap.getOverlays().remove(circle);
     }
 
 
