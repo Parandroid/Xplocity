@@ -2,6 +2,7 @@ package services;
 
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -66,6 +68,7 @@ public class XplocityPositionService
     private LocationManager mLocationManager;
 
 
+    private boolean mIsForeground;
     private Logger mLogger;
 
     private static final int STICKY_NOTIFICATION_ID = 10000;
@@ -139,18 +142,36 @@ public class XplocityPositionService
         initializeLocationManager();
 
         mNotifManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(getString(R.string.notification_channel_id),
+                    "Xplocity",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            mNotifManager.createNotificationChannel(channel);
+        }
+
         mNotifBuilder = new NotificationCompat.Builder(this);
-        mNotifBuilder.setContentTitle("Xplocity")
-                .setContentText("Ready to start tracking")
-                .setSmallIcon(R.drawable.ic_walking)
-                .setOngoing(true);
 
-        Notification notification = mNotifBuilder.build();
-        mNotifManager.notify(STICKY_NOTIFICATION_ID, notification);
+        //runServiceForeground();
 
-        startForeground(STICKY_NOTIFICATION_ID, notification);
         loadStateFromStorage();
 
+
+    }
+
+    public void runServiceForeground() {
+        if (!mIsForeground) {
+            mNotifBuilder.setContentTitle("Ready to start tracking")
+                    .setSmallIcon(R.drawable.ic_walking)
+                    .setOngoing(true)
+                    .setChannelId(getString(R.string.notification_channel_id));
+
+            Notification notification = mNotifBuilder.build();
+            mNotifManager.notify(STICKY_NOTIFICATION_ID, notification);
+
+            startForeground(STICKY_NOTIFICATION_ID, notification);
+            mIsForeground = true;
+        }
 
     }
 
@@ -267,11 +288,12 @@ public class XplocityPositionService
         if (!XplocityApplication.isActivityVisible()) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
-                    .setContentTitle("Xplocity. Location reached.")
-                    .setContentText(location.name);
+                    .setContentTitle("Location reached")
+                    .setContentText(location.name)
+                    .setChannelId(getString(R.string.notification_channel_id));
 
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(0, mBuilder.build());
+            //NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotifManager.notify(0, mBuilder.build());
         }
     }
 
@@ -291,7 +313,7 @@ public class XplocityPositionService
             trackingState = TRACKING_STATE_ACTIVE;
 
             if (mNotifBuilder != null) {
-                mNotifBuilder.setContentText("Tracking started");
+                mNotifBuilder.setContentTitle("Tracking started");
                 mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
             }
 
@@ -328,7 +350,7 @@ public class XplocityPositionService
             trackingState = TRACKING_STATE_FINISHED;
 
             if (mNotifBuilder != null) {
-                mNotifBuilder.setContentText("Tracking stopped. Route can be saved.");
+                mNotifBuilder.setContentTitle("Tracking stopped. Route can be saved.");
                 mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
             }
 
@@ -351,9 +373,11 @@ public class XplocityPositionService
         clearStorage();
         trackingState = TRACKING_STATE_NOT_STARTED;
         stopForeground(true);
+        mIsForeground = false;
         mNotifManager.cancelAll();
         stopSelf();
     }
+
 
     public boolean trackingActive() {
         return trackingState == TRACKING_STATE_ACTIVE;

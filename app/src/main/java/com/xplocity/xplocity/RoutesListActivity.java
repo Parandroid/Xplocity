@@ -28,7 +28,7 @@ import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import managers.PermissionManager;
 import models.RouteDescription;
 
-public class RoutesListActivity extends ServiceBindingActivity
+public class RoutesListActivity extends XplocityMenuActivity
         implements
             RoutesDescriptionsDownloaderInterface,
             RouteDescriptionImageDownloaderInterface,
@@ -131,7 +131,7 @@ public class RoutesListActivity extends ServiceBindingActivity
     }
 
 
-    @Override
+    /*@Override
     protected void onServiceBound() {
         if (mService.trackingActive()) {
             Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
@@ -146,7 +146,7 @@ public class RoutesListActivity extends ServiceBindingActivity
     @Override
     protected void onServiceUnbound() {
 
-    }
+    }*/
 
     private void downloadRoutesDescription() {
         mFlagLoading = true;

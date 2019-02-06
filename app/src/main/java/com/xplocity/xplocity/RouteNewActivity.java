@@ -209,6 +209,8 @@ public class RouteNewActivity
 
     @Override
     protected void onServiceBound() {
+        mService.runServiceForeground();
+
         if (mService.trackingActive()) {
             restoreActivityState();
         }
