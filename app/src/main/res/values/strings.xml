@@ -45,6 +45,11 @@
     <string name="title_notifications">Notifications</string>
 
 
+
+    <!-- Global map strings -->
+    <string name='location_circle_title'>Visit this area to reveal hidden location</string>
+
+
     <!-- Route saving screen -->
     <string name='unseen_locations_text_1'>And another</string>
     <string name='unseen_locations_text_2'>locations have remained in secret.</string>

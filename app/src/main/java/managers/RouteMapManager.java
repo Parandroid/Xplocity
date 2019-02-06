@@ -21,6 +21,8 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
+import org.osmdroid.views.overlay.infowindow.InfoWindow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +78,7 @@ public class RouteMapManager extends MapManager {
             public boolean singleTapConfirmedHelper(GeoPoint p) {
                 mCallback.onFocusDropped();
                 dropFocus();
+                InfoWindow.closeAllInfoWindowsOn(mMap);
                 mMap.invalidate();
                 return true;
             }
@@ -293,6 +296,10 @@ public class RouteMapManager extends MapManager {
         p.setStrokeWidth(0);
         p.setFillColor(ResourceGetter.getResources().getColor(R.color.black));
         p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions));
+
+        p.setTitle(ResourceGetter.getResources().getString(R.string.location_circle_title));
+        p.setInfoWindow(new BasicInfoWindow(R.layout.bonuspack_bubble, mMap));
+
 
         mMap.getOverlays().add(p);
         return p;

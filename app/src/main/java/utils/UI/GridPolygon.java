@@ -1,6 +1,5 @@
 package utils.UI;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -8,12 +7,13 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
+import android.view.MotionEvent;
 
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.util.TileSystem;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Polygon;
+import org.osmdroid.views.overlay.infowindow.InfoWindow;
 
 /**
  * Created by dmitry on 21.08.18.
@@ -106,5 +106,15 @@ public class GridPolygon extends Polygon {
             scale = 1f /(MAX_ZOOM_LEVEL - zoomLevel);
 
         return scale;
+    }
+
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e, MapView mapView) {
+        if (e.getAction() == MotionEvent.ACTION_UP && contains(e)) {
+            InfoWindow.closeAllInfoWindowsOn(mapView);
+            return true;
+        }
+        return super.onSingleTapUp(e, mapView);
     }
 }
