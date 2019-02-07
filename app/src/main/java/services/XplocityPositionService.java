@@ -217,6 +217,13 @@ public class XplocityPositionService
         editor.commit();
     }
 
+    private void writeTrackingStateToStorage() {
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("trackingState", trackingState);
+        editor.commit();
+    }
+
     private void loadStateFromStorage() {
         // load tasks from preference
         SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -311,6 +318,7 @@ public class XplocityPositionService
         if (trackingState != TRACKING_STATE_ACTIVE) {
             mPositionManager.startTracking();
             trackingState = TRACKING_STATE_ACTIVE;
+            writeTrackingStateToStorage();
 
             if (mNotifBuilder != null) {
                 mNotifBuilder.setContentTitle("Tracking started");
@@ -348,6 +356,7 @@ public class XplocityPositionService
     public void stopTracking() {
         if (trackingState == TRACKING_STATE_ACTIVE) {
             trackingState = TRACKING_STATE_FINISHED;
+            writeTrackingStateToStorage();
 
             if (mNotifBuilder != null) {
                 mNotifBuilder.setContentTitle("Tracking stopped. Route can be saved.");

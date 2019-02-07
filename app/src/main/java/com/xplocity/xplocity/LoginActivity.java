@@ -18,6 +18,10 @@ import api_classes.interfaces.AuthTokenDownloaderInterface;
 import models.AuthToken;
 import utils.UI.WaitWheel;
 
+import static services.XplocityPositionService.TRACKING_STATE_ACTIVE;
+import static services.XplocityPositionService.TRACKING_STATE_FINISHED;
+import static services.XplocityPositionService.TRACKING_STATE_NOT_STARTED;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -146,8 +150,30 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
     }
 
     private void redirectToMainActivity() {
-        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        Intent intent;
+
+        if (prefs.contains("trackingState")) {
+            int trackingState = prefs.getInt("trackingState", TRACKING_STATE_NOT_STARTED);
+
+            if (trackingState == TRACKING_STATE_ACTIVE) {
+                intent = new Intent(getApplicationContext(), RouteNewActivity.class);
+
+            }
+            else if (trackingState == TRACKING_STATE_FINISHED) {
+                intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
+            }
+            else {
+                intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+            }
+        }
+        else {
+            intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+        }
+
         startActivity(intent);
+
     }
 
     private void redirectToSignUp() {
