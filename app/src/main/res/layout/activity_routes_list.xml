@@ -8,6 +8,8 @@
 
     <include layout="@layout/content_routes_list" />
 
+    <include layout="@layout/mock_routes_list" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

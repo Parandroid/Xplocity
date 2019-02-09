@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/welcome_mock"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Xplocity"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textColor="@color/gray900"/>
+
+    <Space
+        android:layout_height="4dp"
+        android:layout_width="match_parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Explore beautiful hidden places of cities"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textColor="@color/gray900"/>
+
+    <Space
+        android:layout_height="8dp"
+        android:layout_width="match_parent"/>
+
+    <Button
+        android:id="@+id/btn_start_first_route"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start your first route" />
+</LinearLayout>

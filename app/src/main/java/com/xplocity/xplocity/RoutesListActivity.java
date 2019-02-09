@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ public class RoutesListActivity extends XplocityMenuActivity
     private ArrayList<RouteDescription> mRouteDescriptions;
     private ListView mListView;
     private View mFooterLoading;
+    private View mWelcomeMock;
+
     private FloatingActionButton mFab;
 
     private static final int MAX_ROUTES_PER_REQUEST = 10; //max number of routes returned by single request
@@ -58,13 +62,22 @@ public class RoutesListActivity extends XplocityMenuActivity
         mFooterLoading = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.route_description_list_item_footer_loading, null, false);
 
+        mWelcomeMock = findViewById(R.id.welcome_mock);
+        mWelcomeMock.setVisibility(LinearLayout.GONE);
+
+        ((Button) findViewById(R.id.btn_start_first_route)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNewRoute();
+            }
+        });
+
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
-                startActivity(intent);
+                startNewRoute();
             }
         });
 
@@ -102,6 +115,11 @@ public class RoutesListActivity extends XplocityMenuActivity
 
         requestPermissions();
 
+    }
+
+    private void startNewRoute() {
+        Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
+        startActivity(intent);
     }
 
     private void requestPermissions() {
@@ -161,8 +179,13 @@ public class RoutesListActivity extends XplocityMenuActivity
     public void onRouteDescriptionsDownloaded(ArrayList<RouteDescription> routeDescriptions) {
         if (routeDescriptions.size() == 0) {
             mAllRoutesDownloaded = true;
+            if (mRouteDescriptions.size() == 0) {
+                mWelcomeMock.setVisibility(LinearLayout.VISIBLE);
+            }
         }
         else {
+
+            mWelcomeMock.setVisibility(LinearLayout.GONE);
 
             if (mRouteDescriptions == null)
                 mRouteDescriptions = routeDescriptions;
