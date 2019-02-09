@@ -53,6 +53,11 @@ public class RouteStatProgressCircleFragment extends Fragment {
         ((TextView) v.findViewById(R.id.locations_explored)).setText(Integer.toString(mExploredLocCount));
         ((ProgressBar) v.findViewById(R.id.progressBar)).setProgress(percentVisited);
 
+        if (mExploredLocCount != mAllLocCount) {
+            v.findViewById(R.id.badge_100).setVisibility(View.GONE);
+            v.findViewById(R.id.text_100).setVisibility(View.GONE);
+        }
+
         return v;
     }
 
