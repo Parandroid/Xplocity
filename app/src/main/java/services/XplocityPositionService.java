@@ -410,6 +410,10 @@ public class XplocityPositionService
         return mPositionManager.lastPosition;
     }
 
+    public int getUnexploredLocationsCount() {
+        return getRoute().loc_cnt_total - getRoute().loc_cnt_explored;
+    }
+
 
     /*public ArrayList<LatLng> getPath() {
         return mPath;

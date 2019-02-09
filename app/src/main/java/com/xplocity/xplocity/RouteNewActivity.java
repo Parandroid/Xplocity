@@ -72,7 +72,8 @@ public class RouteNewActivity
         ServiceStateReceiverInterface,
         RouteLocationsListAdapterInterface,
         RouteLocationList.OnFragmentInteractionListener,
-        MapManagerInterface {
+        MapManagerInterface,
+        RouteCompleteDialogFragment.RouteCompleteDialogListener {
 
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
@@ -250,6 +251,9 @@ public class RouteNewActivity
         fillLocationsList(mService.getRoute().locations);
         updateProgressBar();
         initMapManager();
+        if (mService.getUnexploredLocationsCount() == 0) {
+            showRouteCompleteDialog();
+        }
 
         mRouteReady = true;
         invalidateOptionsMenu(); // to show options that need a route
@@ -596,7 +600,12 @@ public class RouteNewActivity
         }
 
         updateProgressBar();
+
+        if (mService.getUnexploredLocationsCount() == 0) {
+            showRouteCompleteDialog();
+        }
     }
+
 
     @Override
     public void onLocationCircleReached(int locationId) {
@@ -757,6 +766,22 @@ public class RouteNewActivity
     private void updateProgressBar() {
         mProgressbar.setMax(mService.getRoute().loc_cnt_total);
         mProgressbar.setProgress(mService.getRoute().loc_cnt_explored);
+    }
+
+
+
+
+    /********** Complete route dialog *********/
+
+    private void showRouteCompleteDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        RouteCompleteDialogFragment dialog = RouteCompleteDialogFragment.newInstance();
+        dialog.show(fm, "fragment_complete_route");
+    }
+
+    @Override
+    public void onFinishRoute() {
+        stopTrackingBtnPressed(null);
     }
 
 
