@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.xplocity.xplocity.R;
+import com.xplocity.xplocity.RouteNewActivity;
 
 import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
@@ -161,10 +162,15 @@ public class XplocityPositionService
 
     public void runServiceForeground() {
         if (!mIsForeground) {
+            Intent intent = new Intent(this, RouteNewActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
             mNotifBuilder.setContentTitle("Ready to start tracking")
                     .setSmallIcon(R.drawable.ic_walking)
                     .setOngoing(true)
-                    .setChannelId(getString(R.string.notification_channel_id));
+                    .setChannelId(getString(R.string.notification_channel_id))
+                    .setContentIntent(pendingIntent);
 
             Notification notification = mNotifBuilder.build();
             mNotifManager.notify(STICKY_NOTIFICATION_ID, notification);
@@ -292,12 +298,19 @@ public class XplocityPositionService
         localIntent.putExtra("locationId", location.id);
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 
+
+        Intent intent = new Intent(this, RouteNewActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
         if (!XplocityApplication.isActivityVisible()) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
                     .setContentTitle("Location reached")
                     .setContentText(location.name)
-                    .setChannelId(getString(R.string.notification_channel_id));
+                    .setChannelId(getString(R.string.notification_channel_id))
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
 
             //NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotifManager.notify(0, mBuilder.build());
