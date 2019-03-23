@@ -57,10 +57,6 @@ public class RouteMapManager extends MapManager {
     private ImageView mArrow;
     Marker mFocusedMarker;
 
-
-
-
-
     /*private Map<Location, Marker> mLocationMarkers;
     private Map<Location, Polygon> mLocationCircles;*/
     private Map<Location, LocationOnMap> mLocationsOnMap;
@@ -303,13 +299,12 @@ public class RouteMapManager extends MapManager {
         p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.transparent));
         p.setStrokeWidth(0);
         p.setFillColor(ResourceGetter.getResources().getColor(R.color.black));
-        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions));
+        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions2));
 
         p.setTitle(ResourceGetter.getResources().getString(R.string.location_circle_title));
         p.setInfoWindow(new BasicInfoWindow(R.layout.bonuspack_bubble, mMap));
 
-
-        mMap.getOverlays().add(p);
+        mMap.getOverlays().add(1, p); //1, т.к. 0 зарезервирован за Overlay для обработки кликов
         return p;
         //mMap.invalidate();
     }
