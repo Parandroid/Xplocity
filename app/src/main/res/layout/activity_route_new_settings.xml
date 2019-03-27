@@ -9,21 +9,24 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="100">
+        android:layout_margin="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How do you move"
+            android:textAppearance="@style/XplocityTextView"
+            android:textSize="18sp" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="15">
+            android:layout_height="wrap_content">
 
             <RadioGroup
                 android:id="@+id/travel_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
                 android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -32,32 +35,51 @@
                     android:id="@+id/radio_walking"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
+                    android:layout_gravity="center"
                     android:checked="true"
-                    android:text="Walking" />
+                    android:drawableRight="@drawable/ic_walking"
+                    android:text="" />
+
+                <Space
+                    android:layout_width="16dp"
+                    android:layout_height="match_parent" />
 
                 <RadioButton
                     android:id="@+id/radio_cycling"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:text="Cycling" />
+                    android:layout_gravity="center"
+                    android:drawableRight="@drawable/ic_cycling"
+                    android:text="" />
 
+                <Space
+                    android:layout_width="16dp"
+                    android:layout_height="match_parent" />
 
                 <RadioButton
                     android:id="@+id/radio_test"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
+                    android:layout_gravity="center"
                     android:text="Test" />
             </RadioGroup>
 
         </android.support.constraint.ConstraintLayout>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desired travel time"
+            android:textAppearance="@style/XplocityTextView"
+            android:textSize="18sp" />
+
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="15">
+            android:layout_height="wrap_content">
 
             <SeekBar
                 android:id="@+id/SelectTimeSlider"
@@ -69,27 +91,36 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/text_time"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="TextView"
                 android:textColor="@color/colorAccent"
                 android:textSize="24sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/SelectTimeSlider" />
+                app:layout_constraintLeft_toRightOf="@+id/SelectTimeSlider"
+                app:layout_constraintRight_toRightOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="What are you interested in"
+            android:textAppearance="@style/XplocityTextView"
+            android:textSize="18sp" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="45"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
             android:scrollbars="vertical">
 
             <LinearLayout
@@ -103,29 +134,24 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="25">
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/btn_create_chain"
                 style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/colorPrimary"
+                android:paddingTop="24dp"
+                android:paddingBottom="24dp"
                 android:enabled="false"
                 android:onClick="createRoute"
                 android:text="Get route"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintRight_toRightOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
     </LinearLayout>
