@@ -354,9 +354,6 @@ public class RouteNewActivity
         } else if (selectedId == R.id.radio_walking) {
             mTravelType = "walking";
             optimalDistance = 0.5d;
-        } else if (selectedId == R.id.radio_running) {
-            mTravelType = "running";
-            optimalDistance = 1d;
         } else if (selectedId == R.id.radio_test) {
             mTravelType = "walking";
             optimalDistance = 0.01d;
