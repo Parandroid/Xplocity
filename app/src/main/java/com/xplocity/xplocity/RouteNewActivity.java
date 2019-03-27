@@ -394,6 +394,7 @@ public class RouteNewActivity
         if (mLocationPermissionsGranted) {
             try {
                 mMapManager.initMyLocation();
+                //mMapManager.setMyLocationIconWalking();
 
                 mMapManager.setRoute(mService.getRoute());
                 updateRouteUI();

@@ -1,5 +1,6 @@
 package managers;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -34,6 +35,7 @@ import models.Location;
 import models.LocationCircle;
 import models.Route;
 import models.enums.LocationExploreState;
+import utils.ImageManager;
 import utils.ResourceGetter;
 import utils.UI.GridPolygon;
 
@@ -102,6 +104,13 @@ public class RouteMapManager extends MapManager {
         });
 
         hideArrowToLocation();
+    }
+
+
+    public void setMyLocationIconWalking() {
+
+        Bitmap bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
+        mLocationOverlay.setPersonIcon(bmpIcon);
     }
 
 
