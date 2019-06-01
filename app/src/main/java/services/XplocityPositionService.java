@@ -338,7 +338,7 @@ public class XplocityPositionService
                 mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
             }
 
-            try {
+            /*try {
                 Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (location != null) {
                     mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
@@ -346,7 +346,7 @@ public class XplocityPositionService
                 }
             } catch (java.lang.SecurityException e) {
                 mLogger.logError("Failed to start tracking: Failed to request location update", e);
-            }
+            }*/
 
             requestLocationUpdates();
         } else {

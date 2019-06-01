@@ -42,19 +42,36 @@ public class PositionManager implements Parcelable {
     }
 
 
+
+    final float MAX_AVG_SPEED = 300*1000f/(60*60*1000f);  // translate km/h to m/ms
     public void addPosToPath(GeoPoint pos) {
         if (pos != null) {
-            if (lastPosition != null) {
-                route.distance = route.distance + calculateDistance(pos, lastPosition);
-                updateDuration();
 
-                check_location_reached(pos);
-                sortLocationsByDistance();
+            DateTime curTime = DateTime.now();
+
+            if (lastPosition != null) {
+
+
+                float deltaDistance = calculateDistance(pos, lastPosition);
+                long deltaTime = curTime.getMillis() - mLastTime.getMillis();
+
+                if (deltaDistance/deltaTime <=  MAX_AVG_SPEED) {
+                    route.distance = route.distance + calculateDistance(pos, lastPosition);
+                    route.duration = route.duration + (int) deltaTime;
+
+                    check_location_reached(pos);
+                    sortLocationsByDistance();
+                }
+                else {
+                    return; // if speed exceeded maximum allowed, then do not track that point
+                }
             }
             route.path.add(pos);
             lastPosition = pos;
+            mLastTime = curTime;
         }
     }
+
 
 
     private void check_location_reached(GeoPoint position) {
@@ -93,17 +110,6 @@ public class PositionManager implements Parcelable {
         lastPosition = null;
     }
 
-
-    public void updateDuration() {
-        if (mLastTime != null) {
-            DateTime curTime = DateTime.now();;
-
-            long diffInMs = curTime.getMillis() - mLastTime.getMillis();
-
-            route.duration = route.duration + (int) diffInMs;
-            mLastTime = curTime;
-        }
-    }
 
     //Return distance in meters between two points
     public static float calculateDistance(GeoPoint pos1, GeoPoint pos2) {
