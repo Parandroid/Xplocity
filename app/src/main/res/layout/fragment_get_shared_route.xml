@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="If you received ID of shared route, paste it below." />
+        android:text="@string/get_shared_route_hint" />
 
     <EditText
         android:id="@+id/txtShareRouteID"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:backgroundTint="@color/colorPrimary"
-        android:text="Get route"
+        android:text="@string/get_route"
         android:textColor="@android:color/white" />
 
 

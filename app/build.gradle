@@ -20,13 +20,13 @@ android {
         debug_prod_endpoint {
             debuggable true
             signingConfig signingConfigs.debug
-            buildConfigField 'String', 'API_URL', '"http://br-on.ru:3003/api/v1"'
+            buildConfigField 'String', 'API_URL', '"http://xplocity.com/api/v1"'
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'API_URL', '"http://br-on.ru:3003/api/v1"'
+            buildConfigField 'String', 'API_URL', '"http://xplocity.com/api/v1"'
         }
     }
     compileOptions {

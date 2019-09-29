@@ -173,11 +173,11 @@ public class RouteSaveActivity
 
     private void showCancelRouteDialog() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage("Unsaved route will be lost. Do you want to continue?");
+        builder1.setMessage(getString(R.string.confirm_cancel_route));
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finishRoute();
@@ -186,7 +186,7 @@ public class RouteSaveActivity
                 });
 
         builder1.setNegativeButton(
-                "No",
+                getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

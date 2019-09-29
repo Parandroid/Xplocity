@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Set marker to the location"
+        android:text="@string/report_location_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     <LinearLayout
@@ -37,7 +37,7 @@
                 android:id="@+id/locationName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Location name" />
+                android:hint="@string/location_name" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -48,7 +48,7 @@
                 android:id="@+id/locationDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Location description"
+                android:hint="@string/location_description"
                 android:inputType="textMultiLine"
                 android:lines="4" />
         </android.support.design.widget.TextInputLayout>
@@ -65,14 +65,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Report location" />
+            android:text="@string/report_new_location" />
 
         <Button
             android:id="@+id/btnCancelReportLocation"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="@string/cancel" />
     </LinearLayout>
 
 </LinearLayout>

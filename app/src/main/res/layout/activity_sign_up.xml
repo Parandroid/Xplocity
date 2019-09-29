@@ -98,7 +98,7 @@
                         android:id="@+id/textView5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="If you already have an account:"
+                        android:text="@string/if_you_already_have_an_account"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         app:layout_constraintBaseline_toBaselineOf="@+id/btn_sign_in" />
 
@@ -110,7 +110,7 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:onClick="redirectToSignIn"
-                        android:text="@string/action_sign_in"
+                        android:text="@string/action_sign_in_short"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/textView5" />

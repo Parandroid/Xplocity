@@ -75,7 +75,7 @@
         android:id="@+id/text_100"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="You found all locations of this route!"
+        android:text="@string/you_found_all_locations_of_this_route"
         android:textAlignment="center"
         android:textColor="@color/green900"
         android:background="@color/green100"

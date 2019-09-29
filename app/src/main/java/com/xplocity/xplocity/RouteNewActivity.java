@@ -75,9 +75,9 @@ public class RouteNewActivity
         MapManagerInterface,
         RouteCompleteDialogFragment.RouteCompleteDialogListener {
 
-    private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
-    private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
-    private static int TIME_SLIDER_DEFAULT_VALUE = 240; //Time slider default value(3.5 hours)
+    private static final int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
+    private static final int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
+    private static final int TIME_SLIDER_DEFAULT_VALUE = 240; //Time slider default value(3.5 hours)
 
 
     //Logger
@@ -136,15 +136,11 @@ public class RouteNewActivity
 
 
         mProgressbar = findViewById(R.id.progressbar);
-        mProgressbar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    mMapManager.animateToClosestUnexploredLocation(RouteNewActivity.this.mService.getLastposition());
-                }
-
-                return true;
+        mProgressbar.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                mMapManager.animateToClosestUnexploredLocation(RouteNewActivity.this.mService.getLastposition());
             }
+            return true;
         });
 
         mProgressbar.setVisibility(View.GONE);
@@ -153,7 +149,7 @@ public class RouteNewActivity
         mPagerAdapter = new NewRoutePagerAdapter(getSupportFragmentManager(), this);
         mPagerAdapter.addFragment(RouteLocationList.class.getName());
 
-        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager = findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(1);
         mPager.setAdapter(mPagerAdapter);
         BottomSheetUtils.setupViewPager(mPager);
@@ -562,7 +558,7 @@ public class RouteNewActivity
 
     private void updateDistance() {
         if (mService.getRoute() != null) {
-            mTxtDistance.setText(Formatter.formatDistance((int) mService.getRoute().distance) + " km");
+            mTxtDistance.setText(getString(R.string.n_km, Formatter.formatDistance((int) mService.getRoute().distance)));
         }
     }
 
@@ -581,7 +577,7 @@ public class RouteNewActivity
                 speed = 0f;
             }
 
-            mTxtSpeed.setText(Formatter.formatSpeed(speed) + " km/h");
+            mTxtSpeed.setText(getString(R.string.n_km_h, Formatter.formatSpeed(speed)));
         }
     }
 
@@ -634,11 +630,11 @@ public class RouteNewActivity
 
     private void showCancelRouteDialog() {
         android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(this);
-        builder1.setMessage("Unsaved route will be lost. Do you want to continue?");
+        builder1.setMessage(R.string.confirm_cancel_route);
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         stopTracking();
@@ -650,7 +646,7 @@ public class RouteNewActivity
                 });
 
         builder1.setNegativeButton(
-                "No",
+                getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

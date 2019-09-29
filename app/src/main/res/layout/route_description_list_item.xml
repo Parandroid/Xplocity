@@ -78,9 +78,11 @@
                         android:id="@+id/duration_hour_symbol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
                         android:fontFamily="sans-serif"
                         android:lines="1"
-                        android:text=" h "
+                        android:text="@string/hour_short"
                         android:textColor="@color/gray500"
                         android:textSize="16sp" />
 
@@ -98,9 +100,10 @@
                         android:id="@+id/duration_minute_symbol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
                         android:fontFamily="sans-serif"
                         android:lines="1"
-                        android:text=" min"
+                        android:text="@string/minute_short"
                         android:textColor="@color/gray500"
                         android:textSize="16sp" />
 
@@ -127,9 +130,10 @@
                         android:id="@+id/distance_km_symbol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
                         android:fontFamily="sans-serif"
                         android:lines="1"
-                        android:text=" km"
+                        android:text="@string/km"
                         android:textColor="@color/gray500"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -208,54 +212,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-
-            <!--<LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical"
-                        app:srcCompat="@drawable/location_explored_marker" />
-
-                    <TextView
-                        android:id="@+id/locations_explored"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="47"
-                        android:textColor="@color/gray700"
-                        android:textSize="18sp" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_vertical"
-                        app:srcCompat="@drawable/location_unexplored_marker" />
-
-                    <TextView
-                        android:id="@+id/locations_unexplored"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="14"
-                        android:textColor="@color/gray700"
-                        android:textSize="18sp" />
-                </LinearLayout>
-            </LinearLayout>-->
-
 
         </LinearLayout>
 

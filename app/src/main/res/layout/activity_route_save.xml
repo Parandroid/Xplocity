@@ -50,7 +50,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="Save route"
+                    android:text="@string/save_route"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse" />
 

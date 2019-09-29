@@ -18,12 +18,12 @@
     <string name="title_activity_route_view">Map</string>
 
 
-    <string name='preference_file_key'>Xplocity.Storage</string>
-    <string name='route_id_key'>route_id</string>
-    <string name='notification_channel_id'>xplocity_channel_01</string>
-    <string name="broadcast_position_changed">Xplocity.broadcast.positionChanged</string>
-    <string name="broadcast_location_reached">Xplocity.broadcast.locationReached</string>
-    <string name="broadcast_location_circle_reached">Xplocity.broadcast.locationCircleReached</string>
+    <string name='preference_file_key' translatable="false">Xplocity.Storage</string>
+    <string name='route_id_key' translatable="false">route_id</string>
+    <string name='notification_channel_id' translatable="false">xplocity_channel_01</string>
+    <string name="broadcast_position_changed" translatable="false">Xplocity.broadcast.positionChanged</string>
+    <string name="broadcast_location_reached" translatable="false">Xplocity.broadcast.locationReached</string>
+    <string name="broadcast_location_circle_reached" translatable="false">Xplocity.broadcast.locationCircleReached</string>
 
 
     <!-- Error messages -->
@@ -39,13 +39,7 @@
 
 
     <!-- Log level -->
-    <string name='log_level'>verbose</string>
-    <string name="title_activity_test">TestActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-
-
+    <string name='log_level' translatable="false">verbose</string>
 
     <!-- Global map strings -->
     <string name='location_circle_title'>Visit this area to reveal hidden location</string>
@@ -59,10 +53,60 @@
 
     <!-- Measures -->
     <string name='km'>km</string>
+    <string name="n_km">%1$s km</string>
+    <string name="n_km_h">%1$s km/h</string>
+    <string name="n_h">%1$s h</string>
+
+    <string name="hour_short">h</string>
+    <string name="minute_short">m</string>
 
 
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="if_you_already_have_an_account">If you already have an account:</string>
+    <string name="distance">distance</string>
+    <string name="duration">duration</string>
+    <string name="avg_speed">avg speed</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="how_do_you_move">How do you move</string>
+    <string name="desired_travel_time">Desired travel time</string>
+    <string name="what_are_you_interested_in">What are you interested in</string>
+    <string name="get_route">Get route</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="you_have_found_all_locations_on_the_current_route_would_you_like_to_finish_tracking_and_save_the_route">You have found all locations on the current route. Would you like to finish tracking and save the route?</string>
+    <string name="finish_and_save_route">Yes, finish and save route</string>
+    <string name="continue_route">Continue route</string>
+
+    <string name="loading_routes">Loading routes</string>
+
+    <string name="save_route">Save route</string>
+    <string name="you_found_all_locations_of_this_route">You found all locations of this route!</string>
+    <string name="welcome_to_xplocity">Welcome to Xplocity</string>
+    <string name="explore_beautiful_hidden_places_of_cities">Explore beautiful hidden places of cities</string>
+    <string name="start_your_first_route">Start your first route</string>
+    <string name="share_route">Share route</string>
+    <string name="share_route_tip">Press button to share your route. You will receive unique ID of the route to share with others.</string>
+    <string name="share">Share</string>
+    <string name="get_shared_route">Get shared route</string>
+    <string name="report_a_new_location">Report a new location</string>
+    <string name="profile">Profile</string>
+    <string name="sign_out">Sign out</string>
+
+    <string name="report_location_message">Message</string>
+    <string name="send">Send</string>
+    <string name="get_shared_route_hint">If you received ID of shared route, paste it below.</string>
+    <string name="report_location_title">Set marker to the location</string>
+    <string name="location_name">Location name</string>
+    <string name="location_description">Location description</string>
+    <string name="report_new_location">Report location</string>
+    <string name="cancel">Cancel</string>
+    <string name="report_location">Report</string>
+    <string name="are_you_sure_sign_out">Are you sure you want to sign out?</string>
+    <string name="delete_route">Delete</string>
+    <string name="confirm_delete_route">Are you sure you want to delete this route?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_cancel_route">Unsaved route will be lost. Do you want to continue?</string>
+
 
 </resources>

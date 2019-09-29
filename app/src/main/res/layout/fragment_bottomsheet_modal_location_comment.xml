@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Report location"
+        android:text="@string/report_location"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     <Spinner
@@ -29,7 +29,7 @@
             android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Message"
+            android:hint="@string/report_location_message"
             android:inputType="textMultiLine"
             android:lines="2" />
     </android.support.design.widget.TextInputLayout>
@@ -38,5 +38,5 @@
         android:id="@+id/btn_send_location_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send" />
+        android:text="@string/send" />
 </LinearLayout>
