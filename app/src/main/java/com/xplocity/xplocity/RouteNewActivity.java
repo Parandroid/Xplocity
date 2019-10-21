@@ -333,7 +333,7 @@ public class RouteNewActivity
 
 
 
-    private String mTravelType;
+    private String mTravelType = "walking";
 
     private void requestNewRoute(final Double lat, final Double lon) {
         SeekBar sb = (SeekBar) findViewById(R.id.SelectTimeSlider);
