@@ -40,7 +40,7 @@ public class XMLRouteBuilder {
             serializer.text(Integer.toString(route.duration));
             serializer.endTag("", "duration");
             serializer.startTag("", "travel_type");
-            serializer.text(route.travelType);
+            serializer.text(route.travelType.toString());
             serializer.endTag("", "travel_type");
 
             serializer.endTag("", "Info");

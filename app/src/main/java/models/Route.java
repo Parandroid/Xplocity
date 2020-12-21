@@ -12,6 +12,7 @@ import org.osmdroid.util.GeoPoint;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import models.enums.TravelTypes;
 import utils.DateTimeConverter;
 
 /**
@@ -20,7 +21,7 @@ import utils.DateTimeConverter;
 
 public class Route implements Parcelable {
     public DateTime date;
-    public String travelType;
+    public TravelTypes travelType;
 
     public int loc_cnt_explored;
     public int loc_cnt_total;

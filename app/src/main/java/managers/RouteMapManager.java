@@ -35,6 +35,7 @@ import models.Location;
 import models.LocationCircle;
 import models.Route;
 import models.enums.LocationExploreState;
+import models.enums.TravelTypes;
 import utils.ImageManager;
 import utils.ResourceGetter;
 import utils.UI.GridPolygon;
@@ -107,10 +108,33 @@ public class RouteMapManager extends MapManager {
     }
 
 
+    public void initMyLocation(TravelTypes travelType) {
+        super.initMyLocation();
+
+        switch (travelType) {
+            case WALKING:
+                setMyLocationIconWalking();
+                break;
+            case CYCLING:
+                setMyLocationIconCycling();
+                break;
+        }
+
+
+    }
+
     public void setMyLocationIconWalking() {
 
         Bitmap bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
         mLocationOverlay.setPersonIcon(bmpIcon);
+        mLocationOverlay.setDirectionArrow(bmpIcon, bmpIcon);
+    }
+
+    public void setMyLocationIconCycling() {
+
+        Bitmap bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_cycling);
+        mLocationOverlay.setPersonIcon(bmpIcon);
+        mLocationOverlay.setDirectionArrow(bmpIcon, bmpIcon);
     }
 
 
@@ -308,7 +332,7 @@ public class RouteMapManager extends MapManager {
         p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.transparent));
         p.setStrokeWidth(0);
         p.setFillColor(ResourceGetter.getResources().getColor(R.color.black));
-        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions2));
+        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions));
 
         p.setTitle(ResourceGetter.getResources().getString(R.string.location_circle_title));
         p.setInfoWindow(new BasicInfoWindow(R.layout.bonuspack_bubble, mMap));
