@@ -56,6 +56,7 @@ import managers.RouteMapManager;
 import managers.interfaces.MapManagerInterface;
 import models.LocationCategory;
 import models.Route;
+import models.enums.TravelTypes;
 import services.ServiceStateReceiver;
 import services.interfaces.ServiceStateReceiverInterface;
 import utils.Factory.LogFactory;
@@ -337,7 +338,7 @@ public class RouteNewActivity
 
 
 
-    private String mTravelType;
+    private TravelTypes mTravelType;
 
     private void requestNewRoute(final Double lat, final Double lon) {
         SeekBar sb = (SeekBar) findViewById(R.id.SelectTimeSlider);
@@ -349,13 +350,13 @@ public class RouteNewActivity
 
         double optimalDistance = 2d;
         if (selectedId == R.id.radio_cycling) {
-            mTravelType = "cycling";
+            mTravelType = TravelTypes.CYCLING;
             optimalDistance = 2d;
         } else if (selectedId == R.id.radio_walking) {
-            mTravelType = "walking";
+            mTravelType =  TravelTypes.WALKING;
             optimalDistance = 0.5d;
         } else if (selectedId == R.id.radio_test) {
-            mTravelType = "walking";
+            mTravelType = TravelTypes.WALKING;
             optimalDistance = 0.01d;
             locCount = 200;
         }
@@ -393,7 +394,7 @@ public class RouteNewActivity
 
         if (mLocationPermissionsGranted) {
             try {
-                mMapManager.initMyLocation();
+                mMapManager.initMyLocation(mTravelType);
                 //mMapManager.setMyLocationIconWalking();
 
                 mMapManager.setRoute(mService.getRoute());
