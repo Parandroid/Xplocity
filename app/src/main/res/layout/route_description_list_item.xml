@@ -197,7 +197,7 @@
                         app:srcCompat="@drawable/location_explored_marker" />
 
                     <TextView
-                        android:id="@+id/locations_explored"
+                        android:id="@+id/locations_explored_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="47"

@@ -1,10 +1,13 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
-    <include layout="@layout/fragment_location_info"/>
-    <include layout="@layout/fragment_route_location_list"/>
-</android.support.design.widget.CoordinatorLayout>
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/fragment_route_new_location_info" />
+        <include layout="@layout/fragment_route_new_locations" />
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.v4.widget.NestedScrollView>
 
 

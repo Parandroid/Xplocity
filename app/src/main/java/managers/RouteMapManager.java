@@ -110,32 +110,26 @@ public class RouteMapManager extends MapManager {
 
     public void initMyLocation(TravelTypes travelType) {
         super.initMyLocation();
+        setPersonIcon(travelType);
+    }
 
+    private void setPersonIcon(TravelTypes travelType) {
+        Bitmap bmpIcon;
         switch (travelType) {
             case WALKING:
-                setMyLocationIconWalking();
+                bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
                 break;
             case CYCLING:
-                setMyLocationIconCycling();
+                bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_cycling);
                 break;
+            default:
+                bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
         }
 
-
-    }
-
-    public void setMyLocationIconWalking() {
-
-        Bitmap bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
         mLocationOverlay.setPersonIcon(bmpIcon);
         mLocationOverlay.setDirectionArrow(bmpIcon, bmpIcon);
     }
 
-    public void setMyLocationIconCycling() {
-
-        Bitmap bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_cycling);
-        mLocationOverlay.setPersonIcon(bmpIcon);
-        mLocationOverlay.setDirectionArrow(bmpIcon, bmpIcon);
-    }
 
 
     public void updateLocationOnMap(Location loc) {

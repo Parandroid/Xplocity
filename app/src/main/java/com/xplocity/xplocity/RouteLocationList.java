@@ -30,16 +30,11 @@ public class RouteLocationList extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public RouteLocationList() {
-        // Required empty public constructor
-    }
+    public RouteLocationList() { }
 
 
-    public static RouteLocationList newInstance(String param1, String param2) {
+    public static RouteLocationList newInstance() {
         RouteLocationList fragment = new RouteLocationList();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -91,6 +86,13 @@ public class RouteLocationList extends Fragment {
             public void onClick(View v) {
                 showLocationList();
                 mListener.onLocationInfoClosed();
+            }
+        });
+
+        ((ImageButton) mLocationInfoPage.findViewById(R.id.btn_return_to_locations_list)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLocationList();
             }
         });
 
