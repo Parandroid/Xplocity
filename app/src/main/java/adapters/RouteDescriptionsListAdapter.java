@@ -53,7 +53,7 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
         TextView dateTxtView = (TextView) convertView.findViewById(R.id.date);
         //TextView yearTxtView = (TextView) convertView.findViewById(R.id.year);
         //TextView nameTxtView = (TextView) convertView.findViewById(R.id.name);
-        TextView locationsExploredTxtView = (TextView) convertView.findViewById(R.id.locations_explored);
+        TextView locationsExploredTxtView = (TextView) convertView.findViewById(R.id.locations_explored_count);
         TextView percentExploredTxtView = (TextView) convertView.findViewById(R.id.percent_explored);
 
         ImageView travelTypeImg = convertView.findViewById(R.id.img_travel_type);
@@ -142,9 +142,10 @@ public class RouteDescriptionsListAdapter extends ArrayAdapter<RouteDescription>
 
         ImageView routeImageView = convertView.findViewById(R.id.route_image);
         Bitmap originalBitmap;
-        if (routeDescription.image == null)
-            originalBitmap = Bitmap.createBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.map_foreground), 0, 0, 130, 200);
-        else
+        if (routeDescription.image == null) {
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.map_foreground);
+            originalBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight());
+        } else
             originalBitmap = routeDescription.image;
         routeImageView.setImageBitmap(originalBitmap);
 

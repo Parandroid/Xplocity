@@ -5,14 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +20,9 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -42,8 +41,6 @@ import org.osmdroid.views.MapView;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapters.RouteLocationsListAdapter;
-import adapters.interfaces.RouteLocationsListAdapterInterface;
 import api_classes.LocationCategoriesDownloader;
 import api_classes.NewRouteDownloader;
 import api_classes.interfaces.LocationCategoriesDownloaderInterface;
@@ -71,11 +68,16 @@ public class RouteNewActivity
         implements LocationCategoriesDownloaderInterface,
         NewRouteDownloaderInterface,
         ServiceStateReceiverInterface,
-        RouteLocationsListAdapterInterface,
         RouteLocationList.OnFragmentInteractionListener,
         MapManagerInterface,
-        RouteCompleteDialogFragment.RouteCompleteDialogListener {
+        RouteCompleteDialogFragment.RouteCompleteDialogListener,
+        RouteStatLocationsFragment.FragmentListener {
 
+    //Fragments
+    private android.support.v4.app.FragmentManager mFragmentManager;
+    private RouteStatLocationsFragment mLocationsFragment;
+
+    //Constants
     private static int TIME_SLIDER_MIN = 30; //Time slider min value(30 min)
     private static int TIME_SLIDER_MAX = 1440; //Time slider max value(24 hours)
     private static int TIME_SLIDER_DEFAULT_VALUE = 240; //Time slider default value(3.5 hours)
@@ -102,10 +104,15 @@ public class RouteNewActivity
     Button mStartTrackingButton;
     Button mStopTrackingButton;
 
-    SeekBar mProgressbar;
+    SeekBar mSeekbar;
+    ProgressBar mProgressbar;
+
+    TextView mTxtLocExploredCount;
+    TextView mTxtLocExploredPercent;
+    TextView mTxtLocLeftCount;
+    ImageButton btnShowClosestLocationSecondary;
 
     NewRoutePagerAdapter mPagerAdapter;
-    private RouteLocationsListAdapter mLocationAdapter;
     ViewPager mPager;
     ViewPagerBottomSheetBehavior mBottomSheet;
 
@@ -115,9 +122,10 @@ public class RouteNewActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_routes_new);
+        setContentView(R.layout.activity_route_new);
 
         mLogger = LogFactory.createLogger(this, LogLevelGetter.get());
+        mFragmentManager = this.getSupportFragmentManager();
 
         mStartTrackingButton = (Button) findViewById(R.id.btn_start_tracking);
         mStopTrackingButton = (Button) findViewById(R.id.btn_stop_tracking);
@@ -136,19 +144,19 @@ public class RouteNewActivity
         mTxtSpeed = (TextView) findViewById(R.id.textSpeed);
 
 
-        mProgressbar = findViewById(R.id.progressbar);
-        mProgressbar.setOnTouchListener(new View.OnTouchListener() {
+        mSeekbar = findViewById(R.id.location_progress_seekbar);
+        mSeekbar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    mMapManager.animateToClosestUnexploredLocation(RouteNewActivity.this.mService.getLastposition());
+                    onShowClosestLocationBtnClicked();
                 }
 
                 return true;
             }
         });
 
-        mProgressbar.setVisibility(View.GONE);
+        mSeekbar.setVisibility(View.GONE);
         mBottomSheet = ViewPagerBottomSheetBehavior.from(findViewById(R.id.bottom_sheet_panel));
 
         mPagerAdapter = new NewRoutePagerAdapter(getSupportFragmentManager(), this);
@@ -158,7 +166,6 @@ public class RouteNewActivity
         mPager.setOffscreenPageLimit(1);
         mPager.setAdapter(mPagerAdapter);
         BottomSheetUtils.setupViewPager(mPager);
-
 
         receiver = new ServiceStateReceiver(this);
 
@@ -241,7 +248,7 @@ public class RouteNewActivity
         animator.setInAnimation(inAnimation);
         animator.setOutAnimation(outAnimation);
 
-        mProgressbar.setVisibility(View.VISIBLE);
+        mSeekbar.setVisibility(View.VISIBLE);
 
         onRouteReady();
     }
@@ -249,8 +256,8 @@ public class RouteNewActivity
 
     // Executed when route downloaded initially or when it was initialized after restoring the app
     private void onRouteReady() {
-        fillLocationsList(mService.getRoute().locations);
-        updateProgressBar();
+        updateLocationsList();
+        updateLocationProgress();
         initMapManager();
         if (mService.getUnexploredLocationsCount() == 0) {
             showRouteCompleteDialog();
@@ -262,7 +269,6 @@ public class RouteNewActivity
 
 
     // Permissions
-
     boolean mLocationPermissionsGranted = false;
     boolean mWriteExternalStoragePermissionsGranted = false;
 
@@ -288,7 +294,8 @@ public class RouteNewActivity
             mLocationPermissionsGranted = true;
             initLocationClient();
             getCurrentPosition();
-        };
+        }
+        ;
     }
 
     private void initLocationClient() {
@@ -337,7 +344,6 @@ public class RouteNewActivity
     }
 
 
-
     private TravelTypes mTravelType;
 
     private void requestNewRoute(final Double lat, final Double lon) {
@@ -353,14 +359,13 @@ public class RouteNewActivity
             mTravelType = TravelTypes.CYCLING;
             optimalDistance = 2d;
         } else if (selectedId == R.id.radio_walking) {
-            mTravelType =  TravelTypes.WALKING;
+            mTravelType = TravelTypes.WALKING;
             optimalDistance = 0.5d;
         } else if (selectedId == R.id.radio_test) {
             mTravelType = TravelTypes.WALKING;
             optimalDistance = 0.01d;
             locCount = 200;
         }
-
 
         // Populate array with IDs of checked categories
         ArrayList<Integer> checkedLocationCategories = new ArrayList<>();
@@ -390,7 +395,7 @@ public class RouteNewActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new RouteMapManager(map,findViewById(android.R.id.content), this);
+        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this);
 
         if (mLocationPermissionsGranted) {
             try {
@@ -419,28 +424,30 @@ public class RouteNewActivity
     @Override
     public void onMarkerClicked(models.Location location) {
         View bottomSheetView = findViewById(R.id.bottom_sheet_panel);
-        ViewPagerBottomSheetBehavior.from(bottomSheetView).setState(BottomSheetBehavior.STATE_EXPANDED);
+        ViewPagerBottomSheetBehavior.from(bottomSheetView).setState(ViewPagerBottomSheetBehavior.STATE_EXPANDED);
         mPagerAdapter.getLocationsPage().showLocationInfo(location);
-    };
+
+        mLocationsFragment.scrollToLocation(location);
+    }
+
 
 
     @Override
     public void onFocusDropped() {
         onLocationInfoClosed();
+        mPagerAdapter.getLocationsPage().showLocationList();
     }
 
     @Override
     public int getHiddenMapHeight() {
-        if (mBottomSheet.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+        if (mBottomSheet.getState() == ViewPagerBottomSheetBehavior.STATE_COLLAPSED) {
             return 0;
-        }
-        else {
+        } else {
             View bottomSheetView = findViewById(R.id.bottom_sheet_panel);
             int bottomSheetHeight = bottomSheetView.getHeight();
             return bottomSheetHeight;
         }
     }
-
 
 
     private void initRouteSettings() {
@@ -502,7 +509,7 @@ public class RouteNewActivity
         if (mIsBound && !mService.trackingActive()) {
             mService.startTracking();
 
-            mProgressbar.setVisibility(View.VISIBLE);
+            mSeekbar.setVisibility(View.VISIBLE);
 
             mStartTrackingButton.setEnabled(false);
             mStopTrackingButton.setEnabled(true);
@@ -517,7 +524,6 @@ public class RouteNewActivity
                 //get last path update from service then stop the service
                 updateRouteUI();
                 Intent intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
-                /*intent.putExtra("route", mService.getRoute());*/
                 stopTracking();
                 startActivity(intent);
             } else if (mService.getRoute() == null) {
@@ -547,6 +553,41 @@ public class RouteNewActivity
     @Override
     public void onPositionChanged() {
         updateRouteUI();
+    }
+
+
+    @Override
+    public void onLocationReached(int locationId) {
+        if (mMapManager != null) {
+            for (models.Location loc : mService.getRoute().locations) {
+                if (loc.id == locationId) {
+                    mMapManager.updateLocationOnMap(loc);
+                    break;
+                }
+            }
+        }
+
+        updateLocationProgress();
+        updateLocationsList();
+
+        if (mService.getUnexploredLocationsCount() == 0) {
+            showRouteCompleteDialog();
+        }
+    }
+
+
+    @Override
+    public void onLocationCircleReached(int locationId) {
+        if (mMapManager != null) {
+            for (models.Location loc : mService.getRoute().locations) {
+                if (loc.id == locationId) {
+                    mMapManager.updateLocationOnMap(loc);
+                    break;
+                }
+            }
+        }
+
+        updateLocationsList();
     }
 
 
@@ -585,39 +626,6 @@ public class RouteNewActivity
             mTxtSpeed.setText(Formatter.formatSpeed(speed) + " km/h");
         }
     }
-
-
-    @Override
-    public void onLocationReached(int locationId) {
-        if (mMapManager != null) {
-            for (models.Location loc : mService.getRoute().locations) {
-                if (loc.id == locationId) {
-                    mMapManager.updateLocationOnMap(loc);
-                    break;
-                }
-            }
-        }
-
-        updateProgressBar();
-
-        if (mService.getUnexploredLocationsCount() == 0) {
-            showRouteCompleteDialog();
-        }
-    }
-
-
-    @Override
-    public void onLocationCircleReached(int locationId) {
-        if (mMapManager != null) {
-            for (models.Location loc : mService.getRoute().locations) {
-                if (loc.id == locationId) {
-                    mMapManager.updateLocationOnMap(loc);
-                    break;
-                }
-            }
-        }
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -720,54 +728,81 @@ public class RouteNewActivity
     }
 
 
-    public void fillLocationsList(ArrayList<models.Location> locations) {
-        mLocationAdapter = new RouteLocationsListAdapter(this, locations, this, mPagerAdapter.getLocationsPage());
-        RecyclerView listView = findViewById(R.id.explored_locations_list);
-        listView.setAdapter(mLocationAdapter);
-        listView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-
-        // Update locations info on bottom sheet expanded
-        mBottomSheet.setBottomSheetCallback(new ViewPagerBottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    mLocationAdapter.notifyDataSetChanged();
-                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mPagerAdapter.getLocationsPage().showLocationList();
-                }
-            }
-
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-            }
-        });
-    }
-
-
-    @Override
-    public void moveCameraPositionBelowLocation(GeoPoint position) {
-        mMapManager.animateTrackingCamera(new GeoPoint(position.getLatitude() - 0.001, position.getLongitude()));
-        //mMapManager.animateTrackingCamera(position);
+    private void updateLocationsList() {
+        if (mLocationsFragment == null) {
+            android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            mLocationsFragment = RouteStatLocationsFragment.newInstance(mService.getRoute().locations, false);
+            fragmentTransaction.replace(R.id.fragment_locations_list, mLocationsFragment);
+            fragmentTransaction.commit();
+        } else {
+            mLocationsFragment.setLocations(mService.getRoute().locations);
+        }
     }
 
     @Override
     public void onLocationInfoClosed() {
-
-        mBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheet.setState(ViewPagerBottomSheetBehavior.STATE_COLLAPSED);
+        mLocationsFragment.dropFocus();
     }
 
+    @Override
+    public void onLocationSelected(models.Location location) {
+        mMapManager.animateTrackingCamera(new GeoPoint(location.position.getLatitude(), location.position.getLongitude()));
+        mPagerAdapter.getLocationsPage().showLocationInfo(location);
+        mMapManager.focusOnLocation(location);
+    }
 
+    @Override
+    public void onLocationUnselected() {
+        mMapManager.dropFocus();
+    }
+
+    private void onShowClosestLocationBtnClicked() {
+        mMapManager.animateToClosestUnexploredLocation(RouteNewActivity.this.mService.getLastposition());
+    }
 
 
     /********** Progressbar  *********/
 
-    private void updateProgressBar() {
+    private void updateLocationProgress() {
+
+        if (mTxtLocExploredCount == null) {
+            mTxtLocExploredCount = findViewById(R.id.locations_explored_count);
+        }
+        if (mTxtLocLeftCount == null) {
+            mTxtLocLeftCount = findViewById(R.id.locations_left_count_number);
+        }
+        if (mTxtLocExploredPercent == null) {
+            mTxtLocExploredPercent = findViewById(R.id.locations_explored_percent_number);
+        }
+        if (mProgressbar == null) {
+            mProgressbar = findViewById(R.id.location_progressbar);
+        }
+        if (btnShowClosestLocationSecondary == null) {
+            btnShowClosestLocationSecondary = findViewById(R.id.btn_show_closest_location_secondary);
+            btnShowClosestLocationSecondary.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onShowClosestLocationBtnClicked();
+                }
+            });
+        }
+
+
+        int progress = mService.getRoute().loc_cnt_explored * 100 /  mService.getRoute().loc_cnt_total;
+        int locLeftCount = mService.getRoute().loc_cnt_total - mService.getRoute().loc_cnt_explored;
+
+        mTxtLocExploredCount.setText(String.valueOf(mService.getRoute().loc_cnt_explored));
+        mTxtLocLeftCount.setText(String.valueOf(locLeftCount));
+        mTxtLocExploredPercent.setText(String.valueOf(progress));
+
+        mSeekbar.setMax(mService.getRoute().loc_cnt_total);
+        mSeekbar.setProgress(mService.getRoute().loc_cnt_explored);
+
         mProgressbar.setMax(mService.getRoute().loc_cnt_total);
         mProgressbar.setProgress(mService.getRoute().loc_cnt_explored);
+
     }
-
-
 
 
     /********** Complete route dialog *********/
@@ -782,7 +817,6 @@ public class RouteNewActivity
     public void onFinishRoute() {
         stopTrackingBtnPressed(null);
     }
-
 
 
     /**********   Menu  **************/

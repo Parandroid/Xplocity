@@ -3,19 +3,11 @@ package com.xplocity.xplocity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.ShareCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import api_classes.SharedRouteUploader;
-import api_classes.interfaces.SharedRouteUploaderInterface;
-import app.XplocityApplication;
 import models.Location;
-import models.Route;
 
 
 public class LocationInfoDialog
@@ -66,7 +58,7 @@ public class LocationInfoDialog
 
         mLocation = (Location) getArguments().getParcelable(LOCATION_KEY);
 
-        View v = inflater.inflate(R.layout.fragment_location_info, container, false);
+        View v = inflater.inflate(R.layout.fragment_route_new_location_info, container, false);
         return v;
     }
 

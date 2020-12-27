@@ -18,10 +18,10 @@
             android:scaleType="fitCenter"
 
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/progressBar"
-            app:layout_constraintEnd_toStartOf="@+id/progressBar"
+            app:layout_constraintBottom_toBottomOf="@+id/location_progressbar"
+            app:layout_constraintEnd_toStartOf="@+id/location_progressbar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/progressBar"
+            app:layout_constraintTop_toTopOf="@+id/location_progressbar"
             android:src="@drawable/ic_badge_100" />
 
 
@@ -40,7 +40,7 @@
                 android:src="@drawable/location_explored_marker" />
 
             <TextView
-                android:id="@+id/locations_explored"
+                android:id="@+id/locations_explored_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="142"
@@ -53,7 +53,7 @@
 
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/location_progressbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="100dp"
             android:layout_height="100dp"

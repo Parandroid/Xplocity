@@ -64,13 +64,11 @@ public class XMLRouteParser extends XMLAbstractParser {
             } else if (name.equals("travel_type")) {
                 String tt = readText(parser);
 
-                switch (tt) {
+                switch (tt.toUpperCase()) {
                     case "CYCLING":
-                    case "cycling":
                         route.travelType = TravelTypes.CYCLING;
                         break;
                     case "WALKING":
-                    case "walking":
                         route.travelType = TravelTypes.WALKING;
                         break;
                     default:

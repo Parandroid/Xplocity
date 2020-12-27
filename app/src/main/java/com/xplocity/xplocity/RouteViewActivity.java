@@ -112,7 +112,7 @@ public class RouteViewActivity
     private void showLocations(ArrayList<Location> locations) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 
-        mLocationsFragment = RouteStatLocationsFragment.newInstance(locations);
+        mLocationsFragment = RouteStatLocationsFragment.newInstance(locations, true);
         fragmentTransaction.replace(R.id.fragment_locations_list, mLocationsFragment);
         fragmentTransaction.commit();
     }

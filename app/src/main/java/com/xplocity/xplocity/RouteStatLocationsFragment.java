@@ -44,16 +44,29 @@ public class RouteStatLocationsFragment extends Fragment {
 
     private View mView;
 
+    LinearLayout mExploredLocationListLayout;
+    LinearLayout mUnexploredLocationListLayout;
+    View mUnseenLocationsLayout;
+
+    private Boolean mShowUnseen;
+
     public RouteStatLocationsFragment() {
         // Required empty public constructor
     }
 
 
-    public static RouteStatLocationsFragment newInstance(ArrayList<Location> locations) {
+    public static RouteStatLocationsFragment newInstance(Boolean showUnseen) {
+        RouteStatLocationsFragment fragment = new RouteStatLocationsFragment();
+        fragment.mShowUnseen = showUnseen;
+        return fragment;
+    }
+
+    public static RouteStatLocationsFragment newInstance(ArrayList<Location> locations, Boolean showUnseen) {
         RouteStatLocationsFragment fragment = new RouteStatLocationsFragment();
         Bundle args = new Bundle();
         args.putSerializable(LOCATIONS, locations);
         fragment.setArguments(args);
+        fragment.mShowUnseen = showUnseen;
         return fragment;
     }
 
@@ -67,13 +80,6 @@ public class RouteStatLocationsFragment extends Fragment {
             //v.setBackgroundColor(getResources().getColor(R.color.colorAccent));
             v.requestFocus();
         }
-
-        /*if (loc.explored()) {
-            int pos = mLocationsExplored.indexOf(loc);
-        }
-        else {
-
-        }*/
     }
 
 
@@ -95,6 +101,8 @@ public class RouteStatLocationsFragment extends Fragment {
         if (getArguments() != null) {
             mLocations = (ArrayList<Location>) getArguments().getSerializable(LOCATIONS);
         }
+        else
+            mLocations = new ArrayList<Location>();
     }
 
     @Override
@@ -102,19 +110,29 @@ public class RouteStatLocationsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_route_stat_locations, container, false);
+
+        mExploredLocationListLayout = mView.findViewById(R.id.explored_locations_list);
+        mUnexploredLocationListLayout = mView.findViewById(R.id.unexplored_locations_list);
+        mUnseenLocationsLayout = mView.findViewById(R.id.unseen_locations_info);
+
         fillLocationsList();
 
         return mView;
     }
 
+
+    public void setLocations(ArrayList<Location> locations) {
+        mLocations = locations;
+        fillLocationsList();
+    }
+
     private void fillLocationsList() {
-        // fill location list
-        LinearLayout exploredLocationListLayout = mView.findViewById(R.id.explored_locations_list);
-        LinearLayout unexploredLocationListLayout = mView.findViewById(R.id.unexplored_locations_list);
-
-
         mLocationsExplored = new ArrayList<Location>();
         mLocationsUnexplored = new ArrayList<Location>();
+
+        mExploredLocationListLayout.removeAllViews();
+        mUnexploredLocationListLayout.removeAllViews();
+
         int unseenLocationsCount = 0;
 
         for (Location loc : mLocations) {
@@ -170,7 +188,7 @@ public class RouteStatLocationsFragment extends Fragment {
                 rect.setPadding(0, 0, 0, paddingPixel);
             }
 
-            exploredLocationListLayout.addView(v);
+            mExploredLocationListLayout.addView(v);
 
             v.findViewById(R.id.container_explored).setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -191,7 +209,7 @@ public class RouteStatLocationsFragment extends Fragment {
             TextView txtLocationName = (TextView) v.findViewById(R.id.txt_location_name);
             txtLocationName.setText(location.name);
 
-            unexploredLocationListLayout.addView(v);
+            mUnexploredLocationListLayout.addView(v);
 
             v.findViewById(R.id.container_unexplored).setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -203,17 +221,20 @@ public class RouteStatLocationsFragment extends Fragment {
             });
         }
 
-
-        View unseenLocationsLayout = mView.findViewById(R.id.unseen_locations_info);
-        if (unseenLocationsCount > 0) {
-            TextView txtUnseenLocationsCount = mView.findViewById(R.id.txt_unseen_locations);
-            String unseenLocationsText = getString(R.string.unseen_locations_text_1)
-                    + "<b> " + Integer.toString(unseenLocationsCount) + " </b>"
-                    + getString(R.string.unseen_locations_text_2)
-                    + "<br/>" + getString(R.string.unseen_locations_text_3);
-            txtUnseenLocationsCount.setText(Html.fromHtml(unseenLocationsText));
-        } else {
-            unseenLocationsLayout.setVisibility(View.GONE);
+        if (mShowUnseen) {
+            if (unseenLocationsCount > 0) {
+                TextView txtUnseenLocationsCount = mView.findViewById(R.id.txt_unseen_locations);
+                String unseenLocationsText = getString(R.string.unseen_locations_text_1)
+                        + "<b> " + Integer.toString(unseenLocationsCount) + " </b>"
+                        + getString(R.string.unseen_locations_text_2)
+                        + "<br/>" + getString(R.string.unseen_locations_text_3);
+                txtUnseenLocationsCount.setText(Html.fromHtml(unseenLocationsText));
+            } else {
+                mUnseenLocationsLayout.setVisibility(View.GONE);
+            }
+        }
+        else {
+            mUnseenLocationsLayout.setVisibility(View.GONE);
         }
 
     }
