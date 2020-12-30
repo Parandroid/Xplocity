@@ -29,6 +29,7 @@ public class RouteUploader extends Loader {
     @Override
     protected void onResponse(String response, int http_code) {
         if (http_code == HTTP_CREATED) {
+            mLogger.logDebug(response);
             mCallback.onSuccessUploadRoute();
         }
     }
