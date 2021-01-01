@@ -58,7 +58,7 @@ public class Formatter {
     public static String formatHoursAndMinutes(final int totalMinutes) {
         String minutes = Integer.toString(totalMinutes % 60);
         minutes = minutes.length() == 1 ? "0" + minutes : minutes;
-        return (totalMinutes / 60) + " h " + minutes + " m";
+        return (totalMinutes / 60) + " " + ResourceGetter.getString("hour_short") + " " + minutes + " " + ResourceGetter.getString("minute_short");
     }
 
     //format minutes to "5.2" format

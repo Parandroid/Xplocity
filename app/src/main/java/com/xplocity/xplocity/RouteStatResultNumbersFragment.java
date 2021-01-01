@@ -51,9 +51,10 @@ public class RouteStatResultNumbersFragment extends Fragment {
 
         Formatter formatter = new Formatter();
 
-        ((TextView) v.findViewById(R.id.distance)).setText(formatter.formatDistance(mDistance) + " km");
-        ((TextView) v.findViewById(R.id.duration)).setText(formatter.formatHours(mDuration / 60000) + " h");
-        ((TextView) v.findViewById(R.id.speed)).setText(Formatter.formatSpeed(calculateSpeed(mDistance, mDuration)) + " km/h");
+        ((TextView) v.findViewById(R.id.distance)).setText(getString(R.string.n_km, Formatter.formatDistance(mDistance)));
+        ((TextView) v.findViewById(R.id.duration)).setText(getString(R.string.n_h, formatter.formatHours(mDuration / 60000)));
+        ((TextView) v.findViewById(R.id.speed)).setText(getString(R.string.n_km_h, Formatter.formatSpeed(calculateSpeed(mDistance, mDuration))));
+
 
         return v;
     }

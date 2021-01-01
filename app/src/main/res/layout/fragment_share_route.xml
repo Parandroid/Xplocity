@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Press button to share your route. You will receive unique ID of the route to share with others." />
+        android:text="@string/share_route_tip" />
 
     <Button
         android:id="@+id/btnUploadSharedRoute"
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:backgroundTint="@color/cast_intro_overlay_button_background_color"
-        android:text="Share route" />
+        android:text="@string/share_route" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_below="@+id/txtShareRouteID">
 
             <Button
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="1dp"
-                android:text="Share"
+                android:text="@string/share"
                 android:textSize="12sp" />
 
             <Button
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="1dp"
-                android:text="Cancel"
+                android:text="@string/cancel"
                 android:textSize="12sp" />
 
         </LinearLayout>

@@ -12,9 +12,12 @@ import android.widget.RelativeLayout;
 
 import com.xplocity.xplocity.R;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.events.MapAdapter;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
@@ -344,6 +347,23 @@ public class RouteMapManager extends MapManager {
             animateCamera(closestLocPosition);
         }
     }
+
+
+    public void zoomToRouteBoundingBox() {
+        BoundingBox boundingBox = BoundingBox.fromGeoPoints(mPolyline.getPoints());
+        mMap.zoomToBoundingBox(boundingBox, false);
+
+        IMapController mapController = mMap.getController();
+        mapController.zoomToSpan(boundingBox.getLatitudeSpan(), boundingBox.getLongitudeSpan());
+        mapController.setCenter(boundingBox.getCenter());
+    }
+
+    public Bitmap exportBitmap() {
+        mMap.buildDrawingCache();
+        Bitmap bitmap=mMap.getDrawingCache().copy(Bitmap.Config.RGB_565, true);
+        return bitmap;
+    }
+
 
 
 

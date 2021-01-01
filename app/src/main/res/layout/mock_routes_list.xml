@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome to Xplocity"
+        android:text="@string/welcome_to_xplocity"
         android:textAlignment="center"
         android:textSize="20sp"
         android:textColor="@color/gray900"/>
@@ -23,7 +23,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Explore beautiful hidden places of cities"
+        android:text="@string/explore_beautiful_hidden_places_of_cities"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textColor="@color/gray900"/>
@@ -37,5 +37,5 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start your first route" />
+        android:text="@string/start_your_first_route" />
 </LinearLayout>

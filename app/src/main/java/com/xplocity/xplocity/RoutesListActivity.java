@@ -246,7 +246,7 @@ public class RoutesListActivity extends XplocityMenuActivity
                                     ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId()==R.id.chain_list) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-            menu.add("Delete");
+            menu.add(R.string.delete_route);
         }
     }
 
@@ -262,11 +262,11 @@ public class RoutesListActivity extends XplocityMenuActivity
 
     private void showDeleteRouteDialog(int routeId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this route?");
+        builder.setMessage(R.string.confirm_delete_route);
         builder.setCancelable(true);
 
         builder.setPositiveButton(
-                "Yes",
+                R.string.yes,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         RoutesDescriptionsDeleter deleter = new RoutesDescriptionsDeleter(RoutesListActivity.this);
@@ -276,7 +276,7 @@ public class RoutesListActivity extends XplocityMenuActivity
                 });
 
         builder.setNegativeButton(
-                "No",
+                R.string.no,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

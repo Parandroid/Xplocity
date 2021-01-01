@@ -294,8 +294,7 @@ public class RouteNewActivity
             mLocationPermissionsGranted = true;
             initLocationClient();
             getCurrentPosition();
-        }
-        ;
+        };
     }
 
     private void initLocationClient() {
@@ -604,7 +603,7 @@ public class RouteNewActivity
 
     private void updateDistance() {
         if (mService.getRoute() != null) {
-            mTxtDistance.setText(Formatter.formatDistance((int) mService.getRoute().distance) + " km");
+            mTxtDistance.setText(getString(R.string.n_km, Formatter.formatDistance((int) mService.getRoute().distance)));
         }
     }
 
@@ -623,7 +622,7 @@ public class RouteNewActivity
                 speed = 0f;
             }
 
-            mTxtSpeed.setText(Formatter.formatSpeed(speed) + " km/h");
+            mTxtSpeed.setText(getString(R.string.n_km_h, Formatter.formatSpeed(speed)));
         }
     }
 
@@ -643,11 +642,11 @@ public class RouteNewActivity
 
     private void showCancelRouteDialog() {
         android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(this);
-        builder1.setMessage("Unsaved route will be lost. Do you want to continue?");
+        builder1.setMessage(R.string.confirm_cancel_route);
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Yes",
+                getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         stopTracking();
@@ -659,7 +658,7 @@ public class RouteNewActivity
                 });
 
         builder1.setNegativeButton(
-                "No",
+                getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

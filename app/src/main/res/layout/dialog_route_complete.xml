@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:text="Congratulations!"
+            android:text="@string/congratulations"
             android:textColor="@color/gray900"
             android:textSize="10pt" />
 
@@ -41,7 +41,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="You have found all locations on the current route. Would you like to finish tracking and save the route?"
+            android:text="@string/you_have_found_all_locations_on_the_current_route_would_you_like_to_finish_tracking_and_save_the_route"
             android:textAlignment="center"
             android:textColor="@color/gray700" />
 
@@ -60,14 +60,14 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Yes, finish and save route" />
+                android:text="@string/finish_and_save_route" />
 
             <Button
                 android:id="@+id/btn_continue"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Continue route" />
+                android:text="@string/continue_route" />
         </LinearLayout>
 
     </LinearLayout>

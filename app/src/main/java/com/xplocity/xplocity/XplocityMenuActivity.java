@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -44,11 +44,11 @@ public class XplocityMenuActivity extends AppCompatActivity {
 
     public void onSignOut(MenuItem mi) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage("Are you sure you want to sign out?");
+        builder1.setMessage(R.string.are_you_sure_sign_out);
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
-                "Sign out",
+                getString(R.string.sign_out),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         stopService();
@@ -60,7 +60,7 @@ public class XplocityMenuActivity extends AppCompatActivity {
                 });
 
         builder1.setNegativeButton(
-                "Cancel",
+                getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

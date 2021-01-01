@@ -92,7 +92,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="0dp"
-                    android:text="distance"
+                    android:text="@string/distance"
                     android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -124,7 +124,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="0dp"
-                    android:text="duration"
+                    android:text="@string/duration"
                     android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -156,7 +156,7 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="0dp"
-                    android:text="avg speed"
+                    android:text="@string/avg_speed"
                     android:textSize="12sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -202,7 +202,7 @@
             android:layout_weight="50"
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="startTrackingBtnPressed"
-            android:text="Start" />
+            android:text="@string/start" />
 
         <Button
             android:id="@+id/btn_stop_tracking"
@@ -213,7 +213,7 @@
             android:layout_weight="50"
             android:backgroundTint="@android:color/holo_red_light"
             android:onClick="stopTrackingBtnPressed"
-            android:text="Stop" />
+            android:text="@string/stop" />
     </LinearLayout>
 </LinearLayout>
 

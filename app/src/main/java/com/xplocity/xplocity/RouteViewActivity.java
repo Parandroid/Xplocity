@@ -1,8 +1,16 @@
 package com.xplocity.xplocity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import org.osmdroid.views.MapView;
 
@@ -14,12 +22,16 @@ import managers.RouteMapManager;
 import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.Route;
+import utils.StorageHelper;
+import utils.UI.WaitWheel;
 
 public class RouteViewActivity
-        extends FragmentActivity
+        extends XplocityMenuActivity
         implements RouteDownloaderInterface,
         MapManagerInterface,
         RouteStatLocationsFragment.FragmentListener {
+
+    private WaitWheel mWaitWheel;
 
     private RouteMapManager mMapManager = null;
     private int mRouteId;
@@ -35,6 +47,7 @@ public class RouteViewActivity
         Bundle recdData = getIntent().getExtras();
         mRouteId = recdData.getInt(getString(R.string.route_id_key));
 
+        mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
         mFragmentManager = getSupportFragmentManager();
 
         initMapManager();
@@ -83,13 +96,12 @@ public class RouteViewActivity
     public void onRouteDownloaded(Route route) {
         if (mMapManager != null) {
             mMapManager.setRoute(route);
-            if (route.locations.size() > 0) {
-                mMapManager.setOverviewCamera(route.path.get(0));
-            }
 
             showResultNumbers((int) route.distance, route.duration);
             showProgress(route.loc_cnt_total, route.loc_cnt_explored);
             showLocations(route.locations);
+
+            mMapManager.zoomToRouteBoundingBox();
         }
     }
 
@@ -116,4 +128,51 @@ public class RouteViewActivity
         fragmentTransaction.replace(R.id.fragment_locations_list, mLocationsFragment);
         fragmentTransaction.commit();
     }
+
+
+    /**********   Menu  **************/
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.miShareRoute).setVisible(true);
+        menu.findItem(R.id.miShareRoute).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                mWaitWheel.showWaitAnimation();
+                shareRouteImage();
+                mWaitWheel.hideWaitAnimation();
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    private void shareRouteImage() {
+        Bitmap bmp = generateRouteImage();
+
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+
+        // Set the MIME type
+        share.setType("image/*");
+
+        // Create the URI from the media
+        Uri uri = StorageHelper.saveImage(bmp);
+
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
+    }
+
+    private Bitmap generateRouteImage() {
+        View v = findViewById(R.id.appbar);
+        v.buildDrawingCache();
+        Bitmap bitmap = v.getDrawingCache();
+        return bitmap;
+    }
+
+
 }
