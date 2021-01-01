@@ -17,7 +17,6 @@ import org.osmdroid.events.MapAdapter;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.util.BoundingBox;
-import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
@@ -61,13 +60,11 @@ class LocationOnMap {
 public class RouteMapManager extends MapManager {
     private Polyline mPolyline;
     private ImageView mArrow;
-    Marker mFocusedMarker;
+    private Marker mFocusedMarker;
 
-    /*private Map<Location, Marker> mLocationMarkers;
-    private Map<Location, Polygon> mLocationCircles;*/
     private Map<Location, LocationOnMap> mLocationsOnMap;
 
-    public RouteMapManager(MapView p_map, View context, MapManagerInterface callback) {
+    public RouteMapManager(MapView p_map, View context, MapManagerInterface callback, boolean showLocationArrow) {
         super(p_map, context, callback);
 
         mLocationsOnMap = new HashMap<>();
@@ -95,17 +92,17 @@ public class RouteMapManager extends MapManager {
         MapEventsOverlay mapEventsOverlay = new MapEventsOverlay(mReceive);
         mMap.getOverlays().add(0, mapEventsOverlay);
 
-        //mMap.setInfoWindowAdapter(new LocationToMapAdapter(mContext));
+        if (showLocationArrow) {
+            calculateNormScreenSize();
+            mMap.setMapListener(new MapAdapter() {
+                @Override
+                public boolean onScroll(ScrollEvent event) {
+                    updateLocationArrowPosition();
 
-        calculateNormScreenSize();
-        mMap.setMapListener(new MapAdapter() {
-            @Override
-            public boolean onScroll(ScrollEvent event) {
-                updateLocationArrowPosition();
-
-                return super.onScroll(event);
-            }
-        });
+                    return super.onScroll(event);
+                }
+            });
+        }
 
         hideArrowToLocation();
     }

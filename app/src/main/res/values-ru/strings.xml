@@ -73,4 +73,7 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="confirm_cancel_route">Вы уверены, что хотите выйти, не сохраняя маршрут?</string>
+    <string name="explored">Найдено</string>
+    <string name="left">Осталось</string>
+    <string name="show_the_closest_location">Ближайшее место</string>
 </resources>

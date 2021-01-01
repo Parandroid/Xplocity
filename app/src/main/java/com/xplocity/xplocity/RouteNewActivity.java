@@ -394,7 +394,7 @@ public class RouteNewActivity
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this);
+        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this, true);
 
         if (mLocationPermissionsGranted) {
             try {

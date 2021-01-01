@@ -40,7 +40,6 @@ public class NewRouteDownloader extends Loader {
 
     @Override
     protected void onResponse(String xml, int http_code) {
-        mLogger.logError("RESPONSE");
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationsParser newRouteParser = new XMLLocationsParser();
 

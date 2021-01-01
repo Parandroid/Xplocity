@@ -19,7 +19,6 @@ import managers.RouteMapManager;
 import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.Route;
-import models.RouteDescription;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
@@ -106,13 +105,9 @@ public class RouteSaveActivity
 
     public void initMapManager() {
         MapView map = findViewById(R.id.map);
-        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this);
+        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this, false);
         mMapManager.setRoute(mRoute);
-
-        if (mRoute.path.size() > 0)
-            mMapManager.setOverviewCamera(mRoute.path.get(mRoute.path.size() - 1));
-        else
-            mMapManager.setOverviewCamera(mService.getLastposition());
+        mMapManager.zoomToRouteBoundingBox();
     }
 
     @Override
@@ -154,10 +149,11 @@ public class RouteSaveActivity
 
 
     @Override
-    public void onSuccessUploadRoute() {
+    public void onSuccessUploadRoute(Route route) {
         mWaitWheel.hideWaitAnimation();
+        mRoute = route;
 
-        finishRoute();
+        redirectToRouteView();
     }
 
     @Override
@@ -181,7 +177,7 @@ public class RouteSaveActivity
                 getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        finishRoute();
+                        redirectToRoutesList();
                         dialog.cancel();
                     }
                 });
@@ -199,10 +195,25 @@ public class RouteSaveActivity
     }
 
 
-    private void finishRoute() {
-        mService.destroyService();
+    private void redirectToRouteView() {
+        destroyPositionService();
+
         Intent intent = new Intent(getApplicationContext(), RouteViewActivity.class);
         intent.putExtra(getString(R.string.route_id_key), mRoute.id);
+        intent.putExtra(getString(R.string.route_key), mRoute);
         startActivity(intent);
+    }
+
+
+    private void redirectToRoutesList() {
+        destroyPositionService();
+
+        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+        startActivity(intent);
+    }
+
+
+    private void destroyPositionService() {
+        mService.destroyService();
     }
 }
