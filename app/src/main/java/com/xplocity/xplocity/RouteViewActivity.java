@@ -2,11 +2,13 @@ package com.xplocity.xplocity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,20 +46,53 @@ public class RouteViewActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_view);
 
-        Bundle recdData = getIntent().getExtras();
-        mRouteId = recdData.getInt(getString(R.string.route_id_key));
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp);// set drawable icon
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
         mFragmentManager = getSupportFragmentManager();
 
         initMapManager();
-        downloadRoute();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Bundle recdData = getIntent().getExtras();
+        mRouteId = recdData.getInt(getString(R.string.route_id_key));
+        if (recdData.get(getString(R.string.route_key)) != null) {
+            Route route = recdData.getParcelable(getString(R.string.route_key));
+
+            //Ugly fix osmdroid zoom bug https://stackoverflow.com/questions/10509130/why-osmdroid-loaded-a-lot-of-maps-zoom-to-a-wrong-place
+            mWaitWheel.showWaitAnimation();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onRouteDownloaded(route);
+                }
+            }, 200);
+
+        }
+        else {
+            downloadRoute();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        redirectToRouteList();
+    }
+
+    private void redirectToRouteList() {
+        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+        startActivity(intent);
     }
 
 
     public void initMapManager() {
         MapView map = (MapView) findViewById(R.id.map);
-        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this);
+        mMapManager = new RouteMapManager(map, findViewById(android.R.id.content), this, false);
     }
 
     @Override
@@ -88,6 +123,7 @@ public class RouteViewActivity
 
 
     public void downloadRoute() {
+        mWaitWheel.showWaitAnimation();
         RouteDownloader loader = new RouteDownloader(this);
         loader.downloadRoute(mRouteId);
     }
@@ -102,6 +138,7 @@ public class RouteViewActivity
             showLocations(route.locations);
 
             mMapManager.zoomToRouteBoundingBox();
+            mWaitWheel.hideWaitAnimation();
         }
     }
 
@@ -148,6 +185,21 @@ public class RouteViewActivity
         return true;
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                redirectToRouteList();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+
     private void shareRouteImage() {
         Bitmap bmp = generateRouteImage();
 
@@ -168,11 +220,33 @@ public class RouteViewActivity
     }
 
     private Bitmap generateRouteImage() {
-        View v = findViewById(R.id.appbar);
+        View v = findViewById(R.id.map_layout);
+        v.destroyDrawingCache();
         v.buildDrawingCache();
-        Bitmap bitmap = v.getDrawingCache();
+        Bitmap mapBmp = v.getDrawingCache();
+
+        v = findViewById(R.id.fragment_result_numbers);
+        v.destroyDrawingCache();
+        v.buildDrawingCache();
+        Bitmap statsBmp = v.getDrawingCache();
+
+        Bitmap bitmap = combineMapAndStatsBitmaps(mapBmp, statsBmp);
+
         return bitmap;
     }
 
+    private Bitmap combineMapAndStatsBitmaps(Bitmap mapBmp, Bitmap statsBmp) {
+        Bitmap resultBmp = Bitmap.createBitmap(mapBmp.getWidth(), mapBmp.getHeight() + statsBmp.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(resultBmp);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPaint(paint);
+
+        canvas.drawBitmap(mapBmp, 0, 0, null);
+        canvas.drawBitmap(statsBmp, 0, mapBmp.getHeight(), null);
+        return resultBmp;
+    }
 
 }

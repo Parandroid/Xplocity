@@ -1,8 +1,13 @@
 package api_classes;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import api_classes.interfaces.RouteUploaderInterface;
 import models.Route;
 import xml_builders.XMLRouteBuilder;
+import xml_parsers.XMLRouteParser;
 
 /**
  * Created by dmitry on 05.09.17.
@@ -27,10 +32,21 @@ public class RouteUploader extends Loader {
     }
 
     @Override
-    protected void onResponse(String response, int http_code) {
+    protected void onResponse(String xml, int http_code) {
         if (http_code == HTTP_CREATED) {
-            mLogger.logDebug(response);
-            mCallback.onSuccessUploadRoute();
+
+            InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+            XMLRouteParser parser = new XMLRouteParser();
+            Route route;
+
+            try {
+                route = parser.parse(stream);
+                mCallback.onSuccessUploadRoute(route);
+            }
+            catch (Throwable e) {
+                mLogger.logError("Error parsing new mRoute: ", e);
+            }
+
         }
     }
 

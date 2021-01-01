@@ -43,6 +43,8 @@ public class XMLRouteParser extends XMLAbstractParser {
         route = new Route();
 
         parser.require(XmlPullParser.START_TAG, ns, "Chain");
+        String id = parser.getAttributeValue("", "id");
+        route.id = parseInt(id);
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
