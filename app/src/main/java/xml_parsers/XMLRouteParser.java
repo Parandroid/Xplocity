@@ -14,6 +14,7 @@ import java.text.ParseException;
 import models.Location;
 import models.Route;
 import models.enums.LocationExploreState;
+import models.enums.TravelTypes;
 
 
 /**
@@ -61,7 +62,20 @@ public class XMLRouteParser extends XMLAbstractParser {
             } else if (name.equals("duration")) {
                 route.duration = parseInt(readText(parser));
             } else if (name.equals("travel_type")) {
-                route.travelType = readText(parser);
+                String tt = readText(parser);
+
+                switch (tt.toUpperCase()) {
+                    case "CYCLING":
+                        route.travelType = TravelTypes.CYCLING;
+                        break;
+                    case "WALKING":
+                        route.travelType = TravelTypes.WALKING;
+                        break;
+                    default:
+                        route.travelType = TravelTypes.WALKING;
+                }
+
+
             } else if (name.equals("Locations")) {
                 readLocations(parser);
             } else if (name.equals("Route")) {

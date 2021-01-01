@@ -19,6 +19,7 @@ import managers.RouteMapManager;
 import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.Route;
+import models.RouteDescription;
 import utils.Factory.LogFactory;
 import utils.Log.Logger;
 import utils.LogLevelGetter;
@@ -90,7 +91,7 @@ public class RouteSaveActivity
     private void showLocations(ArrayList<Location> locations) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 
-        mLocationsFragment = RouteStatLocationsFragment.newInstance(locations);
+        mLocationsFragment = RouteStatLocationsFragment.newInstance(locations, true);
         fragmentTransaction.replace(R.id.fragment_locations_list, mLocationsFragment);
         fragmentTransaction.commit();
     }
@@ -200,7 +201,8 @@ public class RouteSaveActivity
 
     private void finishRoute() {
         mService.destroyService();
-        Intent intent = new Intent(getApplicationContext(), RoutesListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), RouteViewActivity.class);
+        intent.putExtra(getString(R.string.route_id_key), mRoute.id);
         startActivity(intent);
     }
 }

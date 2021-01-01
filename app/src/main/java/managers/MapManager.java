@@ -1,5 +1,6 @@
 package managers;
 
+import android.graphics.Canvas;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -12,6 +13,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.Map;
@@ -26,9 +28,27 @@ import utils.LogLevelGetter;
  * Created by dmitry on 20.08.17.
  */
 
+class UndirectedLocationOverlay extends MyLocationNewOverlay {
+
+    public UndirectedLocationOverlay(MapView mapView) {
+        super(mapView);
+    }
+
+    public UndirectedLocationOverlay(IMyLocationProvider myLocationProvider, MapView mapView) {
+        super(myLocationProvider, mapView);
+    }
+
+    @Override
+    protected void drawMyLocation(Canvas canvas, MapView mapView, android.location.Location lastFix) {
+        // to prevent rotation of person icon
+        lastFix.setBearing(0);
+        super.drawMyLocation(canvas, mapView, lastFix);
+    }
+}
+
 public class MapManager {
     protected MapView mMap;
-    protected MyLocationNewOverlay mLocationOverlay;
+    protected UndirectedLocationOverlay mLocationOverlay;
     protected MapManagerInterface mCallback;
 
     protected Logger mLogger;
@@ -84,7 +104,7 @@ public class MapManager {
 
 
     public void initMyLocation() {
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(mContext.getContext()), mMap);
+        mLocationOverlay = new UndirectedLocationOverlay(new GpsMyLocationProvider(mContext.getContext()), mMap);
         mLocationOverlay.enableMyLocation();
         mMap.getOverlays().add(mLocationOverlay);
 

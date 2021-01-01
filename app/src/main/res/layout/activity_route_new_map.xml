@@ -51,7 +51,7 @@
                 android:layout_marginRight="8dp">
 
             </android.support.v4.view.ViewPager>
-            
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
@@ -166,7 +166,7 @@
         </LinearLayout>
 
         <SeekBar
-            android:id="@+id/progressbar"
+            android:id="@+id/location_progress_seekbar"
             style="@style/Widget.AppCompat.SeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

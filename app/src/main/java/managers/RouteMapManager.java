@@ -12,9 +12,12 @@ import android.widget.RelativeLayout;
 
 import com.xplocity.xplocity.R;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.events.MapAdapter;
 import org.osmdroid.events.MapEventsReceiver;
 import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
@@ -35,6 +38,7 @@ import models.Location;
 import models.LocationCircle;
 import models.Route;
 import models.enums.LocationExploreState;
+import models.enums.TravelTypes;
 import utils.ImageManager;
 import utils.ResourceGetter;
 import utils.UI.GridPolygon;
@@ -107,11 +111,28 @@ public class RouteMapManager extends MapManager {
     }
 
 
-    public void setMyLocationIconWalking() {
-
-        Bitmap bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
-        mLocationOverlay.setPersonIcon(bmpIcon);
+    public void initMyLocation(TravelTypes travelType) {
+        super.initMyLocation();
+        setPersonIcon(travelType);
     }
+
+    private void setPersonIcon(TravelTypes travelType) {
+        Bitmap bmpIcon;
+        switch (travelType) {
+            case WALKING:
+                bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
+                break;
+            case CYCLING:
+                bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_cycling);
+                break;
+            default:
+                bmpIcon = ImageManager.getBitmapFromVectorDrawable(R.drawable.ic_walking);
+        }
+
+        mLocationOverlay.setPersonIcon(bmpIcon);
+        mLocationOverlay.setDirectionArrow(bmpIcon, bmpIcon);
+    }
+
 
 
     public void updateLocationOnMap(Location loc) {
@@ -308,7 +329,7 @@ public class RouteMapManager extends MapManager {
         p.setStrokeColor(ResourceGetter.getResources().getColor(R.color.transparent));
         p.setStrokeWidth(0);
         p.setFillColor(ResourceGetter.getResources().getColor(R.color.black));
-        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions2));
+        p.setPatternBitmap(BitmapFactory.decodeResource(ResourceGetter.getResources(), R.drawable.questions));
 
         p.setTitle(ResourceGetter.getResources().getString(R.string.location_circle_title));
         p.setInfoWindow(new BasicInfoWindow(R.layout.bonuspack_bubble, mMap));
@@ -326,6 +347,23 @@ public class RouteMapManager extends MapManager {
             animateCamera(closestLocPosition);
         }
     }
+
+
+    public void zoomToRouteBoundingBox() {
+        BoundingBox boundingBox = BoundingBox.fromGeoPoints(mPolyline.getPoints());
+        mMap.zoomToBoundingBox(boundingBox, false);
+
+        IMapController mapController = mMap.getController();
+        mapController.zoomToSpan(boundingBox.getLatitudeSpan(), boundingBox.getLongitudeSpan());
+        mapController.setCenter(boundingBox.getCenter());
+    }
+
+    public Bitmap exportBitmap() {
+        mMap.buildDrawingCache();
+        Bitmap bitmap=mMap.getDrawingCache().copy(Bitmap.Config.RGB_565, true);
+        return bitmap;
+    }
+
 
 
 
