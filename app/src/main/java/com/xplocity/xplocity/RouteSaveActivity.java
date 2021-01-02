@@ -113,7 +113,7 @@ public class RouteSaveActivity
     @Override
     public void onMarkerClicked(models.Location location) {
         mLocationsFragment.scrollToLocation(location);
-    };
+    }
 
     @Override
     public void onFocusDropped() {
@@ -145,6 +145,13 @@ public class RouteSaveActivity
 
     public void cancelRoute(View view) {
         showCancelRouteDialog();
+    }
+
+    public void resumeRoute(View view) {
+        mService.resumeTracking();
+
+        Intent intent = new Intent(getApplicationContext(), RouteNewActivity.class);
+        startActivity(intent);
     }
 
 
@@ -216,4 +223,5 @@ public class RouteSaveActivity
     private void destroyPositionService() {
         mService.destroyService();
     }
+
 }

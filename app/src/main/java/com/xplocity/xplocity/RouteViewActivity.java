@@ -24,6 +24,7 @@ import managers.RouteMapManager;
 import managers.interfaces.MapManagerInterface;
 import models.Location;
 import models.Route;
+import utils.Formatter;
 import utils.StorageHelper;
 import utils.UI.WaitWheel;
 
@@ -59,13 +60,13 @@ public class RouteViewActivity
     protected void onResume() {
         super.onResume();
 
+        mWaitWheel.showWaitAnimation();
         Bundle recdData = getIntent().getExtras();
         mRouteId = recdData.getInt(getString(R.string.route_id_key));
         if (recdData.get(getString(R.string.route_key)) != null) {
             Route route = recdData.getParcelable(getString(R.string.route_key));
 
             //Ugly fix osmdroid zoom bug https://stackoverflow.com/questions/10509130/why-osmdroid-loaded-a-lot-of-maps-zoom-to-a-wrong-place
-            mWaitWheel.showWaitAnimation();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -123,7 +124,6 @@ public class RouteViewActivity
 
 
     public void downloadRoute() {
-        mWaitWheel.showWaitAnimation();
         RouteDownloader loader = new RouteDownloader(this);
         loader.downloadRoute(mRouteId);
     }
@@ -139,6 +139,9 @@ public class RouteViewActivity
 
             mMapManager.zoomToRouteBoundingBox();
             mWaitWheel.hideWaitAnimation();
+
+            Formatter formatter = new Formatter();
+            setTitle(getString(R.string.title_activity_route_view) + " " + formatter.formatDate(route.date));
         }
     }
 
@@ -200,39 +203,29 @@ public class RouteViewActivity
     }
 
 
+    /**********   Route sharing  **************/
+
     private void shareRouteImage() {
         Bitmap bmp = generateRouteImage();
-
-        // Create the new Intent using the 'Send' action.
         Intent share = new Intent(Intent.ACTION_SEND);
-
-        // Set the MIME type
         share.setType("image/*");
-
-        // Create the URI from the media
         Uri uri = StorageHelper.saveImage(bmp);
-
-        // Add the URI to the Intent.
         share.putExtra(Intent.EXTRA_STREAM, uri);
-
-        // Broadcast the Intent.
         startActivity(Intent.createChooser(share, "Share to"));
     }
 
     private Bitmap generateRouteImage() {
-        View v = findViewById(R.id.map_layout);
+        Bitmap mapBmp = bitmapFromView(R.id.map_layout);
+        Bitmap statsBmp = bitmapFromView(R.id.fragment_result_numbers);
+
+        return combineMapAndStatsBitmaps(mapBmp, statsBmp);
+    }
+
+    private Bitmap bitmapFromView(int viewId) {
+        View v = findViewById(viewId);
         v.destroyDrawingCache();
         v.buildDrawingCache();
-        Bitmap mapBmp = v.getDrawingCache();
-
-        v = findViewById(R.id.fragment_result_numbers);
-        v.destroyDrawingCache();
-        v.buildDrawingCache();
-        Bitmap statsBmp = v.getDrawingCache();
-
-        Bitmap bitmap = combineMapAndStatsBitmaps(mapBmp, statsBmp);
-
-        return bitmap;
+        return v.getDrawingCache();
     }
 
     private Bitmap combineMapAndStatsBitmaps(Bitmap mapBmp, Bitmap statsBmp) {
@@ -248,5 +241,7 @@ public class RouteViewActivity
         canvas.drawBitmap(statsBmp, 0, mapBmp.getHeight(), null);
         return resultBmp;
     }
+
+
 
 }

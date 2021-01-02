@@ -239,6 +239,8 @@ public class RouteNewActivity
 
 
     private void restoreActivityState() {
+        mTravelType = mService.getRoute().travelType;
+
         ViewAnimator animator = (ViewAnimator) findViewById(R.id.animator);
         Animation inAnimation = animator.getInAnimation();
         Animation outAnimation = animator.getOutAnimation();

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Xplocity.iml" filepath="$PROJECT_DIR$/Xplocity.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Xplocity.iml" filepath="$PROJECT_DIR$/.idea/modules/Xplocity.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Xplocity.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Xplocity.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
