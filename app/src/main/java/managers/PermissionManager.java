@@ -25,8 +25,6 @@ import java.util.Map;
 public class PermissionManager {
 
     private final static int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
-    /*private final static int REQUEST_ACCESS_FINE_LOCATION_CODE = 100;
-    private final static int REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 101;*/
 
 
     // Returns true if permissions were requested

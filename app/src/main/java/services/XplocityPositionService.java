@@ -338,15 +338,22 @@ public class XplocityPositionService
                 mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
             }
 
-            /*try {
-                Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location != null) {
-                    mPositionManager.addPosToPath(new GeoPoint(location.getLatitude(), location.getLongitude()));
-                    broadcastPositionChanged();
-                }
-            } catch (java.lang.SecurityException e) {
-                mLogger.logError("Failed to start tracking: Failed to request location update", e);
-            }*/
+            requestLocationUpdates();
+        } else {
+            mLogger.logWarning("Failed to start tracking: tracking already in progress");
+        }
+    }
+
+
+    public void resumeTracking() {
+        if (trackingState != TRACKING_STATE_ACTIVE) {
+            trackingState = TRACKING_STATE_ACTIVE;
+            writeTrackingStateToStorage();
+
+            if (mNotifBuilder != null) {
+                mNotifBuilder.setContentTitle("Tracking resumed");
+                mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
+            }
 
             requestLocationUpdates();
         } else {

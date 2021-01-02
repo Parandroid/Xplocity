@@ -6,8 +6,7 @@
 
     <include layout="@layout/wait_wheel" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -35,11 +34,21 @@
                 android:orientation="horizontal">
 
                 <ImageButton
+                    android:id="@+id/btnResume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?android:selectableItemBackground"
+                    android:minWidth="50dp"
+                    android:onClick="resumeRoute"
+                    app:srcCompat="@drawable/ic_arrow_back_white_24dp"
+                    android:tint="@color/cast_expanded_controller_text_color" />
+
+                <ImageButton
                     android:id="@+id/btnCancel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="?android:selectableItemBackground"
-                    android:minWidth="100dp"
+                    android:minWidth="50dp"
                     android:onClick="cancelRoute"
                     app:srcCompat="@drawable/ic_close_black_24dp"
                     android:tint="@color/cast_expanded_controller_text_color" />
@@ -49,11 +58,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:text="@string/save_route"
-                    android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse" />
-
 
                 <ImageButton
                     android:id="@+id/btnOk"
