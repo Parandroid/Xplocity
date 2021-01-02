@@ -595,7 +595,7 @@ public class RouteNewActivity
     private void updateRouteUI() {
         if (mMapManager != null && mService != null) {
             if (mService.trackingActive()) {
-                mMapManager.drawPath(mService.getRoute().path);
+                mMapManager.drawPath(mService.getRoute().getPathGeopoints());
                 updateDistance();
                 updateDuration();
                 updateSpeed();

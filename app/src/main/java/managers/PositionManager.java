@@ -14,6 +14,7 @@ import java.util.Collections;
 
 import managers.interfaces.PositionManagerInterface;
 import models.Location;
+import models.PathPoint;
 import models.Route;
 import utils.DateTimeConverter;
 
@@ -66,7 +67,10 @@ public class PositionManager implements Parcelable {
                     return; // if speed exceeded maximum allowed, then do not track that point
                 }
             }
-            route.path.add(pos);
+
+            PathPoint point = new PathPoint(pos, curTime);
+
+            route.path.add(point);
             lastPosition = pos;
             mLastTime = curTime;
         }
