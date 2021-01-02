@@ -3,6 +3,7 @@ package utils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Created by dmitry on 09.09.17.
@@ -23,6 +24,17 @@ public class Formatter {
         else {
             return String.format("%.0f", distanceKm);
         }
+    }
+
+
+    public String formatDateTimeToUTCString(DateTime date) {
+        DateTimeFormatter dtfOut = ISODateTimeFormat.dateTime();
+        return dtfOut.print(date);
+    }
+
+    public DateTime formatStringToUTCDatetime(String str) {
+        DateTimeFormatter dtfOut = ISODateTimeFormat.dateTime();
+        return dtfOut.parseDateTime(str);
     }
 
     public String formatDate(DateTime date) {

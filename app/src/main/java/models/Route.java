@@ -14,10 +14,12 @@ import java.util.ArrayList;
 
 import models.enums.TravelTypes;
 import utils.DateTimeConverter;
+import utils.Formatter;
 
 /**
  * Created by dmitry on 20.08.17.
  */
+
 
 public class Route implements Parcelable {
     public DateTime date;
@@ -29,43 +31,58 @@ public class Route implements Parcelable {
     public float distance = 0f; //distance in meter
     public int duration = 0; //duration in milliseconds
 
-    public ArrayList<GeoPoint> path;
+    public ArrayList<PathPoint> path;
     public ArrayList<Location> locations;
 
 
     public Route() {
-
         locations = new ArrayList<Location>();
-        path = new ArrayList<GeoPoint>();
+        path = new ArrayList<PathPoint>();
     }
 
     // deep copy path from source ArrayList
-    public void setPath(ArrayList<GeoPoint> src) {
+    public void setPath(ArrayList<PathPoint> src) {
         path.clear();
-        for (GeoPoint pos : src) {
+        for (PathPoint pos : src) {
             path.add(pos);
         }
-
     }
 
-    public static ArrayList<GeoPoint> string_to_route(String str_route) {
-        ArrayList<GeoPoint> points = new ArrayList<GeoPoint>();
+
+    public ArrayList<GeoPoint> getPathGeopoints() {
+        return (ArrayList<GeoPoint>) (ArrayList<?>) path;
+    }
+
+
+
+    public void pathFromString (String str_route) {
+        ArrayList<PathPoint> points = new ArrayList<PathPoint>();
+        Formatter formatter = new Formatter();
 
         for (String str_pos : str_route.split(";")) {
             //Achtung! API возвращает координаты в инвертированном порядке. (Долгота-ширина)
-            Double latitude = Double.parseDouble(str_pos.substring(0, str_pos.indexOf(" ")));
-            Double longitude = Double.parseDouble(str_pos.substring(str_pos.indexOf(" ")+1, str_pos.length()));
+            int firstDelimiterIndex = str_pos.indexOf(" ");
+            int secondDelimiterIndex = str_pos.indexOf(" ", firstDelimiterIndex + 1);
+            Double latitude = Double.parseDouble(str_pos.substring(0, firstDelimiterIndex));
+            Double longitude;
+            if (secondDelimiterIndex > 0) {
+                longitude = Double.parseDouble(str_pos.substring(firstDelimiterIndex + 1, secondDelimiterIndex));
+                DateTime time = formatter.formatStringToUTCDatetime(str_pos.substring(secondDelimiterIndex + 1));
+                points.add(new PathPoint(latitude, longitude, time));
 
-            points.add(new GeoPoint(latitude, longitude));
+            }
+            else {
+                longitude = Double.parseDouble(str_pos.substring(firstDelimiterIndex + 1));
+                points.add(new PathPoint(latitude, longitude));
+            }
         }
 
-        return points;
+        this.path = points;
     }
 
 
 
     /// Parcelable
-
     public int describeContents() {
         return 0;
     }

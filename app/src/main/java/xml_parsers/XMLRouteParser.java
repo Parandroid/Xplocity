@@ -81,7 +81,7 @@ public class XMLRouteParser extends XMLAbstractParser {
             } else if (name.equals("Locations")) {
                 readLocations(parser);
             } else if (name.equals("Route")) {
-                route.path = Route.string_to_route(readText(parser));
+                route.pathFromString(readText(parser));
             } else {
                 skip(parser);
             }

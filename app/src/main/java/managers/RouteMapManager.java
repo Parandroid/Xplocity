@@ -214,7 +214,7 @@ public class RouteMapManager extends MapManager {
 
 
     public void setRoute(Route route) {
-        drawPath(route.path);
+        drawPath(route.getPathGeopoints());
 
         for (Location loc : route.locations) {
             addLocationToMap(loc);

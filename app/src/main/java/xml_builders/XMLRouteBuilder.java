@@ -4,23 +4,27 @@ import android.util.Xml;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.osmdroid.util.GeoPoint;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
 
 import models.Location;
+import models.PathPoint;
 import models.Route;
 import models.enums.LocationExploreState;
+import utils.Formatter;
 
 /**
  * Created by dmitry on 05.09.17.
  */
 
 public class XMLRouteBuilder {
+    private utils.Formatter mFormatter;
 
-    public XMLRouteBuilder() {}
+    public XMLRouteBuilder() {
+        mFormatter = new Formatter();
+    }
 
     public String toXml(Route route) {
         XmlSerializer serializer = Xml.newSerializer();
@@ -96,14 +100,14 @@ public class XMLRouteBuilder {
 
 
 
-    private String pathToString(ArrayList<GeoPoint> path) {
+    private String pathToString(ArrayList<PathPoint> path) {
         String result = "";
 
-        for (GeoPoint pos : path) {
+        for (PathPoint pos : path) {
             if (result.length() > 0) {
                 result = result + ";";
             }
-            result = result + Double.toString(pos.getLatitude()) + " " + Double.toString(pos.getLongitude());
+            result = result + Double.toString(pos.getLatitude()) + " " + Double.toString(pos.getLongitude()) + " " + mFormatter.formatDateTimeToUTCString(pos.getTime());
         }
 
         return result;
