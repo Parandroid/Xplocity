@@ -7,11 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import adapters.LocationCommentTypesSpinnerAdapter;
@@ -92,18 +90,17 @@ public class BottomsheetLocationCommentFragment extends BottomSheetDialogFragmen
     }
 
 
-
-
     public void onSendBtnClicked(View view) {
         LocationComment comment = new LocationComment();
         comment.location = mLocation;
         comment.message = ((EditText) mView.findViewById(R.id.message)).getText().toString();
         comment.messageType = mAdapter.getItem(mSpinner.getSelectedItemPosition()).id;
 
-        LocationCommentUploader uploader = new LocationCommentUploader(this);
+        LocationCommentUploader uploader = new LocationCommentUploader(this, XplocityApplication.getAppContext());
         uploader.uploadLocationComment(comment);
 
     }
+
 
     @Override
     public void onSuccessUploadLocationComment() {
@@ -111,6 +108,7 @@ public class BottomsheetLocationCommentFragment extends BottomSheetDialogFragmen
         toast.show();
         this.dismiss();
     }
+
 
     @Override
     public void onErrorUploadLocationComment(String errorText) {

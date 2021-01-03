@@ -1,5 +1,10 @@
 package api_classes;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import com.xplocity.xplocity.R;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +25,7 @@ public class SignUpUploader extends Loader {
     private String API_method = "/users";
 
     public SignUpUploader(SignUpUploaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -30,40 +36,33 @@ public class SignUpUploader extends Loader {
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-        if (http_code == HTTP_CREATED) {
 
-            XMLAuthTokenParser authTokenParser = new XMLAuthTokenParser();
-            try {
-                AuthToken auth_token = authTokenParser.parse(stream);
-                mCallback.onSuccessUploadSignUpInfo(auth_token);
-            } catch (Throwable e) {
-                mLogger.logError("Error parsing auth token: ", e);
-            }
+        XMLAuthTokenParser authTokenParser = new XMLAuthTokenParser();
+        try {
+            AuthToken auth_token = authTokenParser.parse(stream);
+            mCallback.onSuccessUploadSignUpInfo(auth_token);
+        } catch (Throwable e) {
+            mLogger.logError("Error parsing auth token: ", e);
+            Toast.makeText(mContext, R.string.error_network_error, Toast.LENGTH_SHORT).show();
         }
-        else {
-            if (http_code == HTTP_NOT_ACCEPTABLE) {
-                XMLSignUpErrorsParser parser = new XMLSignUpErrorsParser();
-                try {
-                    ArrayList<String> errors = parser.parse(stream);
-                    mCallback.onErrorUploadSignUpInfo(errors);
-                } catch (Throwable e) {
-                    mLogger.logError("Error parsing sign up errors: ", e);
-                }
-            }
-            else {
-                onError(xml);
-            }
-        }
+
     }
 
     @Override
-    protected void onError(String errorText) {
-        ArrayList<String> errors = new ArrayList<String>();
-        errors.add(errorText);
-        mCallback.onErrorUploadSignUpInfo(errors);
+    protected void onError(String errorText, int httpCode) {
+        InputStream stream = new ByteArrayInputStream(errorText.getBytes(StandardCharsets.UTF_8));
+        XMLSignUpErrorsParser parser = new XMLSignUpErrorsParser();
+        try {
+            ArrayList<String> errors = parser.parse(stream);
+            mCallback.onErrorUploadSignUpInfo(errors);
+        } catch (Throwable e) {
+            mLogger.logError("Error parsing sign up errors: ", e);
+            ArrayList<String> errors = new ArrayList<String>();
+            errors.add(errorText);
+            mCallback.onErrorUploadSignUpInfo(errors);
+        }
     }
-
 
 }

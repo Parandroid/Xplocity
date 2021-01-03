@@ -3,7 +3,6 @@ package com.xplocity.xplocity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +21,6 @@ import managers.reportLocationMapManager;
 import models.Location;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ReportNewLocation.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ReportNewLocation#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ReportNewLocation
         extends DialogFragment
         implements ReportedLocationUploaderInterface,
@@ -40,13 +31,12 @@ public class ReportNewLocation
     EditText mEditName;
     EditText mEditDesc;
 
-    /*private OnFragmentInteractionListener mListener;*/
 
     public ReportNewLocation() {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
+
     public static ReportNewLocation newInstance() {
         ReportNewLocation fragment = new ReportNewLocation();
         return fragment;
@@ -56,7 +46,6 @@ public class ReportNewLocation
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
 
 
     @Override
@@ -106,7 +95,6 @@ public class ReportNewLocation
     }
 
 
-
     @Override
     public void onMarkerClicked(models.Location location) {};
 
@@ -134,19 +122,14 @@ public class ReportNewLocation
             location.description = mEditDesc.getText().toString();
             location.position = mMapManager.getMarkerPosition();
 
-
-            ReportedLocationUploader reportedLocationUploader = new ReportedLocationUploader(this);
+            ReportedLocationUploader reportedLocationUploader = new ReportedLocationUploader(this, getContext());
             reportedLocationUploader.uploadReportedLocation(location);
-
 
         }
     }
 
     private boolean checkFields() {
         boolean ok = true;
-
-
-
         if (mEditName.getText().length() == 0) {
             ok = false;
             mEditName.setError("Enter location name");
@@ -162,26 +145,16 @@ public class ReportNewLocation
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-
-        /*if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        /*mListener = null;*/
     }
 
 
     @Override
     public void onSuccessUploadReportedLocation() {
-        //mWaitWheel.hideWaitAnimation();
         Toast toast = Toast.makeText(XplocityApplication.getAppContext(), "Location successfully reported", Toast.LENGTH_LONG);
         toast.show();
         this.dismiss();
@@ -189,26 +162,8 @@ public class ReportNewLocation
 
     @Override
     public void onErrorUploadReportedLocation(String errorText) {
-        //mWaitWheel.hideWaitAnimation();
         Toast toast = Toast.makeText(XplocityApplication.getAppContext(), errorText, Toast.LENGTH_LONG);
         toast.show();
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
-
-    /*public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
 }

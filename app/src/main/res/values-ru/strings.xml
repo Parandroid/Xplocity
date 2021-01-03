@@ -76,4 +76,14 @@
     <string name="explored">Найдено</string>
     <string name="left">Осталось</string>
     <string name="show_the_closest_location">Ближайшее место</string>
+    <string name="error_network_error">Ошибка подключения к сети. Проверьте своё соединение, пожалуйста.</string>
+    <string name="error_credentials">Ошибка учётных данных. Пожалуйста, войдите в приложение заново.</string>
+    <string name="action_reset_password">Восстановление пароля</string>
+    <string name="action_send_reset_pwd_email">Восстановить пароль</string>
+    <string name="prompt_password_reset_token">Код восстановления</string>
+    <string name="new_password">Новый пароль</string>
+    <string name="password_reset_tip_text">На вашу почту направлен код восстановления пароля. Введите его в поле ниже. Придумайте и укажите новый пароль.</string>
+    <string name="action_set_new_password">Сохранить новый пароль</string>
+    <string name="action_forgot_password">Забыли пароль?</string>
+    <string name="toast_new_password">Новый пароль сохранен</string>
 </resources>

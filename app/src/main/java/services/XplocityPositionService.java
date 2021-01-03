@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.xplocity.xplocity.R;
 import com.xplocity.xplocity.RouteNewActivity;
+import com.xplocity.xplocity.RouteSaveActivity;
 
 import org.joda.time.DateTime;
 import org.osmdroid.util.GeoPoint;
@@ -378,8 +379,12 @@ public class XplocityPositionService
             trackingState = TRACKING_STATE_FINISHED;
             writeTrackingStateToStorage();
 
+            Intent intent = new Intent(this, RouteSaveActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
             if (mNotifBuilder != null) {
                 mNotifBuilder.setContentTitle("Tracking stopped. Route can be saved.");
+                mNotifBuilder.setContentIntent(pendingIntent);
                 mNotifManager.notify(STICKY_NOTIFICATION_ID, mNotifBuilder.build());
             }
 

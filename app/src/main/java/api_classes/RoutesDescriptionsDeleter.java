@@ -1,13 +1,13 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import api_classes.interfaces.RoutesDescriptionsDeleterInterface;
-import utils.Factory.LogFactory;
 import utils.Log.Logger;
-import utils.LogLevelGetter;
 import xml_parsers.XMLDeleteRouteResultParser;
 
 /**
@@ -23,8 +23,8 @@ public class RoutesDescriptionsDeleter extends Loader {
     private static final String API_method = "/chains";
 
     public RoutesDescriptionsDeleter(RoutesDescriptionsDeleterInterface callback) {
+        super((Context) callback);
         mCallback = callback;
-        mLogger = LogFactory.createLogger(this.getClass(), LogLevelGetter.get());
     }
 
     public void deleteRoute(int routeID) {
@@ -34,7 +34,7 @@ public class RoutesDescriptionsDeleter extends Loader {
 
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLDeleteRouteResultParser parser = new XMLDeleteRouteResultParser();
 
@@ -49,7 +49,7 @@ public class RoutesDescriptionsDeleter extends Loader {
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
         mCallback.onRouteDescriptionsDeleteError(errorText);
     }
 }

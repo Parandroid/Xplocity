@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,7 @@ public class NewRouteDownloader extends Loader {
     private static final String API_method = "/locations/get_location_list";
 
     public NewRouteDownloader(NewRouteDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -39,7 +42,7 @@ public class NewRouteDownloader extends Loader {
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationsParser newRouteParser = new XMLLocationsParser();
 
@@ -57,7 +60,7 @@ public class NewRouteDownloader extends Loader {
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
 
     }
 }

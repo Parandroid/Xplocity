@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,7 @@ public class LocationCategoriesDownloader extends Loader {
     private static final String API_method = "/location_categories";
 
     public LocationCategoriesDownloader(LocationCategoriesDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -28,7 +31,7 @@ public class LocationCategoriesDownloader extends Loader {
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationCategoryParser parser = new XMLLocationCategoryParser();
 
@@ -44,7 +47,7 @@ public class LocationCategoriesDownloader extends Loader {
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
 
     }
 }

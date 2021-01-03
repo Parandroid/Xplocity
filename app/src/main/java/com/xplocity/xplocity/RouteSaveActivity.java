@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import org.osmdroid.views.MapView;
 
@@ -166,8 +165,6 @@ public class RouteSaveActivity
     @Override
     public void onErrorUploadRoute(String errorText) {
         mWaitWheel.hideWaitAnimation();
-        Toast toast = Toast.makeText(this, errorText, Toast.LENGTH_LONG);
-        toast.show();
     }
 
     @Override

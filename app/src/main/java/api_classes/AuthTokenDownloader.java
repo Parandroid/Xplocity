@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +19,7 @@ public class AuthTokenDownloader extends Loader {
     private static final String API_method = "/auth/get_authentication_token";
 
     public AuthTokenDownloader(AuthTokenDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -31,28 +34,21 @@ public class AuthTokenDownloader extends Loader {
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
+        InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+        XMLAuthTokenParser authTokenParser = new XMLAuthTokenParser();
 
-        if (http_code == HTTP_OK || http_code == HTTP_NOT_MODIFIED) {
-            InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-            XMLAuthTokenParser authTokenParser = new XMLAuthTokenParser();
-
-
-            try {
-                AuthToken auth_token = authTokenParser.parse(stream);
-                mCallback.onAuthTokenDownloaded(auth_token, "OK");
-            } catch (Throwable e) {
-                mLogger.logError("Error parsing auth token: ", e);
-            }
-        }
-        else {
-            mCallback.onAuthTokenDownloaded(null, xml);
+        try {
+            AuthToken auth_token = authTokenParser.parse(stream);
+            mCallback.onAuthTokenDownloaded(auth_token);
+        } catch (Throwable e) {
+            mLogger.logError("Error parsing auth token: ", e);
         }
     }
 
     @Override
-    protected void onError(String errorText) {
-
+    protected void onError(String errorText, int httpCode) {
+        mCallback.onAuthTokenDownloadError(errorText);
     }
 
 

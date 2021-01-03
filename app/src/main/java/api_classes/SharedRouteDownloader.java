@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +19,7 @@ public class SharedRouteDownloader extends Loader {
     private static final String API_method = "/shared_routes";
 
     public SharedRouteDownloader(NewRouteDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -32,7 +35,7 @@ public class SharedRouteDownloader extends Loader {
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
 
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLLocationsParser newRouteParser = new XMLLocationsParser();
@@ -52,7 +55,7 @@ public class SharedRouteDownloader extends Loader {
 
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
 
     }
 }

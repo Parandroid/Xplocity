@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -7,9 +9,7 @@ import java.util.ArrayList;
 
 import api_classes.interfaces.RoutesDescriptionsDownloaderInterface;
 import models.RouteDescription;
-import utils.Factory.LogFactory;
 import utils.Log.Logger;
-import utils.LogLevelGetter;
 import xml_parsers.XMLRouteDescriptionsParser;
 
 /**
@@ -25,8 +25,8 @@ public class RoutesDescriptionsDownloader extends Loader {
     private static final String API_method = "/chains";
 
     public RoutesDescriptionsDownloader(RoutesDescriptionsDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
-        mLogger = LogFactory.createLogger(this.getClass(), LogLevelGetter.get());
     }
 
     public void downloadRoutesDescriptions(int offset, int limit) {
@@ -36,7 +36,7 @@ public class RoutesDescriptionsDownloader extends Loader {
 
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLRouteDescriptionsParser route_descriptions_parser = new XMLRouteDescriptionsParser();
 
@@ -52,7 +52,7 @@ public class RoutesDescriptionsDownloader extends Loader {
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
 
     }
 }

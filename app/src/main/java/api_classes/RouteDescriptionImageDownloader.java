@@ -1,5 +1,6 @@
 package api_classes;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.io.ByteArrayInputStream;
@@ -20,6 +21,7 @@ public class RouteDescriptionImageDownloader extends Loader{
     private static final String API_method = "/chains/image/";
 
     public RouteDescriptionImageDownloader(RouteDescriptionImageDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -30,8 +32,8 @@ public class RouteDescriptionImageDownloader extends Loader{
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
-        if (http_code == HTTP_OK || http_code == HTTP_NOT_MODIFIED) {
+    protected void onResponse(String xml, int httpCode) {
+        if (httpCode == HTTP_OK || httpCode == HTTP_NOT_MODIFIED) {
             InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
             XMLRouteDescriptionImageParser parser = new XMLRouteDescriptionImageParser();
             Bitmap image;
@@ -47,7 +49,7 @@ public class RouteDescriptionImageDownloader extends Loader{
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
 
     }
 }
