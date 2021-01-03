@@ -83,6 +83,15 @@
                     android:text="@string/action_sign_up"
                     android:textStyle="bold" />
 
+                <Button
+                    android:id="@+id/btn_forgot_password"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/action_forgot_password"
+                    android:textStyle="bold" />
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

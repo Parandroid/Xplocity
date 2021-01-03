@@ -15,8 +15,8 @@ public class LocationCommentUploader extends Loader {
 
     private String API_method = "/locations/";
 
-    public LocationCommentUploader(LocationCommentUploaderInterface callback) {
-        super((Context) callback);
+    public LocationCommentUploader(LocationCommentUploaderInterface callback, Context context) {
+        super(context);
         mCallback = callback;
     }
 

@@ -20,8 +20,8 @@ public class SharedRouteUploader extends Loader {
 
     private String API_method = "/shared_routes";
 
-    public SharedRouteUploader(SharedRouteUploaderInterface callback) {
-        super((Context) callback);
+    public SharedRouteUploader(SharedRouteUploaderInterface callback, Context context) {
+        super(context);
         mCallback = callback;
     }
 

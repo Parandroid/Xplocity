@@ -66,6 +66,14 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
             }
         });
 
+        Button forgotPasswordBtn = (Button) findViewById(R.id.btn_forgot_password);
+        forgotPasswordBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                redirectToResetPassword();
+            }
+        });
+
         mLoginFormView = findViewById(R.id.login_form);
         mWaitWheel = new WaitWheel((FrameLayout) findViewById(R.id.waitWheel), this);
     }
@@ -177,6 +185,12 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
         Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
         startActivity(intent);
     }
+
+    private void redirectToResetPassword() {
+        Intent intent = new Intent(getApplicationContext(), ResetPasswordActivity.class);
+        startActivity(intent);
+    }
+
 
 
 }

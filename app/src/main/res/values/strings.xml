@@ -9,6 +9,10 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up">Create an account</string>
     <string name="action_sign_up_short">Sign up</string>
+    <string name="action_reset_password">Reset password</string>
+    <string name="action_send_reset_pwd_email">Send mail</string>
+    <string name="prompt_password_reset_token">Password reset key</string>
+    <string name="action_forgot_password">Forgot password?</string>
 
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_empty_password">Password is empty</string>
@@ -62,7 +66,6 @@
     <string name="minute_short">m</string>
 
 
-
     <string name="if_you_already_have_an_account">If you already have an account:</string>
     <string name="distance">distance</string>
     <string name="duration">duration</string>
@@ -113,6 +116,10 @@
     <string name="show_the_closest_location">Show the closest location</string>
     <string name="error_network_error">Couldn\'t connect to the Internet. Please check your connection</string>
     <string name="error_credentials">Credential error. Please login again.</string>
+    <string name="new_password">New password</string>
+    <string name="password_reset_tip_text">Password reset key was sent to your email address. Please, enter it to the field below. Also enter new password for your account.</string>
+    <string name="action_set_new_password">Save new password</string>
+    <string name="toast_new_password">New password was saved.</string>
 
 
 </resources>

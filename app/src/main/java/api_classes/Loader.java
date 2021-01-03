@@ -30,6 +30,8 @@ public abstract class Loader {
     protected Context mContext;
 
     //http codes
+    public static final int HTTP_NETWORK_ERROR = -1;
+
     public static final int HTTP_OK = 200;
     public static final int HTTP_CREATED = 201;
     public static final int HTTP_NOT_MODIFIED = 304;
@@ -84,6 +86,7 @@ public abstract class Loader {
                         NetworkResponse response = error.networkResponse;
                         if (error instanceof NetworkError) {
                             Toast.makeText(mContext, R.string.error_network_error, Toast.LENGTH_SHORT).show();
+                            onError(error.getMessage(), HTTP_NETWORK_ERROR);
                         } else if (response.statusCode == HTTP_UNAUTHORIZED) {
                             deleteTokenFromStorage();
                             redirectToLoginActivity();

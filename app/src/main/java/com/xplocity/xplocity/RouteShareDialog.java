@@ -100,7 +100,7 @@ public class RouteShareDialog
     }
 
     public void onUploadRouteBtnPressed(View view) {
-        SharedRouteUploader routeUploader = new SharedRouteUploader(this);
+        SharedRouteUploader routeUploader = new SharedRouteUploader(this, getContext());
         routeUploader.uploadSharedRoute(mRoute);
 
     }

@@ -15,8 +15,8 @@ public class ReportedLocationUploader extends Loader {
 
     private String API_method = "/reported_locations";
 
-    public ReportedLocationUploader(ReportedLocationUploaderInterface callback) {
-        super((Context) callback);
+    public ReportedLocationUploader(ReportedLocationUploaderInterface callback, Context context) {
+        super(context);
         mCallback = callback;
     }
 
