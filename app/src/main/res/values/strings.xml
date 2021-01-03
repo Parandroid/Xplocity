@@ -111,6 +111,8 @@
     <string name="explored">Explored</string>
     <string name="left">Left</string>
     <string name="show_the_closest_location">Show the closest location</string>
+    <string name="error_network_error">Couldn\'t connect to the Internet. Please check your connection</string>
+    <string name="error_credentials">Credential error. Please login again.</string>
 
 
 </resources>

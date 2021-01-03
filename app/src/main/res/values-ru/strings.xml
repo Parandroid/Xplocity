@@ -76,4 +76,6 @@
     <string name="explored">Найдено</string>
     <string name="left">Осталось</string>
     <string name="show_the_closest_location">Ближайшее место</string>
+    <string name="error_network_error">Ошибка подключения к сети. Проверьте своё соединение, пожалуйста.</string>
+    <string name="error_credentials">Ошибка учётных данных. Пожалуйста, войдите в приложение заново.</string>
 </resources>

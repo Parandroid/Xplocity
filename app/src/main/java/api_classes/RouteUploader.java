@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,7 @@ public class RouteUploader extends Loader {
     private String API_method = "/chains";
 
     public RouteUploader(RouteUploaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -32,8 +35,8 @@ public class RouteUploader extends Loader {
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
-        if (http_code == HTTP_CREATED) {
+    protected void onResponse(String xml, int httpCode) {
+        if (httpCode == HTTP_CREATED) {
 
             InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
             XMLRouteParser parser = new XMLRouteParser();
@@ -51,7 +54,7 @@ public class RouteUploader extends Loader {
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
         mCallback.onErrorUploadRoute(errorText);
     }
 

@@ -28,7 +28,6 @@ import static services.XplocityPositionService.TRACKING_STATE_NOT_STARTED;
 public class LoginActivity extends AppCompatActivity implements AuthTokenDownloaderInterface {
 
 
-
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -42,7 +41,7 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
         if (prefs.getString("auth_token", null) != null && prefs.getInt("user_id", 0) != 0) {
             //TODO добавить проверку правильности токена (возможно, новый метод на стороне сервиса)
             redirectToMainActivity();
-        };
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -130,23 +129,24 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
 
 
     @Override
-    public void onAuthTokenDownloaded(AuthToken auth_token, String error) {
+    public void onAuthTokenDownloaded(AuthToken auth_token) {
         mWaitWheel.hideWaitAnimation();
 
-        if (auth_token != null) {
-            // TODO мб вынести работу с хранилищем в отдельный класс?
-            SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("user_id", auth_token.user_id);
-            editor.putString("auth_token", auth_token.auth_token);
-            editor.commit();
+        // TODO мб вынести работу с хранилищем в отдельный класс?
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("user_id", auth_token.user_id);
+        editor.putString("auth_token", auth_token.auth_token);
+        editor.commit();
 
-            redirectToMainActivity();
+        redirectToMainActivity();
+    }
 
-        } else {
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
-        }
+    @Override
+    public void onAuthTokenDownloadError(String error) {
+        mWaitWheel.hideWaitAnimation();
+        mPasswordView.setError(getString(R.string.error_incorrect_password));
+        mPasswordView.requestFocus();
     }
 
     private void redirectToMainActivity() {
@@ -160,15 +160,12 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
             if (trackingState == TRACKING_STATE_ACTIVE) {
                 intent = new Intent(getApplicationContext(), RouteNewActivity.class);
 
-            }
-            else if (trackingState == TRACKING_STATE_FINISHED) {
+            } else if (trackingState == TRACKING_STATE_FINISHED) {
                 intent = new Intent(getApplicationContext(), RouteSaveActivity.class);
-            }
-            else {
+            } else {
                 intent = new Intent(getApplicationContext(), RoutesListActivity.class);
             }
-        }
-        else {
+        } else {
             intent = new Intent(getApplicationContext(), RoutesListActivity.class);
         }
 
@@ -180,7 +177,6 @@ public class LoginActivity extends AppCompatActivity implements AuthTokenDownloa
         Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
         startActivity(intent);
     }
-
 
 
 }

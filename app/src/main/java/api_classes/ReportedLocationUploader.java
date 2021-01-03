@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import api_classes.interfaces.ReportedLocationUploaderInterface;
 import models.Location;
 import xml_builders.XMLReportedLocationBuilder;
@@ -14,6 +16,7 @@ public class ReportedLocationUploader extends Loader {
     private String API_method = "/reported_locations";
 
     public ReportedLocationUploader(ReportedLocationUploaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -27,14 +30,14 @@ public class ReportedLocationUploader extends Loader {
     }
 
     @Override
-    protected void onResponse(String response, int http_code) {
-        if (http_code == HTTP_CREATED) {
+    protected void onResponse(String response, int httpCode) {
+        if (httpCode == HTTP_CREATED) {
             mCallback.onSuccessUploadReportedLocation();
         }
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
         mCallback.onErrorUploadReportedLocation(errorText);
     }
 

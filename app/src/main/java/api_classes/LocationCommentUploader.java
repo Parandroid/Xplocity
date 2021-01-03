@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import api_classes.interfaces.LocationCommentUploaderInterface;
 import models.LocationComment;
 import xml_builders.XMLLocationCommentBuilder;
@@ -14,6 +16,7 @@ public class LocationCommentUploader extends Loader {
     private String API_method = "/locations/";
 
     public LocationCommentUploader(LocationCommentUploaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -27,14 +30,14 @@ public class LocationCommentUploader extends Loader {
     }
 
     @Override
-    protected void onResponse(String response, int http_code) {
-        if (http_code == HTTP_CREATED) {
+    protected void onResponse(String response, int httpCode) {
+        if (httpCode == HTTP_CREATED) {
             mCallback.onSuccessUploadLocationComment();
         }
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
         mCallback.onErrorUploadLocationComment(errorText);
     }
 

@@ -8,5 +8,6 @@ import models.AuthToken;
  */
 
 public interface AuthTokenDownloaderInterface {
-    void onAuthTokenDownloaded(AuthToken auth_token, String error);
+    void onAuthTokenDownloaded(AuthToken auth_token);
+    void onAuthTokenDownloadError(String error);
 }

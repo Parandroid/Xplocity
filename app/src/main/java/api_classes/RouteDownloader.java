@@ -1,5 +1,7 @@
 package api_classes;
 
+import android.content.Context;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +20,7 @@ public class RouteDownloader extends Loader{
     private static final String API_method = "/chains/";
 
     public RouteDownloader(RouteDownloaderInterface callback) {
+        super((Context) callback);
         mCallback = callback;
     }
 
@@ -27,7 +30,7 @@ public class RouteDownloader extends Loader{
     }
 
     @Override
-    protected void onResponse(String xml, int http_code) {
+    protected void onResponse(String xml, int httpCode) {
         InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         XMLRouteParser parser = new XMLRouteParser();
         Route route;
@@ -42,7 +45,7 @@ public class RouteDownloader extends Loader{
     }
 
     @Override
-    protected void onError(String errorText) {
+    protected void onError(String errorText, int httpCode) {
 
     }
 }
